@@ -31,15 +31,51 @@ class DrillDungeonGame(arcade.Window):
         """
         Set up game and initialize variables
         """
-        self.wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
-        
-        x = 50
-        y = 350
-        
-        # function introduces random walls
-        
+        #self.generate_random_walls()
+        self.fill_map_with_terrain()
+       
+    def on_draw(self):
+        """print map"""
+        arcade.start_render()
+        self.wall_list.draw()
+
+    def fill_map_with_terrain(self, blockWidth=20, blockHeight=20):
+        """
+        Fills the terrain with blocks. Requires that the block width/height be a
+        multiple of the screen width and height or it will end up looking strange
+        """
+        numberOfBlocksX = int(SCREEN_WIDTH / blockWidth)
+        numberOfBlocksY = int(SCREEN_HEIGHT / blockHeight) 
+        x = 0
+        y = 0
+        for i in range(numberOfBlocksX + 1):
+            self.fill_column_with_terrain(x, numberOfBlocksY, blockWidth,  blockHeight)
+            x += blockWidth 
+
+    def fill_column_with_terrain(self, x, numberOfBlocksY, blockWidth, blockHeight):
+        """
+        Fills a column with terrain
+        int x              : the x position of the column
+        int numberOfWallsY : number of blocks required to fill the columns
+        """
+        y = 0
+        for j in range(numberOfBlocksY + 1):
+            wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png")
+            wallsprite.width = blockWidth 
+            wallsprite.height = blockHeight
+            wallsprite.center_x = x
+            wallsprite.center_y = y
+            self.wall_list.append(wallsprite)
+            y += blockHeight 
+
+    def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
+        """
+        Generates random walls
+        int numberOfWalls : Number of walls to add
+        int sizeOfWalls   : The length of each wall (number of blocks)
+        """
         for j in range(10):
             x = random.randint(0, 800)
             y = random.randint(0, 600)
@@ -49,17 +85,7 @@ class DrillDungeonGame(arcade.Window):
                 wallsprite.center_y = y + i* wallsprite.height 
                 self.wall_list.append(wallsprite) 
 
-        
-        
-        #self.wallsprite.center_x = 50
-        #self.wallsprite.center_y = 350
-        
-        self.wall_list.append(self.wallsprite)
-        
-    def on_draw(self):
-        """print map"""
-        arcade.start_render()
-        self.wall_list.draw()
+
 
 
 
