@@ -23,7 +23,7 @@ class DrillDungeonGame(arcade.Window):
 
         #Sprite variables
         self.player_drill = None
-        self.wall_list = None # generates walls inside of map
+        self.wall_list = None 
 
         
         arcade.set_background_color(arcade.color.BROWN_NOSE)
@@ -37,7 +37,9 @@ class DrillDungeonGame(arcade.Window):
         self.fill_map_with_terrain()
        
     def on_draw(self):
-        """print map"""
+        """
+        Draws the map
+        """
         arcade.start_render()
         self.wall_list.draw()
 
@@ -45,6 +47,8 @@ class DrillDungeonGame(arcade.Window):
         """
         Fills the terrain with blocks. Requires that the block width/height be a
         multiple of the screen width and height or it will end up looking strange
+        int blockWidth  : width of the blocks to fill the terrain
+        int blockHeight : height of the blocks to fill the terrain
         """
         numberOfBlocksX = int(SCREEN_WIDTH / blockWidth)
         numberOfBlocksY = int(SCREEN_HEIGHT / blockHeight) 
