@@ -50,6 +50,10 @@ class DrillDungeonGame(arcade.Window):
         int blockWidth  : width of the blocks to fill the terrain
         int blockHeight : height of the blocks to fill the terrain
         """
+        if SCREEN_WIDTH % blockWidth != 0:
+            raise ValueError("Screen width must be divisible by block width")
+        if SCREEN_HEIGHT % blockHeight != 0:
+            raise ValueError("Screen height must be divisible by block height")
         numberOfBlocksX = int(SCREEN_WIDTH / blockWidth)
         numberOfBlocksY = int(SCREEN_HEIGHT / blockHeight) 
         x = 0
@@ -63,6 +67,8 @@ class DrillDungeonGame(arcade.Window):
         Fills a column with terrain
         int x              : the x position of the column
         int numberOfWallsY : number of blocks required to fill the columns
+        int blockWidth     : width of the blocks to fill the terrain
+        int blockHeight    : height of the blocks to fill the terrain
         """
         y = 0
         for j in range(numberOfBlocksY + 1):
