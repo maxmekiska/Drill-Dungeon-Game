@@ -35,7 +35,7 @@ class Dungeon:
         self.width = width
         self.meanDungeonSize = meanDungeonSize
 
-    def __str__(self):
+    def print_dungeon(self):
         for row in self.dungeon:
             print(row)
 
@@ -69,8 +69,8 @@ class Dungeon:
         x, y = self.generate_dungeon_start_point()
         dungeonSize = self.generate_dungeon_size()
         while dungeonSize > 0:
-            if self.dungeon[y][x] != 'O':
-                self.dungeon[y][x] = 'O'
+            if self.dungeon[y][x] != ' ':
+                self.dungeon[y][x] = ' '
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
@@ -78,43 +78,42 @@ class Dungeon:
     def update_dungeon_coords(self, x, y, walkDirection):
         if walkDirection == 0:
             y += 1
-            x += 1
         if walkDirection == 1:
-            y += 1
+            x += 1
         if walkDirection == 2:
-            x += 1
+            y -= 1
         if walkDirection == 3:
-            y -= 1
-            x += 1
-        if walkDirection == 4:
-            y += 1
-            x -= 1
-        if walkDirection == 5:
-            y -= 1
-        if walkDirection == 6:
-            x -= 1
-        if walkDirection == 7:
-            y -= 1
             x -= 1
         return x, y
         
 
-
     def get_walk_direction(self, x, y):
+    #Need to make x, y are in the range of the dungeon matrix
         if x == 0:
             if y == 0:
+                return random.choice([0, 1])
+            elif y == self.height - 1:
+                return random.choice([1, 2])
+            else:
                 return random.choice([0, 1, 2])
-            else:
-                return random.choice([0, 1, 2, 3, 5])
         elif y == 0:
-            return random.choice([0, 1, 2, 4, 6])
-        elif x == self.width:
-            if y == self.height:
-                return random.choice([5, 6, 7])
+            if x == self.width - 1:
+                return random.choice([0, 3])
             else:
-                return random.choice([1, 4, 5, 6, 7])
-        elif y == self.height:
-            return random.choice([2, 3, 5, 6, 7])
-        else:
-            return random.randint(0, 7)
+                return random.choice([0, 1, 3])
+        elif x == self.width - 1:
+            if y == self.height - 1:
+                return random.choice([2, 3])
+            else:
+                return random.choice([0,2,3])
+        elif y == self.height -1:
+            return random.choice([1,2,3])
+        else:   
+            return random.choice([0, 1, 2, 3]) 
+            
+            
+                
+        
+        
+
 
