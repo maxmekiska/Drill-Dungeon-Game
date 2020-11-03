@@ -14,57 +14,31 @@ class DungeonGenerator:
 
 
 
-class Dungeon:
-    """ A class that holds a single dungeon
-    Approach - Begin by generating a fully filled in dungeon
-    Next - select a random point on map (number of dungeons should also be random maybe)
-    Generate a random amount of blocks to be in the cave (normally distributed
-    Bore out that map
-    Repeat loop where the condition is that the random point cannot be filled already 
-    (but caves can connect)
-    For now - will just spiral around the initial point and have some consideration for
-    if the cave meets the wall
+class MapLayer:
+    """ 
+    A class that holds a single map layer 
     """
 
     def __init__(self, height=200, width=200, meanDungeonSize=40):
-        '''
-        length, width = length, width of dungeon in blocks
-        '''
         self.dungeon = []
         self.height = height 
         self.width = width
         self.meanDungeonSize = meanDungeonSize
 
-    def print_dungeon(self):
+    def __repr__(self):
+        """
+        Prints the dungeon row by row. 
+        """
+        dungeonString = ''
         for row in self.dungeon:
-            print(row)
+            for item in row:
+                dungeonString += (item + " ")
+            dungeonString += "\n"
+        return dungeonString
 
-    def generate_blank_map(self):
-        for i in range(self.height):
-            self.generate_blank_row()
-
-    def generate_blank_row(self):
-        row = []
-        for i in range(self.width):
-            row.append('X')
-        self.dungeon.append(row)
-           
-    def generate_dungeon_start_point(self):
-        startX = random.randint(0, self.width)
-        startY = random.randint(0, self.height)
-        return startX, startY
-
-    def generate_dungeon_size(self):
-        """
-        Simple poisson distribution to allow for occasional very large dungeons.
-        """
-        rng = np.random.default_rng()
-        dungeonSize = rng.poisson(self.meanDungeonSize)
-        return dungeonSize
-        
     def generate_dungeon(self):
         """
-        Generates the dungeon map. Current issues are: it can repeat certain steps
+        Generates a dungeon on the map. Current issues are: it can repeat certain steps
         """
         x, y = self.generate_dungeon_start_point()
         dungeonSize = self.generate_dungeon_size()
@@ -75,7 +49,66 @@ class Dungeon:
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
 
+    def generate_blank_map(self):
+        """
+        Generates a blank (featurless, not empyt) dungeon map (full of
+        'X' - meaning full of blocks)
+        """
+        for i in range(self.height):
+            self.generate_blank_row()
+
+    def generate_blank_row(self):
+        """
+        Appends a blank row (full of 'X' - meaning full of blocks) to 
+        self.dungeon
+        """
+        row = []
+        for i in range(self.width):
+            row.append('X')
+        self.dungeon.append(row)
+           
+    def generate_dungeon_start_point(self):
+        """
+        Generates the location of the first block in the dungeon
+        --------------------------------------------------------
+        Returns
+        int startX : The x coordinate of the first block in the dungeon
+        int startY : The y coordinate of the first block in the dungeon
+        """
+        startX = random.randint(0, self.width)
+        startY = random.randint(0, self.height)
+        return startX, startY
+
+    def generate_dungeon_size(self):
+        """
+        Generates the size of the dungeon using a poisson distribution with mean
+        self.meanDungeonSize
+        ---------------------------------------------------------
+        Returns
+        int dungeonSize : The size of the dungeon in number of blocks
+        """
+        rng = np.random.default_rng()
+        dungeonSize = rng.poisson(self.meanDungeonSize)
+        return dungeonSize
+        
+
     def update_dungeon_coords(self, x, y, walkDirection):
+        """
+        Moves the dungeon block coordinate in the direction dictated by the 
+        walkDirection
+
+        int x             : The x (horizontal) coordinate of the current block
+        int y             : The y (vertical) coordinate of the current block
+        int walkDirection : The direction of the random walk where:
+        0 = Upwards (y + 1)
+        1 = Right (x + 1)
+        2 - Downwards (y - 1)
+        3 = Left (x - 1)
+        ----------------------------------------------------------
+        Returns
+        int x             : The updated x coordinate of the current block
+        int y             : The updated y coordinate of the current block
+        """
         if walkDirection == 0:
             y += 1
         if walkDirection == 1:
@@ -88,7 +121,18 @@ class Dungeon:
         
 
     def get_walk_direction(self, x, y):
-    #Need to make x, y are in the range of the dungeon matrix
+        """
+        Generates the walk direction for the dungeon's random walk. 
+        int x : The x (horizontal) coordinate of the current block
+        int y : The y (vertical) coordinate of the current block
+        ----------------------------------------------------------
+        Returns
+        int walkDirection : The direction of the random walk where:
+        0 = Upwards (y + 1)
+        1 = Right (x + 1)
+        2 - Downwards (y - 1)
+        3 = Left (x - 1)
+        """
         if x == 0:
             if y == 0:
                 return random.choice([0, 1])
@@ -110,10 +154,3 @@ class Dungeon:
             return random.choice([1,2,3])
         else:   
             return random.choice([0, 1, 2, 3]) 
-            
-            
-                
-        
-        
-
-
