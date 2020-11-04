@@ -3,10 +3,10 @@
 Created on Sat Oct 31 17:12:48 2020
 
 """
-  
+
 import random
 import arcade
-
+from utils.drill import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -14,7 +14,7 @@ SCREEN_TITLE = "Welcome to the Drill Dungeon"
 
 
 class DrillDungeonGame(arcade.Window):
-    """ 
+    """
     Basic map class
     """
 
@@ -23,9 +23,17 @@ class DrillDungeonGame(arcade.Window):
 
         #Sprite variables
         self.player_drill = None
-        self.wall_list = None 
 
-        
+        self.player_list = None
+        self.wall_list = None
+        self.border_wall_list = None
+
+        self.left_pressed = False
+        self.right_pressed = False
+        self.up_pressed = False
+        self.down_pressed = False
+
+
         arcade.set_background_color(arcade.color.BROWN_NOSE)
     def setup(self):
         """
@@ -33,15 +41,22 @@ class DrillDungeonGame(arcade.Window):
         """
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
+        self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
         #self.generate_random_walls()
         self.fill_map_with_terrain()
-       
+
+        self.player_drill = Drill("resources/images/drills/drill_v2.png")
+        self.player_list.append(self.player_drill)
+
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player_drill, self.border_wall_list)
+
     def on_draw(self):
         """
         Draws the map
         """
         arcade.start_render()
         self.wall_list.draw()
+        self.player_list.draw()
 
     def fill_map_with_terrain(self, blockWidth=20, blockHeight=20):
         """
@@ -55,12 +70,12 @@ class DrillDungeonGame(arcade.Window):
         if SCREEN_HEIGHT % blockHeight != 0:
             raise ValueError("Screen height must be divisible by block height")
         numberOfBlocksX = int(SCREEN_WIDTH / blockWidth)
-        numberOfBlocksY = int(SCREEN_HEIGHT / blockHeight) 
+        numberOfBlocksY = int(SCREEN_HEIGHT / blockHeight)
         x = 0
         y = 0
         for i in range(numberOfBlocksX + 1):
             self.fill_column_with_terrain(x, numberOfBlocksY, blockWidth,  blockHeight)
-            x += blockWidth 
+            x += blockWidth
 
     def fill_column_with_terrain(self, x, numberOfBlocksY, blockWidth, blockHeight):
         """
@@ -73,12 +88,12 @@ class DrillDungeonGame(arcade.Window):
         y = 0
         for j in range(numberOfBlocksY + 1):
             wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png")
-            wallsprite.width = blockWidth 
+            wallsprite.width = blockWidth
             wallsprite.height = blockHeight
             wallsprite.center_x = x
             wallsprite.center_y = y
             self.wall_list.append(wallsprite)
-            y += blockHeight 
+            y += blockHeight
 
     def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
         """
@@ -91,9 +106,69 @@ class DrillDungeonGame(arcade.Window):
             y = random.randint(0, 600)
             for i in range(10):
                 wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
-                wallsprite.center_x = x + i* wallsprite.width 
-                wallsprite.center_y = y + i* wallsprite.height 
-                self.wall_list.append(wallsprite) 
+                wallsprite.center_x = x + i* wallsprite.width
+                wallsprite.center_y = y + i* wallsprite.height
+                self.wall_list.append(wallsprite)
+
+
+    def on_update(self, delta_time):
+        """ Movement and game logic """
+
+        # Move the player with the physics engine
+
+
+        self.player_drill.change_x = 0
+        self.player_drill.change_y = 0
+
+        if self.up_pressed and not (self.down_pressed or self.left_pressed or self.right_pressed):
+            self.player_drill.angle = 0
+            self.player_drill.change_y = self.player_drill.drillSpeed
+        elif self.down_pressed and not (self.up_pressed or self.left_pressed or self.right_pressed):
+            self.player_drill.angle = 180
+            self.player_drill.change_y = -self.player_drill.drillSpeed
+        if self.left_pressed and not (self.up_pressed or self.down_pressed or self.right_pressed):
+            self.player_drill.angle = 90
+            self.player_drill.change_x = -self.player_drill.drillSpeed
+        elif self.right_pressed and not (self.up_pressed or self.down_pressed or self.left_pressed):
+            self.player_drill.angle = 270
+            self.player_drill.change_x = self.player_drill.drillSpeed
+
+        self.physics_engine.update()
+
+
+        """
+
+        """
+        drill_hole_list = arcade.check_for_collision_with_list(self.player_drill, self.wall_list)
+        for dirt in drill_hole_list:
+            dirt.remove_from_sprite_lists()
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+
+        if key == arcade.key.UP:
+            self.up_pressed = True
+        elif key == arcade.key.DOWN:
+            self.down_pressed = True
+        elif key == arcade.key.LEFT:
+            self.left_pressed = True
+        elif key == arcade.key.RIGHT:
+            self.right_pressed = True
+
+
+
+
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+
+        if key == arcade.key.UP:
+            self.up_pressed = False
+        elif key == arcade.key.DOWN:
+            self.down_pressed = False
+        elif key == arcade.key.LEFT:
+            self.left_pressed = False
+        elif key == arcade.key.RIGHT:
+            self.right_pressed = False
 
 
 
