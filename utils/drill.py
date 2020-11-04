@@ -17,13 +17,8 @@ class Drill(arcade.Sprite):
         self.texture = arcade.load_texture_pair(spriteImage)[0]
         self.hit_box = self.texture.hit_box_points
 
-    def setup(self, arcade):
-
-        return arcade.Sprite(self.spriteImage, self.scale)
-
-
     def changeDrillSpeed(self, newSpeed):
         """
-
+        Changes speed of drill
         """
         self.drillSpeed = newSpeed
