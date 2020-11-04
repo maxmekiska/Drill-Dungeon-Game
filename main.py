@@ -86,10 +86,12 @@ class DrillDungeonGame(arcade.Window):
         int blockHeight    : height of the blocks to fill the terrain
         """
         y = 0
+        imageWidth=128;
         for j in range(numberOfBlocksY + 1):
-            wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png")
-            wallsprite.width = blockWidth
-            wallsprite.height = blockHeight
+            scaleToBlock = blockWidth/imageWidth
+            wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png",scaleToBlock)
+            # wallsprite.width = blockWidth
+            # wallsprite.height = blockHeight
             wallsprite.center_x = x
             wallsprite.center_y = y
             self.wall_list.append(wallsprite)
