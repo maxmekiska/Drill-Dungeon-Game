@@ -1,5 +1,6 @@
 """
-
+Module to create drill and control its specifications
+such as speed.
 """
 
 import arcade
