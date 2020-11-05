@@ -6,14 +6,6 @@ file type, depending on how performance is affected.
 import random
 import numpy as np
 
-class DungeonGenerator:
-    
-    def __init__():
-        self.dungeonList = []
-
-
-
-
 class MapLayer:
     """ 
     A class that holds a single map layer 
