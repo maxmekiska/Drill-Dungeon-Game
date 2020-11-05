@@ -6,7 +6,7 @@ such as speed.
 import arcade
 class Drill(arcade.Sprite):
 
-    def __init__(self, spriteImage, drillSpeed=2, scale=1, startPositionX=64, startPositionY=128):
+    def __init__(self, spriteImage, drillSpeed=1, scale=0.3, startPositionX=64, startPositionY=128):
         super().__init__()
         self.spriteImage = spriteImage
         self.drillSpeed = drillSpeed

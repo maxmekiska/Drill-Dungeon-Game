@@ -7,6 +7,7 @@ Created on Sat Oct 31 17:12:48 2020
 import random
 import arcade
 from utils.drill import *
+from utils.dungeon_generator import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -42,8 +43,16 @@ class DrillDungeonGame(arcade.Window):
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
         self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
-        #self.generate_random_walls()
-        self.fill_map_with_terrain()
+
+        #Initialize the map layer with some dungeon
+        mapLayer = MapLayer(100, 100, meanDungeonSize=400)
+        mapLayer.generate_blank_map()
+        mapLayer.generate_dungeon()
+        mapLayer.generate_dungeon()
+        mapLayer.generate_dungeon()
+
+        #Load map layer from mapLayer
+        self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
 
         self.player_drill = Drill("resources/images/drills/drill_v2.png")
         self.player_list.append(self.player_drill)
@@ -58,44 +67,38 @@ class DrillDungeonGame(arcade.Window):
         self.wall_list.draw()
         self.player_list.draw()
 
-    def fill_map_with_terrain(self, blockWidth=20, blockHeight=20):
-        """
-        Fills the terrain with blocks. Requires that the block width/height be a
-        multiple of the screen width and height or it will end up looking strange
-        int blockWidth  : width of the blocks to fill the terrain
-        int blockHeight : height of the blocks to fill the terrain
-        """
-        if SCREEN_WIDTH % blockWidth != 0:
-            raise ValueError("Screen width must be divisible by block width")
-        if SCREEN_HEIGHT % blockHeight != 0:
-            raise ValueError("Screen height must be divisible by block height")
-        numberOfBlocksX = int(SCREEN_WIDTH / blockWidth)
-        numberOfBlocksY = int(SCREEN_HEIGHT / blockHeight)
-        x = 0
-        y = 0
-        for i in range(numberOfBlocksX + 1):
-            self.fill_column_with_terrain(x, numberOfBlocksY, blockWidth,  blockHeight)
-            x += blockWidth
 
-    def fill_column_with_terrain(self, x, numberOfBlocksY, blockWidth, blockHeight):
+    def load_map_layer_from_matrix(self, mapLayerMatrix):
         """
-        Fills a column with terrain
-        int x              : the x position of the column
-        int numberOfWallsY : number of blocks required to fill the columns
+        Loads a map from a layer matrix
+        """
+        mapLayerHeight = len(mapLayerMatrix)
+        mapLayerWidth = len(mapLayerMatrix[0])
+        blockHeight = SCREEN_HEIGHT / mapLayerHeight
+        blockWidth = SCREEN_WIDTH / mapLayerWidth
+        y = 0.5 * blockHeight #this is probably the center of the block so needs to be height/2
+        for row in mapLayerMatrix:
+            self.fill_row_with_terrain(row, y, blockWidth, blockHeight)
+            y += blockHeight
+
+    def fill_row_with_terrain(self, mapRow, y, blockWidth, blockHeight):
+        """
+        Fills a row with terrain
+        list mapRow        : a row of the map matrix
+        int y              : the y position of the row
         int blockWidth     : width of the blocks to fill the terrain
         int blockHeight    : height of the blocks to fill the terrain
         """
-        y = 0
-        imageWidth=128;
-        for j in range(numberOfBlocksY + 1):
-            scaleToBlock = blockWidth/imageWidth
-            wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png",scaleToBlock)
-            # wallsprite.width = blockWidth
-            # wallsprite.height = blockHeight
-            wallsprite.center_x = x
-            wallsprite.center_y = y
-            self.wall_list.append(wallsprite)
-            y += blockHeight
+        x = 0.5 * blockWidth
+        for item in mapRow:
+            if item == 'X':
+                wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
+                #wallsprite.width = blockWidth 
+                #wallsprite.height = blockHeight
+                wallsprite.center_x = x
+                wallsprite.center_y = y
+                self.wall_list.append(wallsprite)
+            x += blockWidth  
 
     def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
         """
@@ -108,10 +111,9 @@ class DrillDungeonGame(arcade.Window):
             y = random.randint(0, 600)
             for i in range(10):
                 wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
-                wallsprite.center_x = x + i* wallsprite.width
-                wallsprite.center_y = y + i* wallsprite.height
-                self.wall_list.append(wallsprite)
-
+                wallsprite.center_x = x + i* wallsprite.width 
+                wallsprite.center_y = y + i* wallsprite.height 
+                self.wall_list.append(wallsprite) 
 
     def on_update(self, delta_time):
         """ Movement and game logic """

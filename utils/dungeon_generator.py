@@ -88,7 +88,6 @@ class MapLayer:
         """
         Moves the.mapLayerMatrix block coordinate in the direction dictated by the 
         walkDirection
-
         int x             : The x (horizontal) coordinate of the current block
         int y             : The y (vertical) coordinate of the current block
         int walkDirection : The direction of the random walk where:
