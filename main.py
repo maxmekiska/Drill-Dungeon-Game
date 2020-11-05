@@ -30,18 +30,17 @@ class DrillDungeonGame(arcade.Window):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
         #Sprite variables
-        self.player_drill = None
-
-        self.player_list = None
+        self.drill_list = None
         self.wall_list = None
         self.border_wall_list = None
-        self.bullet_list = None
-
+        self.bullet_list = None # new
+        
+        
         self.a_pressed = False
         self.d_pressed = False
         self.w_pressed = False
         self.s_pressed = False
-        
+
         #Initialize scrolling variables
         self.view_bottom = 0
         self.view_left = 0
@@ -52,7 +51,6 @@ class DrillDungeonGame(arcade.Window):
         """
         Set up game and initialize variables
         """
-        self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
         self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.bullet_list = arcade.SpriteList()
@@ -63,14 +61,15 @@ class DrillDungeonGame(arcade.Window):
         mapLayer.generate_dungeon()
         mapLayer.generate_dungeon()
         mapLayer.generate_dungeon()
+        
 
         #Load map layer from mapLayer
         self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
 
-        self.player_drill = Drill("resources/images/drills/drill_v2.png")
-        self.player_list.append(self.player_drill)
-
-        self.physics_engine = arcade.PhysicsEngineSimple(self.player_drill, self.border_wall_list)
+        drillSpriteImage="resources/images/drills/drill_v2_2.png"
+        turretSpriteImage="resources/images/weapons/turret1.png"
+        self.drill_list=Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12)
+        self.drill_list.physicsEngineSetup(self.border_wall_list)
 
         #Set viewpoint boundaries - where the drill currently has scrolled to
         self.view_left = 0
@@ -82,7 +81,7 @@ class DrillDungeonGame(arcade.Window):
         """
         arcade.start_render()
         self.wall_list.draw()
-        self.player_list.draw()
+        self.drill_list.draw()
         self.bullet_list.draw()
 
 
@@ -111,12 +110,12 @@ class DrillDungeonGame(arcade.Window):
         for item in mapRow:
             if item == 'X':
                 wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.18)
-                #wallsprite.width = blockWidth 
+                #wallsprite.width = blockWidth
                 #wallsprite.height = blockHeight
                 wallsprite.center_x = x
                 wallsprite.center_y = y
                 self.wall_list.append(wallsprite)
-            x += blockWidth  
+            x += blockWidth
 
     def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
         """
@@ -129,9 +128,9 @@ class DrillDungeonGame(arcade.Window):
             y = random.randint(0, 600)
             for i in range(10):
                 wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
-                wallsprite.center_x = x + i* wallsprite.width 
-                wallsprite.center_y = y + i* wallsprite.height 
-                self.wall_list.append(wallsprite) 
+                wallsprite.center_x = x + i* wallsprite.width
+                wallsprite.center_y = y + i* wallsprite.height
+                self.wall_list.append(wallsprite)
 
 
 
@@ -159,103 +158,17 @@ class DrillDungeonGame(arcade.Window):
         elif key == arcade.key.D:
             self.d_pressed = False
 
-    def update_map_view(self):
-        changed = False
-        changed = self.check_for_scroll_left(changed)
-        changed = self.check_for_scroll_right(changed)
-        changed = self.check_for_scroll_up(changed)
-        changed = self.check_for_scroll_down(changed)
-
-        self.view_left = int(self.view_left)
-        self.view_bottom = int(self.view_bottom)
-
-        if changed:
-            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
-
-
-    def move_drill(self):
-        if self.w_pressed and not (self.s_pressed or self.a_pressed or self.d_pressed): 
-            self.player_drill.angle = 0
-            self.player_drill.change_y = self.player_drill.drillSpeed
-            
-        # move diagonal up right  
-        elif self.w_pressed and self.d_pressed and not (self.s_pressed or self.a_pressed):
-            self.player_drill.angle = 315
-            self.player_drill.change_x = 0.5 * self.player_drill.drillSpeed
-            self.player_drill.change_y = 0.5 * self.player_drill.drillSpeed
-            
-        # move down    
-        elif self.s_pressed and not (self.w_pressed or self.a_pressed or self.d_pressed):
-            self.player_drill.angle = 180
-            self.player_drill.change_y = -self.player_drill.drillSpeed
-           
-        # move diagonal down right
-        elif self.s_pressed and self.d_pressed and not (self.w_pressed or self.a_pressed):
-            self.player_drill.angle = 225
-            self.player_drill.change_x = 0.5 * self.player_drill.drillSpeed
-            self.player_drill.change_y = 0.5 * -self.player_drill.drillSpeed
-            
-        # move left       
-        elif self.a_pressed and not (self.w_pressed or self.s_pressed or self.d_pressed):
-            self.player_drill.angle = 90
-            self.player_drill.change_x = -self.player_drill.drillSpeed
-        
-        # move digonal up left
-        elif self.a_pressed and self.w_pressed and not  ( self.s_pressed or self.d_pressed):
-            self.player_drill.angle = 45
-            self.player_drill.change_x = 0.5 * -self.player_drill.drillSpeed
-            self.player_drill.change_y = 0.5 * self.player_drill.drillSpeed
-        
-        # move right
-        elif self.d_pressed and not (self.w_pressed or self.s_pressed or self.a_pressed):
-            self.player_drill.angle = 270
-            self.player_drill.change_x = self.player_drill.drillSpeed
-            
-        # move digonal down left
-        elif self.a_pressed and self.s_pressed and not  ( self.w_pressed or self.d_pressed):
-            self.player_drill.angle = 135
-            self.player_drill.change_x = 0.5 * -self.player_drill.drillSpeed
-            self.player_drill.change_y = 0.5 * -self.player_drill.drillSpeed
-
-
-
-
-    def check_for_scroll_left(self, changed):
-        left_boundary = self.view_left + VIEWPOINT_MARGIN
-        if self.player_drill.left < left_boundary:
-            self.view_left -= left_boundary - self.player_drill.left
-            changed = True
-        return changed
-
-    def check_for_scroll_right(self, changed):
-        right_boundary = self.view_left + SCREEN_WIDTH - VIEWPOINT_MARGIN
-        if self.player_drill.right > right_boundary:
-            self.view_left += self.player_drill.right - right_boundary
-            changed = True
-        return changed
-
-    def check_for_scroll_up(self, changed):
-        top_boundary = self.view_bottom + SCREEN_HEIGHT - VIEWPOINT_MARGIN
-        if self.player_drill.top > top_boundary:
-            self.view_bottom += self.player_drill.top - top_boundary
-            changed = True
-        return changed
-
-    def check_for_scroll_down(self, changed):
-        bottom_boundary = self.view_bottom + VIEWPOINT_MARGIN
-        if self.player_drill.bottom < bottom_boundary:
-            self.view_bottom -= bottom_boundary - self.player_drill.bottom
-            changed = True
-        return changed
+    def on_mouse_motion(self, x, y, dx, dy):
+        """ Handle Mouse Motion """
+        self.drill_list.aimTurret(x, y)
        
-       
-    def on_mouse_press(self, x, y, button, modifiers):
+    def on_mouse_press(self, x, y, button, modifiers): # new
         # sprite scaling laser
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
         
       
-        start_x = self.player_drill.center_x
-        start_y = self.player_drill.center_y
+        start_x = self.drill_list.turret.center_x # new
+        start_y = self.drill_list.turret.center_y # new
         bullet.center_x = start_x
         bullet.center_y = start_y
         
@@ -277,31 +190,95 @@ class DrillDungeonGame(arcade.Window):
 
 
         self.bullet_list.append(bullet)
-    
+ #########################################################################################
 
-    
-    
-        
-    
-    
+    def update_map_view(self):
+        changed = False
+        changed = self.check_for_scroll_left(changed)
+        changed = self.check_for_scroll_right(changed)
+        changed = self.check_for_scroll_up(changed)
+        changed = self.check_for_scroll_down(changed)
+
+        self.view_left = int(self.view_left)
+        self.view_bottom = int(self.view_bottom)
+
+        if changed:
+            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
+
+
+    def move_drill(self):
+        if self.w_pressed and not (self.s_pressed or self.a_pressed or self.d_pressed):
+            self.drill_list.moveDrill("UP")
+        # move diagonal up right
+        elif self.w_pressed and self.d_pressed and not (self.s_pressed or self.a_pressed):
+            self.drill_list.moveDrill("UPRIGHT")
+        # move down
+        elif self.s_pressed and not (self.w_pressed or self.a_pressed or self.d_pressed):
+            self.drill_list.moveDrill("DOWN")
+        # move diagonal down right
+        elif self.s_pressed and self.d_pressed and not (self.w_pressed or self.a_pressed):
+            self.drill_list.moveDrill("DOWNRIGHT")
+        # move left
+        elif self.a_pressed and not (self.w_pressed or self.s_pressed or self.d_pressed):
+            self.drill_list.moveDrill("LEFT")
+        # move digonal up left
+        elif self.a_pressed and self.w_pressed and not  ( self.s_pressed or self.d_pressed):
+            self.drill_list.moveDrill("UPLEFT")
+        # move right
+        elif self.d_pressed and not (self.w_pressed or self.s_pressed or self.a_pressed):
+            self.drill_list.moveDrill("RIGHT")
+        # move digonal down left
+        elif self.a_pressed and self.s_pressed and not  ( self.w_pressed or self.d_pressed):
+            self.drill_list.moveDrill("DOWNLEFT")
+
+
+
+
+    def check_for_scroll_left(self, changed):
+        left_boundary = self.view_left + VIEWPOINT_MARGIN
+        if self.drill_list.left() < left_boundary:
+            self.view_left -= left_boundary - self.drill_list.left()
+            changed = True
+        return changed
+
+    def check_for_scroll_right(self, changed):
+        right_boundary = self.view_left + SCREEN_WIDTH - VIEWPOINT_MARGIN
+        if self.drill_list.right() > right_boundary:
+            self.view_left += self.drill_list.right() - right_boundary
+            changed = True
+        return changed
+
+    def check_for_scroll_up(self, changed):
+        top_boundary = self.view_bottom + SCREEN_HEIGHT - VIEWPOINT_MARGIN
+        if self.drill_list.top() > top_boundary:
+            self.view_bottom += self.drill_list.top() - top_boundary
+            changed = True
+        return changed
+
+    def check_for_scroll_down(self, changed):
+        bottom_boundary = self.view_bottom + VIEWPOINT_MARGIN
+        if self.drill_list.bottom() < bottom_boundary:
+            self.view_bottom -= bottom_boundary - self.drill_list.bottom()
+            changed = True
+        return changed
+
+# moved on_update to the end of the main 
     def on_update(self, delta_time):
+        """ Movement and game logic """
+
         
-        
-        
-        self.player_drill.change_x = 0
-        self.player_drill.change_y = 0
-        
+        self.drill_list.stopMoving()
         self.move_drill()
 
 
-        drill_hole_list = arcade.check_for_collision_with_list(self.player_drill, self.wall_list)
-        for dirt in drill_hole_list:
-            dirt.remove_from_sprite_lists()
+        self.drill_list.updatePhysicsEngine()
+        #clears map to leave tunnel behind drill
+        self.drill_list.clearDirt(self.wall_list)
 
         #Check for side scrolling
         self.update_map_view()        
 
-        self.physics_engine.update()        
+        #self.physics_engine.update()        
         self.bullet_list.update()
         
 
