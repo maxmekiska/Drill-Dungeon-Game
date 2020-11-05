@@ -33,7 +33,7 @@ class DrillDungeonGame(arcade.Window):
         self.drill_list = None
         self.wall_list = None
         self.border_wall_list = None
-        self.bullet_list = None # new
+        self.bullet_list = None #  shooting/aiming
         
         
         self.a_pressed = False
@@ -53,7 +53,7 @@ class DrillDungeonGame(arcade.Window):
         """
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
         self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
-        self.bullet_list = arcade.SpriteList()
+        self.bullet_list = arcade.SpriteList() # shooting/aiming
 
         #Initialize the map layer with some dungeon
         mapLayer = MapLayer(100, 100, meanDungeonSize=400)
@@ -82,7 +82,7 @@ class DrillDungeonGame(arcade.Window):
         arcade.start_render()
         self.wall_list.draw()
         self.drill_list.draw()
-        self.bullet_list.draw()
+        self.bullet_list.draw() # shooting/aiming
 
 
     def load_map_layer_from_matrix(self, mapLayerMatrix):
@@ -134,7 +134,7 @@ class DrillDungeonGame(arcade.Window):
 
 
 
-    def on_key_press(self, key, modifiers):
+    def on_key_press(self, key, modifiers): # changed to W, S, A, D movement control
         """Called whenever a key is pressed. """
 
         if key == arcade.key.W:
@@ -162,13 +162,13 @@ class DrillDungeonGame(arcade.Window):
         """ Handle Mouse Motion """
         self.drill_list.aimTurret(x, y)
        
-    def on_mouse_press(self, x, y, button, modifiers): # new
+    def on_mouse_press(self, x, y, button, modifiers): # shooting/aiming
         # sprite scaling laser
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
         
       
-        start_x = self.drill_list.turret.center_x # new
-        start_y = self.drill_list.turret.center_y # new
+        start_x = self.drill_list.turret.center_x
+        start_y = self.drill_list.turret.center_y 
         bullet.center_x = start_x
         bullet.center_y = start_y
         
@@ -190,7 +190,7 @@ class DrillDungeonGame(arcade.Window):
 
 
         self.bullet_list.append(bullet)
- #########################################################################################
+ 
 
     def update_map_view(self):
         changed = False
