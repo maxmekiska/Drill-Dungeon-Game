@@ -121,19 +121,50 @@ class DrillDungeonGame(arcade.Window):
 
         self.player_drill.change_x = 0
         self.player_drill.change_y = 0
-
-        if self.up_pressed and not (self.down_pressed or self.left_pressed or self.right_pressed):
+        
+        # move up
+        if self.up_pressed and not (self.down_pressed or self.left_pressed or self.right_pressed): 
             self.player_drill.angle = 0
             self.player_drill.change_y = self.player_drill.drillSpeed
+            
+        # move diagonal up right  
+        elif self.up_pressed and self.right_pressed and not (self.down_pressed or self.left_pressed):
+            self.player_drill.angle = 315
+            self.player_drill.change_x = 0.5 * self.player_drill.drillSpeed
+            self.player_drill.change_y = 0.5 * self.player_drill.drillSpeed
+            
+        # move down    
         elif self.down_pressed and not (self.up_pressed or self.left_pressed or self.right_pressed):
             self.player_drill.angle = 180
             self.player_drill.change_y = -self.player_drill.drillSpeed
+           
+        # move diagonal down right
+        elif self.down_pressed and self.right_pressed and not (self.up_pressed or self.left_pressed):
+            self.player_drill.angle = 225
+            self.player_drill.change_x = 0.5 * self.player_drill.drillSpeed
+            self.player_drill.change_y = 0.5 * -self.player_drill.drillSpeed
+            
+        # move left       
         if self.left_pressed and not (self.up_pressed or self.down_pressed or self.right_pressed):
             self.player_drill.angle = 90
             self.player_drill.change_x = -self.player_drill.drillSpeed
+        
+        # move digonal up left
+        elif self.left_pressed and self.up_pressed and not  ( self.down_pressed or self.right_pressed):
+            self.player_drill.angle = 45
+            self.player_drill.change_x = 0.5 * -self.player_drill.drillSpeed
+            self.player_drill.change_y = 0.5 * self.player_drill.drillSpeed
+        
+        # move right
         elif self.right_pressed and not (self.up_pressed or self.down_pressed or self.left_pressed):
             self.player_drill.angle = 270
             self.player_drill.change_x = self.player_drill.drillSpeed
+            
+        # move digonal down left
+        elif self.left_pressed and self.down_pressed and not  ( self.up_pressed or self.right_pressed):
+            self.player_drill.angle = 135
+            self.player_drill.change_x = 0.5 * -self.player_drill.drillSpeed
+            self.player_drill.change_y = 0.5 * -self.player_drill.drillSpeed
 
         self.physics_engine.update()
 
