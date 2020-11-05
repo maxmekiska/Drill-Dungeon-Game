@@ -145,7 +145,7 @@ class DrillDungeonGame(arcade.Window):
             self.player_drill.change_y = 0.5 * -self.player_drill.drillSpeed
             
         # move left       
-        if self.left_pressed and not (self.up_pressed or self.down_pressed or self.right_pressed):
+        elif self.left_pressed and not (self.up_pressed or self.down_pressed or self.right_pressed):
             self.player_drill.angle = 90
             self.player_drill.change_x = -self.player_drill.drillSpeed
         
