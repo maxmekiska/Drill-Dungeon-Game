@@ -132,13 +132,59 @@ class DrillDungeonGame(arcade.Window):
     def on_update(self, delta_time):
         """ Movement and game logic """
 
-        # Move the player with the physics engine
-
-
         self.player_drill.change_x = 0
         self.player_drill.change_y = 0
         
-        # move up
+        self.move_drill()
+
+        self.physics_engine.update()
+
+        drill_hole_list = arcade.check_for_collision_with_list(self.player_drill, self.wall_list)
+        for dirt in drill_hole_list:
+            dirt.remove_from_sprite_lists()
+
+        #Check for side scrolling
+        self.update_map_view()
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+
+        if key == arcade.key.UP:
+            self.up_pressed = True
+        elif key == arcade.key.DOWN:
+            self.down_pressed = True
+        elif key == arcade.key.LEFT:
+            self.left_pressed = True
+        elif key == arcade.key.RIGHT:
+            self.right_pressed = True
+
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+
+        if key == arcade.key.UP:
+            self.up_pressed = False
+        elif key == arcade.key.DOWN:
+            self.down_pressed = False
+        elif key == arcade.key.LEFT:
+            self.left_pressed = False
+        elif key == arcade.key.RIGHT:
+            self.right_pressed = False
+
+    def update_map_view(self):
+        changed = False
+        changed = self.check_for_scroll_left(changed)
+        changed = self.check_for_scroll_right(changed)
+        changed = self.check_for_scroll_up(changed)
+        changed = self.check_for_scroll_down(changed)
+
+        self.view_left = int(self.view_left)
+        self.view_bottom = int(self.view_bottom)
+
+        if changed:
+            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
+
+
+    def move_drill(self):
         if self.up_pressed and not (self.down_pressed or self.left_pressed or self.right_pressed): 
             self.player_drill.angle = 0
             self.player_drill.change_y = self.player_drill.drillSpeed
@@ -182,79 +228,36 @@ class DrillDungeonGame(arcade.Window):
             self.player_drill.change_x = 0.5 * -self.player_drill.drillSpeed
             self.player_drill.change_y = 0.5 * -self.player_drill.drillSpeed
 
-        self.physics_engine.update()
 
 
-        """
 
-        """
-        drill_hole_list = arcade.check_for_collision_with_list(self.player_drill, self.wall_list)
-        for dirt in drill_hole_list:
-            dirt.remove_from_sprite_lists()
-
-        # Scrolling implementation
-
-        #Keeps track of the changing of boundaries - will only update if we changed 
-        #the viewpoort
-        changed = False
-        
-        #scroll left
+    def check_for_scroll_left(self, changed):
         left_boundary = self.view_left + VIEWPOINT_MARGIN
         if self.player_drill.left < left_boundary:
             self.view_left -= left_boundary - self.player_drill.left
             changed = True
+        return changed
 
-        #scroll right
+    def check_for_scroll_right(self, changed):
         right_boundary = self.view_left + SCREEN_WIDTH - VIEWPOINT_MARGIN
         if self.player_drill.right > right_boundary:
             self.view_left += self.player_drill.right - right_boundary
             changed = True
+        return changed
 
-        # Scroll up
+    def check_for_scroll_up(self, changed):
         top_boundary = self.view_bottom + SCREEN_HEIGHT - VIEWPOINT_MARGIN
         if self.player_drill.top > top_boundary:
             self.view_bottom += self.player_drill.top - top_boundary
             changed = True
+        return changed
 
-        # Scroll down
+    def check_for_scroll_down(self, changed):
         bottom_boundary = self.view_bottom + VIEWPOINT_MARGIN
         if self.player_drill.bottom < bottom_boundary:
             self.view_bottom -= bottom_boundary - self.player_drill.bottom
             changed = True
-
-        #ensure the boundaries are integers
-        self.view_left = int(self.view_left)
-        self.view_bottom = int(self.view_bottom)
-
-        if changed:
-            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
-
-    def on_key_press(self, key, modifiers):
-        """Called whenever a key is pressed. """
-
-        if key == arcade.key.UP:
-            self.up_pressed = True
-        elif key == arcade.key.DOWN:
-            self.down_pressed = True
-        elif key == arcade.key.LEFT:
-            self.left_pressed = True
-        elif key == arcade.key.RIGHT:
-            self.right_pressed = True
-
-
-
-
-    def on_key_release(self, key, modifiers):
-        """Called when the user releases a key. """
-
-        if key == arcade.key.UP:
-            self.up_pressed = False
-        elif key == arcade.key.DOWN:
-            self.down_pressed = False
-        elif key == arcade.key.LEFT:
-            self.left_pressed = False
-        elif key == arcade.key.RIGHT:
-            self.right_pressed = False
+        return changed
 
 
 
