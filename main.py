@@ -9,9 +9,15 @@ import arcade
 from utils.drill import *
 from utils.dungeon_generator import *
 
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+
+MAP_WIDTH = 2400
+MAP_HEIGHT = 2400
 SCREEN_TITLE = "Welcome to the Drill Dungeon"
+
+VIEWPOINT_MARGIN = 40
 
 
 class DrillDungeonGame(arcade.Window):
@@ -33,6 +39,10 @@ class DrillDungeonGame(arcade.Window):
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
+        
+        #Initialize scrolling variables
+        self.view_bottom = 0
+        self.view_left = 0
 
 
         arcade.set_background_color(arcade.color.BROWN_NOSE)
@@ -59,6 +69,10 @@ class DrillDungeonGame(arcade.Window):
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_drill, self.border_wall_list)
 
+        #Set viewpoint boundaries - where the drill currently has scrolled to
+        self.view_left = 0
+        self.view_bottom = 0
+
     def on_draw(self):
         """
         Draws the map
@@ -74,8 +88,8 @@ class DrillDungeonGame(arcade.Window):
         """
         mapLayerHeight = len(mapLayerMatrix)
         mapLayerWidth = len(mapLayerMatrix[0])
-        blockHeight = SCREEN_HEIGHT / mapLayerHeight
-        blockWidth = SCREEN_WIDTH / mapLayerWidth
+        blockHeight = MAP_HEIGHT / mapLayerHeight
+        blockWidth = MAP_WIDTH / mapLayerWidth
         y = 0.5 * blockHeight #this is probably the center of the block so needs to be height/2
         for row in mapLayerMatrix:
             self.fill_row_with_terrain(row, y, blockWidth, blockHeight)
@@ -92,7 +106,7 @@ class DrillDungeonGame(arcade.Window):
         x = 0.5 * blockWidth
         for item in mapRow:
             if item == 'X':
-                wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
+                wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.18)
                 #wallsprite.width = blockWidth 
                 #wallsprite.height = blockHeight
                 wallsprite.center_x = x
@@ -177,6 +191,43 @@ class DrillDungeonGame(arcade.Window):
         drill_hole_list = arcade.check_for_collision_with_list(self.player_drill, self.wall_list)
         for dirt in drill_hole_list:
             dirt.remove_from_sprite_lists()
+
+        # Scrolling implementation
+
+        #Keeps track of the changing of boundaries - will only update if we changed 
+        #the viewpoort
+        changed = False
+        
+        #scroll left
+        left_boundary = self.view_left + VIEWPOINT_MARGIN
+        if self.player_drill.left < left_boundary:
+            self.view_left -= left_boundary - self.player_drill.left
+            changed = True
+
+        #scroll right
+        right_boundary = self.view_left + SCREEN_WIDTH - VIEWPOINT_MARGIN
+        if self.player_drill.right > right_boundary:
+            self.view_left += self.player_drill.right - right_boundary
+            changed = True
+
+        # Scroll up
+        top_boundary = self.view_bottom + SCREEN_HEIGHT - VIEWPOINT_MARGIN
+        if self.player_drill.top > top_boundary:
+            self.view_bottom += self.player_drill.top - top_boundary
+            changed = True
+
+        # Scroll down
+        bottom_boundary = self.view_bottom + VIEWPOINT_MARGIN
+        if self.player_drill.bottom < bottom_boundary:
+            self.view_bottom -= bottom_boundary - self.player_drill.bottom
+            changed = True
+
+        #ensure the boundaries are integers
+        self.view_left = int(self.view_left)
+        self.view_bottom = int(self.view_bottom)
+
+        if changed:
+            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
