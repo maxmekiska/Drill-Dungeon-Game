@@ -57,9 +57,9 @@ class DrillDungeonGame(arcade.Window):
         #Initialize the map layer with some dungeon
         mapLayer = MapLayer(100, 100, meanDungeonSize=400)
         mapLayer.generate_blank_map()
-        mapLayer.generate_dungeon()
-        mapLayer.generate_dungeon()
-        mapLayer.generate_dungeon()
+        for i in range(20):
+            mapLayer.generate_dungeon()
+
 
         #Load map layer from mapLayer
         self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
