@@ -32,6 +32,7 @@ class DrillDungeonGame(arcade.Window):
         self.drill_list = None
         self.wall_list = None
         self.border_wall_list = None
+        self.bullet_list = None
 
         self.left_pressed = False
         self.right_pressed = False
@@ -44,12 +45,14 @@ class DrillDungeonGame(arcade.Window):
 
 
         arcade.set_background_color(arcade.color.BROWN_NOSE)
+
     def setup(self):
         """
         Set up game and initialize variables
         """
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
         self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
+        self.bullet_list = arcade.SpriteList()
 
         #Initialize the map layer with some dungeon
         mapLayer = MapLayer(100, 100, meanDungeonSize=400)
@@ -77,6 +80,7 @@ class DrillDungeonGame(arcade.Window):
         arcade.start_render()
         self.wall_list.draw()
         self.drill_list.draw()
+        self.bullet_list.draw() 
 
 
     def load_map_layer_from_matrix(self, mapLayerMatrix):
@@ -111,21 +115,6 @@ class DrillDungeonGame(arcade.Window):
                 self.wall_list.append(wallsprite)
             x += blockWidth
 
-    def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
-        """
-        Generates random walls
-        int numberOfWalls : Number of walls to add
-        int sizeOfWalls   : The length of each wall (number of blocks)
-        """
-        for j in range(10):
-            x = random.randint(0, 800)
-            y = random.randint(0, 600)
-            for i in range(10):
-                wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
-                wallsprite.center_x = x + i* wallsprite.width
-                wallsprite.center_y = y + i* wallsprite.height
-                self.wall_list.append(wallsprite)
-
     def on_update(self, delta_time):
         """ Movement and game logic """
 
@@ -138,6 +127,23 @@ class DrillDungeonGame(arcade.Window):
 
         #Check for side scrolling
         self.update_map_view()
+
+        #self.physics_engine.update()        
+        self.bullet_list.update()
+        
+
+       
+        for bullet in self.bullet_list:
+            hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
+            # remove bullet
+            if len(hit_list) > 0:
+                bullet.remove_from_sprite_lists()
+            # remove hit wall    
+            for wall in hit_list:
+                wall.remove_from_sprite_lists()
+            # later also add for enemies    
+            if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
+                bullet.remove_from_sprite_lists()
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -167,7 +173,37 @@ class DrillDungeonGame(arcade.Window):
         """ Handle Mouse Motion """
         self.drill_list.aimTurret(x, y)
 
+    def on_mouse_press(self, x, y, button, modifiers): # shooting/aiming
+        # sprite scaling laser
+        bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
+        
+      
+        start_x = self.drill_list.turret.center_x
+        start_y = self.drill_list.turret.center_y 
+        bullet.center_x = start_x
+        bullet.center_y = start_y
+        
+        dest_x = x
+        dest_y = y
+
+       
+        
+        x_diff = dest_x - start_x
+        y_diff = dest_y - start_y
+        angle = math.atan2(y_diff, x_diff)
+        
+        bullet.angle = math.degrees(angle)
+        print(f"Bullet angle: {bullet.angle:.2f}")
+        
+        #bullet speed at the end
+        bullet.change_x = math.cos(angle) * 7
+        bullet.change_y = math.sin(angle) * 7
+
+
+        self.bullet_list.append(bullet)
+
     def update_map_view(self):
+        #Check if the drill has reached the edge of the box
         changed = False
         changed = self.check_for_scroll_left(changed)
         changed = self.check_for_scroll_right(changed)
@@ -182,6 +218,9 @@ class DrillDungeonGame(arcade.Window):
 
 
     def move_drill(self):
+        """
+        Would probably be cleaner to implement using a dictionary
+        """
         if self.up_pressed and not (self.down_pressed or self.left_pressed or self.right_pressed):
             self.drill_list.moveDrill("UP")
         # move diagonal up right
@@ -205,8 +244,6 @@ class DrillDungeonGame(arcade.Window):
         # move digonal down left
         elif self.left_pressed and self.down_pressed and not  ( self.up_pressed or self.right_pressed):
             self.drill_list.moveDrill("DOWNLEFT")
-
-
 
 
     def check_for_scroll_left(self, changed):
