@@ -167,7 +167,6 @@ class DrillDungeonGame(arcade.Window):
         # sprite scaling laser
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
 
-
         start_x = self.drill_list.turret.center_x
         start_y = self.drill_list.turret.center_y
         bullet.center_x = start_x
@@ -176,19 +175,15 @@ class DrillDungeonGame(arcade.Window):
         dest_x = x + self.view_left
         dest_y = y + self.view_bottom
 
-
-
         x_diff = dest_x - start_x
         y_diff = dest_y - start_y
         angle = math.atan2(y_diff, x_diff)
 
         bullet.angle = math.degrees(angle)
-        print(f"Bullet angle: {bullet.angle:.2f}")
 
         #bullet speed at the end
         bullet.change_x = math.cos(angle) * 7
         bullet.change_y = math.sin(angle) * 7
-
 
         self.bullet_list.append(bullet)
 
@@ -215,10 +210,10 @@ class DrillDungeonGame(arcade.Window):
             # remove hit wall
             for wall in hit_list:
                 wall.remove_from_sprite_lists()
-            # later also add for enemies
-            if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
+            # removes out of screen bullets from bullet list
+            if bullet.center_x > self.width+self.view_left or bullet.center_x < self.view_left or bullet.center_y > self.width+self.view_bottom or bullet.center_y < self.view_bottom:
                 bullet.remove_from_sprite_lists()
-
+            # later also add for enemies
     def move_drill(self):
         """
         Would probably be cleaner to implement using a dictionary
