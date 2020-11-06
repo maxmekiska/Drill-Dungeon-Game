@@ -80,7 +80,7 @@ class DrillDungeonGame(arcade.Window):
         arcade.start_render()
         self.wall_list.draw()
         self.drill_list.draw()
-        self.bullet_list.draw() 
+        self.bullet_list.draw()
 
 
     def load_map_layer_from_matrix(self, mapLayerMatrix):
@@ -93,7 +93,7 @@ class DrillDungeonGame(arcade.Window):
         mapLayerWidth = len(mapLayerMatrix[0])
         blockHeight = MAP_HEIGHT / mapLayerHeight
         blockWidth = MAP_WIDTH / mapLayerWidth
-        yBlockCenter = 0.5 * blockHeight 
+        yBlockCenter = 0.5 * blockHeight
         for row in mapLayerMatrix:
             self.fill_row_with_terrain(row, yBlockCenter, blockWidth, blockHeight)
             yBlockCenter += blockHeight
@@ -130,11 +130,11 @@ class DrillDungeonGame(arcade.Window):
         #Check for side scrolling
         self.update_map_view()
 
-        #self.physics_engine.update()        
+        #self.physics_engine.update()
         self.bullet_list.update()
 
         self.check_for_bullet_hits()
-        
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
@@ -161,30 +161,30 @@ class DrillDungeonGame(arcade.Window):
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Handle Mouse Motion """
-        self.drill_list.aim_turret(x, y)
+        self.drill_list.aim_turret(x+self.view_left, y+self.view_bottom)
 
     def on_mouse_press(self, x, y, button, modifiers): # shooting/aiming
         # sprite scaling laser
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
-        
-      
+
+
         start_x = self.drill_list.turret.center_x
-        start_y = self.drill_list.turret.center_y 
+        start_y = self.drill_list.turret.center_y
         bullet.center_x = start_x
         bullet.center_y = start_y
-        
+
         dest_x = x
         dest_y = y
 
-       
-        
+
+
         x_diff = dest_x - start_x
         y_diff = dest_y - start_y
         angle = math.atan2(y_diff, x_diff)
-        
+
         bullet.angle = math.degrees(angle)
         print(f"Bullet angle: {bullet.angle:.2f}")
-        
+
         #bullet speed at the end
         bullet.change_x = math.cos(angle) * 7
         bullet.change_y = math.sin(angle) * 7
@@ -212,10 +212,10 @@ class DrillDungeonGame(arcade.Window):
             # remove bullet
             if len(hit_list) > 0:
                 bullet.remove_from_sprite_lists()
-            # remove hit wall    
+            # remove hit wall
             for wall in hit_list:
                 wall.remove_from_sprite_lists()
-            # later also add for enemies    
+            # later also add for enemies
             if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
                 bullet.remove_from_sprite_lists()
 
