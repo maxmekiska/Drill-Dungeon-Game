@@ -173,8 +173,8 @@ class DrillDungeonGame(arcade.Window):
         bullet.center_x = start_x
         bullet.center_y = start_y
 
-        dest_x = x
-        dest_y = y
+        dest_x = x + self.view_left
+        dest_y = y + self.view_bottom
 
 
 
