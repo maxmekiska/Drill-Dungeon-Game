@@ -56,13 +56,15 @@ class DrillDungeonGame(arcade.Window):
         self.bullet_list = arcade.SpriteList() # shooting/aiming
 
         #Initialize the map layer with some dungeon
-        mapLayer = MapLayer(100, 100, meanDungeonSize=400)
+        mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10)
         mapLayer.generate_blank_map()
         mapLayer.generate_dungeon()
         mapLayer.generate_dungeon()
         mapLayer.generate_dungeon()
-        
-
+######################################## generate coal block clusters ####################################        
+        for i in range(20):
+            mapLayer.generate_coal()
+##########################################################################################################
         #Load map layer from mapLayer
         self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
 
@@ -110,6 +112,13 @@ class DrillDungeonGame(arcade.Window):
         for item in mapRow:
             if item == 'X':
                 wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.18)
+                #wallsprite.width = blockWidth
+                #wallsprite.height = blockHeight
+                wallsprite.center_x = x
+                wallsprite.center_y = y
+                self.wall_list.append(wallsprite)
+            if item == 'C':
+                wallsprite = arcade.Sprite(":resources:images/tiles/dirtCenter.png", 0.18)
                 #wallsprite.width = blockWidth
                 #wallsprite.height = blockHeight
                 wallsprite.center_x = x

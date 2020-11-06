@@ -11,11 +11,12 @@ class MapLayer:
     A class that holds a single map layer 
     """
 
-    def __init__(self, height=200, width=200, meanDungeonSize=40):
+    def __init__(self, height=200, width=200, meanDungeonSize=40, meanCoalSize=5): # added meanCoalSize parameter
         self.mapLayerMatrix = []
         self.height = height 
         self.width = width
         self.meanDungeonSize = meanDungeonSize
+        self.meanCoalSize = meanCoalSize
 
     def __repr__(self):
         """
@@ -40,7 +41,20 @@ class MapLayer:
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
-
+#########################################################################################################            
+    def generate_coal(self):
+        """
+        Generates a.mapLayerMatrix on the map. Current issues are: it can repeat certain steps
+        """
+        x, y = self.generate_coal_start_point()
+        dungeonSize = self.generate_coal_size()
+        while dungeonSize > 0:
+            if self.mapLayerMatrix[y][x] != 'C':
+                self.mapLayerMatrix[y][x] = 'C'
+                dungeonSize -= 1
+            walkDirection = self.get_walk_direction(x, y)
+            x, y = self.update_dungeon_coords(x, y, walkDirection)
+##########################################################################################################
     def generate_blank_map(self):
         """
         Generates a blank (featurless, not empyt).mapLayerMatrix map (full of
@@ -71,6 +85,21 @@ class MapLayer:
         startY = random.randint(0, self.height - 1)
         return startX, startY
 
+####################################################################################################
+
+    def generate_coal_start_point(self):
+        """
+        Generates the location of the first block in the.mapLayerMatrix
+        --------------------------------------------------------
+        Returns
+        int startX : The x coordinate of the first block in the.mapLayerMatrix
+        int startY : The y coordinate of the first block in the.mapLayerMatrix
+        """
+        startX = random.randint(0, self.width - 1)
+        startY = random.randint(0, self.height - 1)
+        return startX, startY
+####################################################################################################
+
     def generate_dungeon_size(self):
         """
         Generates the size of the.mapLayerMatrix using a poisson distribution with mean
@@ -82,8 +111,20 @@ class MapLayer:
         rng = np.random.default_rng()
         dungeonSize = rng.poisson(self.meanDungeonSize)
         return dungeonSize
-        
+###################################### defining size of coal cluster ######################################################
 
+    def generate_coal_size(self):
+        """
+        Generates the size of the.mapLayerMatrix using a poisson distribution with mean
+        self.meanDungeonSize
+        ---------------------------------------------------------
+        Returns
+        int.mapLayerMatrixSize : The size of the dungeon in number of blocks
+        """
+        rng = np.random.default_rng()
+        dungeonSize = rng.poisson(self.meanCoalSize) #cluster of coal
+        return dungeonSize        
+#########################################################################################################
     def update_dungeon_coords(self, x, y, walkDirection):
         """
         Moves the.mapLayerMatrix block coordinate in the direction dictated by the 
