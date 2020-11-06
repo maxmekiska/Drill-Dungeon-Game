@@ -23,12 +23,12 @@ class Drill():
         self.drillSpeed = drillSpeed
         self.physicsEngines = []
 
-    def stopMoving(self):
+    def stop_moving(self):
         for item in self.sprite_list:
             item.change_x = 0
             item.change_y = 0
 
-    def moveDrill(self, direction):
+    def move_drill(self, direction):
         if direction == "UP":
             self.body.angle = 0
             self.body.change_y = self.drillSpeed
@@ -71,7 +71,7 @@ class Drill():
             self.turret.change_y = 0.5 * -self.drillSpeed
 
 
-    def physicsEngineSetup(self, engineWall):
+    def physics_engine_setup(self, engineWall):
         for item in self.sprite_list:
             self.physicsEngines.append(arcade.PhysicsEngineSimple(item, engineWall))
 
@@ -79,17 +79,17 @@ class Drill():
         for item in self.sprite_list:
             item.draw()
 
-    def updatePhysicsEngine(self):
+    def update_physics_engine(self):
         for engine in self.physicsEngines:
           engine.update()
 
-    def clearDirt(self, dirtWallList):
+    def clear_dirt(self, dirtWallList):
         for item in self.sprite_list:
             drill_hole_list = arcade.check_for_collision_with_list(item, dirtWallList)
             for dirt in drill_hole_list:
                 dirt.remove_from_sprite_lists()
 
-    def aimTurret(self, aimX, aimY):
+    def aim_turret(self, aimX, aimY):
         start_x = self.turret.center_x
         start_y = self.turret.center_y
         dest_x = aimX

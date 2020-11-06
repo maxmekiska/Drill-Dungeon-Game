@@ -67,7 +67,7 @@ class DrillDungeonGame(arcade.Window):
         drillSpriteImage="resources/images/drills/drill_v2_2.png"
         turretSpriteImage="resources/images/weapons/turret1.png"
         self.drill_list=Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12)
-        self.drill_list.physicsEngineSetup(self.border_wall_list)
+        self.drill_list.physics_engine_setup(self.border_wall_list)
 
         #Set viewpoint boundaries - where the drill currently has scrolled to
         self.view_left = 0
@@ -118,12 +118,12 @@ class DrillDungeonGame(arcade.Window):
     def on_update(self, delta_time):
         """ Movement and game logic """
 
-        self.drill_list.stopMoving()
+        self.drill_list.stop_moving()
         self.move_drill()
 
-        self.drill_list.updatePhysicsEngine()
+        self.drill_list.update_physics_engine()
         #clears map to leave tunnel behind drill
-        self.drill_list.clearDirt(self.wall_list)
+        self.drill_list.clear_dirt(self.wall_list)
 
         #Check for side scrolling
         self.update_map_view()
@@ -171,7 +171,7 @@ class DrillDungeonGame(arcade.Window):
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Handle Mouse Motion """
-        self.drill_list.aimTurret(x, y)
+        self.drill_list.aim_turret(x, y)
 
     def on_mouse_press(self, x, y, button, modifiers): # shooting/aiming
         # sprite scaling laser
@@ -222,28 +222,28 @@ class DrillDungeonGame(arcade.Window):
         Would probably be cleaner to implement using a dictionary
         """
         if self.up_pressed and not (self.down_pressed or self.left_pressed or self.right_pressed):
-            self.drill_list.moveDrill("UP")
+            self.drill_list.move_drill("UP")
         # move diagonal up right
         elif self.up_pressed and self.right_pressed and not (self.down_pressed or self.left_pressed):
-            self.drill_list.moveDrill("UPRIGHT")
+            self.drill_list.move_drill("UPRIGHT")
         # move down
         elif self.down_pressed and not (self.up_pressed or self.left_pressed or self.right_pressed):
-            self.drill_list.moveDrill("DOWN")
+            self.drill_list.move_drill("DOWN")
         # move diagonal down right
         elif self.down_pressed and self.right_pressed and not (self.up_pressed or self.left_pressed):
-            self.drill_list.moveDrill("DOWNRIGHT")
+            self.drill_list.move_drill("DOWNRIGHT")
         # move left
         elif self.left_pressed and not (self.up_pressed or self.down_pressed or self.right_pressed):
-            self.drill_list.moveDrill("LEFT")
+            self.drill_list.move_drill("LEFT")
         # move digonal up left
         elif self.left_pressed and self.up_pressed and not  ( self.down_pressed or self.right_pressed):
-            self.drill_list.moveDrill("UPLEFT")
+            self.drill_list.move_drill("UPLEFT")
         # move right
         elif self.right_pressed and not (self.up_pressed or self.down_pressed or self.left_pressed):
-            self.drill_list.moveDrill("RIGHT")
+            self.drill_list.move_drill("RIGHT")
         # move digonal down left
         elif self.left_pressed and self.down_pressed and not  ( self.up_pressed or self.right_pressed):
-            self.drill_list.moveDrill("DOWNLEFT")
+            self.drill_list.move_drill("DOWNLEFT")
 
 
     def check_for_scroll_left(self, changed):
