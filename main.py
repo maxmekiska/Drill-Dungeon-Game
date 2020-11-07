@@ -9,6 +9,7 @@ import random
 import arcade
 from utils.drill import *
 from utils.dungeon_generator import *
+from utils.explosion import * # explosion/smoke
 
 
 SCREEN_WIDTH = 800
@@ -20,6 +21,7 @@ SCREEN_TITLE = "Welcome to the Drill Dungeon"
 
 VIEWPOINT_MARGIN = 40
 
+AMMU = 20 # explosion/smoke
 
 class DrillDungeonGame(arcade.Window):
     """
@@ -34,6 +36,8 @@ class DrillDungeonGame(arcade.Window):
         self.wall_list = None
         self.border_wall_list = None
         self.bullet_list = None #  shooting/aiming
+        self.explosions_list = None
+        
         
         
         self.a_pressed = False
@@ -45,7 +49,10 @@ class DrillDungeonGame(arcade.Window):
         self.view_bottom = 0
         self.view_left = 0
 
-
+        self.ammunition = AMMU # explosion/smoke
+        
+        
+        
         arcade.set_background_color(arcade.color.BROWN_NOSE)
     def setup(self):
         """
@@ -54,6 +61,7 @@ class DrillDungeonGame(arcade.Window):
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
         self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.bullet_list = arcade.SpriteList() # shooting/aiming
+        self.explosions_list = arcade.SpriteList() # explosion/smoke
 
         #Initialize the map layer with some dungeon
         mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10)
@@ -70,12 +78,16 @@ class DrillDungeonGame(arcade.Window):
 
         drillSpriteImage="resources/images/drills/drill_v2_2.png"
         turretSpriteImage="resources/images/weapons/turret1.png"
+        
         self.drill_list=Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12)
         self.drill_list.physicsEngineSetup(self.border_wall_list)
 
         #Set viewpoint boundaries - where the drill currently has scrolled to
         self.view_left = 0
         self.view_bottom = 0
+               
+        
+        self.ammunition = AMMU # explosion/smoke
 
     def on_draw(self):
         """
@@ -85,8 +97,12 @@ class DrillDungeonGame(arcade.Window):
         self.wall_list.draw()
         self.drill_list.draw()
         self.bullet_list.draw() # shooting/aiming
+        self.explosions_list.draw() # explosion/smoke
 
-
+        hud = f"Ammunition: {self.ammunition}" # explosion/smoke
+        
+        arcade.draw_text(hud, self.view_left + 10, self.view_bottom + 20, arcade.color.BLACK, 20) # update hud with screen scroll
+        
     def load_map_layer_from_matrix(self, mapLayerMatrix):
         """
         Loads a map from a layer matrix
@@ -173,6 +189,9 @@ class DrillDungeonGame(arcade.Window):
        
     def on_mouse_press(self, x, y, button, modifiers): # shooting/aiming
         # sprite scaling laser
+        global AMMU # explosion/smoke
+        
+        
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
         
       
@@ -196,10 +215,15 @@ class DrillDungeonGame(arcade.Window):
         #bullet speed at the end
         bullet.change_x = math.cos(angle) * 7
         bullet.change_y = math.sin(angle) * 7
-
-
-        self.bullet_list.append(bullet)
- 
+        
+        
+        # limited ammunition
+        
+        
+        if AMMU > 0:
+            self.bullet_list.append(bullet)
+            AMMU = AMMU - 1
+            self.ammunition = self.ammunition -1
 
     def update_map_view(self):
         changed = False
@@ -213,6 +237,7 @@ class DrillDungeonGame(arcade.Window):
 
         if changed:
             arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
+
 
 
     def move_drill(self):
@@ -289,6 +314,8 @@ class DrillDungeonGame(arcade.Window):
 
         #self.physics_engine.update()        
         self.bullet_list.update()
+        self.explosions_list.update()
+
         
 
        
@@ -299,7 +326,18 @@ class DrillDungeonGame(arcade.Window):
                 bullet.remove_from_sprite_lists()
             # remove hit wall    
             for wall in hit_list:
+            # explosion and smoke when wall hit
+                for i in range(PARTICLE_COUNT):
+                    particle = Particle(self.explosions_list)
+                    particle.position = wall.position
+                    self.explosions_list.append(particle) 
+
+                smoke = Smoke(50)
+                smoke.position = wall.position
+                self.explosions_list.append(smoke)  
+
                 wall.remove_from_sprite_lists()
+                
             # later also add for enemies    
             if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
                 bullet.remove_from_sprite_lists()
