@@ -37,15 +37,15 @@ PARTICLE_SPARKLE_CHANCE = 0.02
 # using transform feedback. If to slow, just get rid of smoke.
 
 # Start scale of smoke, and how fast is scales up
-SMOKE_START_SCALE = 0.25
-SMOKE_EXPANSION_RATE = 0.03
+SMOKE_START_SCALE = 0       # 0.25
+SMOKE_EXPANSION_RATE = 0    # 0.03
 
 # Rate smoke fades, and rises
-SMOKE_FADE_RATE = 7
-SMOKE_RISE_RATE = 0.5
+SMOKE_FADE_RATE = 0     # 7
+SMOKE_RISE_RATE = 0     # 0.5
 
 # Chance we leave smoke trail
-SMOKE_CHANCE = 0.25
+SMOKE_CHANCE = 0      # 0.25
 
 class Smoke(arcade.SpriteCircle):
     """ This represents a puff of smoke """

@@ -8,7 +8,7 @@ import math
 
 class Drill():
 
-    def __init__(self, drillSpriteImage, drillSpriteScale, turretSpriteImage, turretSpriteScale, startPositionX=64, startPositionY=128, drillSpeed=1):
+    def __init__(self, drillSpriteImage, drillSpriteScale, turretSpriteImage, turretSpriteScale, startPositionX=64, startPositionY=128, drillSpeed=1, ammunition=50):
         self.body = arcade.Sprite(drillSpriteImage, drillSpriteScale)
         self.body.center_x = startPositionX
         self.body.center_y = startPositionY
@@ -22,7 +22,10 @@ class Drill():
 
         self.drillSpeed = drillSpeed
         self.physicsEngines = []
-
+        
+        self.ammunition = ammunition
+        
+      
     def stopMoving(self):
         for item in self.sprite_list:
             item.change_x = 0

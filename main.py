@@ -21,7 +21,7 @@ SCREEN_TITLE = "Welcome to the Drill Dungeon"
 
 VIEWPOINT_MARGIN = 40
 
-AMMU = 20 # explosion/smoke
+
 
 class DrillDungeonGame(arcade.Window):
     """
@@ -49,7 +49,7 @@ class DrillDungeonGame(arcade.Window):
         self.view_bottom = 0
         self.view_left = 0
 
-        self.ammunition = AMMU # explosion/smoke
+        
         
         
         
@@ -87,7 +87,7 @@ class DrillDungeonGame(arcade.Window):
         self.view_bottom = 0
                
         
-        self.ammunition = AMMU # explosion/smoke
+      
 
     def on_draw(self):
         """
@@ -99,7 +99,7 @@ class DrillDungeonGame(arcade.Window):
         self.bullet_list.draw() # shooting/aiming
         self.explosions_list.draw() # explosion/smoke
 
-        hud = f"Ammunition: {self.ammunition}" # explosion/smoke
+        hud = f"Ammunition: {self.drill_list.ammunition}" 
         
         arcade.draw_text(hud, self.view_left + 10, self.view_bottom + 20, arcade.color.BLACK, 20) # update hud with screen scroll
         
@@ -159,7 +159,7 @@ class DrillDungeonGame(arcade.Window):
 
 
 
-    def on_key_press(self, key, modifiers): # changed to W, S, A, D movement control
+    def on_key_press(self, key, modifiers): 
         """Called whenever a key is pressed. """
 
         if key == arcade.key.W:
@@ -187,9 +187,8 @@ class DrillDungeonGame(arcade.Window):
         """ Handle Mouse Motion """
         self.drill_list.aimTurret(x, y)
        
-    def on_mouse_press(self, x, y, button, modifiers): # shooting/aiming
-        # sprite scaling laser
-        global AMMU # explosion/smoke
+    def on_mouse_press(self, x, y, button, modifiers):
+     
         
         
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
@@ -218,12 +217,10 @@ class DrillDungeonGame(arcade.Window):
         
         
         # limited ammunition
-        
-        
-        if AMMU > 0:
+            
+        if self.drill_list.ammunition > 0:
             self.bullet_list.append(bullet)
-            AMMU = AMMU - 1
-            self.ammunition = self.ammunition -1
+            self.drill_list.ammunition = self.drill_list.ammunition - 1
 
     def update_map_view(self):
         changed = False
