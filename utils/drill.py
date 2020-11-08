@@ -35,40 +35,40 @@ class Drill():
             self.turret.change_y = self.drillSpeed
         elif direction == "UPRIGHT":
             self.body.angle = 315
-            self.body.change_x = 0.707 * self.drillSpeed
-            self.turret.change_x = 0.707 * self.drillSpeed
-            self.body.change_y = 0.707 * self.drillSpeed
-            self.turret.change_y = 0.707 * self.drillSpeed
+            self.body.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
+            self.turret.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
+            self.body.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
+            self.turret.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
         elif direction == "DOWN":
             self.body.angle = 180
             self.body.change_y = -self.drillSpeed
             self.turret.change_y = -self.drillSpeed
         elif direction == "DOWNRIGHT":
             self.body.angle = 225
-            self.body.change_x = 0.707 * self.drillSpeed
-            self.turret.change_x = 0.707 * self.drillSpeed
-            self.body.change_y = 0.707 * -self.drillSpeed
-            self.turret.change_y = 0.707 * -self.drillSpeed
+            self.body.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
+            self.turret.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
+            self.body.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
+            self.turret.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
         elif direction == "LEFT":
             self.body.angle = 90
             self.body.change_x = -self.drillSpeed
             self.turret.change_x = -self.drillSpeed
         elif direction == "UPLEFT":
             self.body.angle = 45
-            self.body.change_x = 0.707 * -self.drillSpeed
-            self.turret.change_x = 0.707 * -self.drillSpeed
-            self.body.change_y = 0.707 * self.drillSpeed
-            self.turret.change_y = 0.707 * self.drillSpeed
+            self.body.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
+            self.turret.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
+            self.body.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
+            self.turret.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
         elif direction == "RIGHT":
             self.body.angle = 270
             self.body.change_x = self.drillSpeed
             self.turret.change_x = self.drillSpeed
         elif direction == "DOWNLEFT":
             self.body.angle = 135
-            self.body.change_x = 0.707 * -self.drillSpeed
-            self.turret.change_x = 0.707 * -self.drillSpeed
-            self.body.change_y = 0.707 * -self.drillSpeed
-            self.turret.change_y = 0.707 * -self.drillSpeed
+            self.body.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
+            self.turret.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
+            self.body.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
+            self.turret.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
 
 
     def physics_engine_setup(self, engineWall):
