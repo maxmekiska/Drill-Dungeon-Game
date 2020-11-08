@@ -113,7 +113,7 @@ class Drill():
     
         
 
-    def physicsEngineSetup(self, engineWall):
+    def physics_engine_setup(self, engineWall):
 
         for item in self.sprite_list:
             self.physicsEngines.append(arcade.PhysicsEngineSimple(item, engineWall))
