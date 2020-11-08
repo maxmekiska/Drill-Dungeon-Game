@@ -35,6 +35,7 @@ class DrillDungeonGame(arcade.Window):
         self.drill_list = None
         self.wall_list = None
         self.coal_list = None # coal/fuel increment
+        self.gold_list = None # gold increment
         self.border_wall_list = None
         self.bullet_list = None #  shooting/aiming
         self.explosions_list = None
@@ -62,18 +63,21 @@ class DrillDungeonGame(arcade.Window):
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
         self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
         self.coal_list = arcade.SpriteList(use_spatial_hash=True) # coal/fuel
+        self.gold_list = arcade.SpriteList(use_spatial_hash=True) # gold increment
         self.bullet_list = arcade.SpriteList() # shooting/aiming
         self.explosions_list = arcade.SpriteList() # explosion/smoke
 
         #Initialize the map layer with some dungeon
-        mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10)
+        mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
         mapLayer.generate_blank_map()
         mapLayer.generate_dungeon()
         mapLayer.generate_dungeon()
         mapLayer.generate_dungeon()
-######################################## generate coal block clusters ####################################        
+######################################## generate coal and gold block clusters ####################################        
         for i in range(20):
             mapLayer.generate_coal()
+        for j in range(20):
+            mapLayer.generate_gold()
 ##########################################################################################################
         #Load map layer from mapLayer
         self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
@@ -98,11 +102,12 @@ class DrillDungeonGame(arcade.Window):
         arcade.start_render()
         self.wall_list.draw()
         self.coal_list.draw() # coal/fuel
+        self.gold_list.draw() # gold increment
         self.drill_list.draw()
         self.bullet_list.draw() # shooting/aiming
         self.explosions_list.draw() # explosion/smoke
 
-        hud = f"Ammunition: {self.drill_list.ammunition}\nCoal:{self.drill_list.coal}" 
+        hud = f"Ammunition: {self.drill_list.ammunition}\nCoal:{self.drill_list.coal}\nGold:{self.drill_list.gold}" 
         
         arcade.draw_text(hud, self.view_left + 10, self.view_bottom + 20, arcade.color.BLACK, 20) # update hud with screen scroll
         
@@ -143,6 +148,11 @@ class DrillDungeonGame(arcade.Window):
                 wallsprite.center_x = x
                 wallsprite.center_y = y
                 self.coal_list.append(wallsprite) # append coal to coal list
+            if item == 'G':
+                wallsprite = arcade.Sprite(":resources:images/tiles/lava.png", 0.18)
+                wallsprite.center_x = x
+                wallsprite.center_y = y
+                self.gold_list.append(wallsprite) # append gold to gold list
             x += blockWidth
 
     def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
@@ -222,7 +232,7 @@ class DrillDungeonGame(arcade.Window):
         # limited ammunition
             
         if self.drill_list.ammunition > 0:
-            self.bullet_list.append(bullet)
+            self.bullet_list.append(bullet) # if empty, no more bullets append to bullet_list, no shooting
             self.drill_list.ammunition = self.drill_list.ammunition - 1
 
     def update_map_view(self):
@@ -310,6 +320,8 @@ class DrillDungeonGame(arcade.Window):
         self.drill_list.clearDirt(self.wall_list)
         #collects coal and increments fuel tank
         self.drill_list.collectCoal(self.coal_list)
+        #collect gold and increments gold
+        self.drill_list.collectGold(self.gold_list) 
 
         #Check for side scrolling
         self.update_map_view()        
@@ -319,29 +331,62 @@ class DrillDungeonGame(arcade.Window):
         self.explosions_list.update()
 
         
-
+# design explosion effects for each material seperatly
        
         for bullet in self.bullet_list:
-            hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
-            hit_list = arcade.check_for_collision_with_list(bullet, self.coal_list) # add to remove coal block when shot
+            hit_list_wall = arcade.check_for_collision_with_list(bullet, self.wall_list)
+            hit_list_coal = arcade.check_for_collision_with_list(bullet, self.coal_list) # add to remove coal block when shot
+            hit_list_gold = arcade.check_for_collision_with_list(bullet, self.gold_list) # add to remove gold block when shot
             # remove bullet
-            if len(hit_list) > 0:
+            if len(hit_list_wall) > 0:
                 bullet.remove_from_sprite_lists()
             # remove hit wall    
-            for wall in hit_list:
+            for wall in hit_list_wall:
             # explosion and smoke when wall hit
                 for i in range(PARTICLE_COUNT):
                     particle = Particle(self.explosions_list)
                     particle.position = wall.position
-                    self.explosions_list.append(particle) 
-
+                    self.explosions_list.append(particle)
+                    
                 smoke = Smoke(50)
                 smoke.position = wall.position
-                self.explosions_list.append(smoke)  
-
+                self.explosions_list.append(smoke)
                 wall.remove_from_sprite_lists()
                 
-            # later also add for enemies    
+                
+            if len(hit_list_coal) > 0:
+                bullet.remove_from_sprite_lists()
+            for coal in hit_list_coal:       
+                for i in range(PARTICLE_COUNT):
+                    particle = Particle(self.explosions_list)
+                    particle.position = coal.position
+                    self.explosions_list.append(particle)
+                    
+                smoke = Smoke(50)
+                smoke.position = coal.position
+                self.explosions_list.append(smoke)
+                coal.remove_from_sprite_lists()
+                
+                
+            if len(hit_list_gold) > 0:
+                bullet.remove_from_sprite_lists()                
+            for gold in hit_list_gold:       
+                for i in range(PARTICLE_COUNT):
+                    particle = Particle(self.explosions_list)
+                    particle.position = gold.position
+                    self.explosions_list.append(particle)
+                    
+                smoke = Smoke(50)
+                smoke.position = gold.position
+                self.explosions_list.append(smoke)
+                gold.remove_from_sprite_lists()                    
+
+     
+                
+            # later also add for enemies 
+
+
+            
             if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
                 bullet.remove_from_sprite_lists()
 

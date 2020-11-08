@@ -9,7 +9,7 @@ import math
 
 class Drill():
 
-    def __init__(self, drillSpriteImage, drillSpriteScale, turretSpriteImage, turretSpriteScale, startPositionX=64, startPositionY=128, drillSpeed=1, ammunition=50, distanceMoved=0, coal=100):
+    def __init__(self, drillSpriteImage, drillSpriteScale, turretSpriteImage, turretSpriteScale, startPositionX=64, startPositionY=128, drillSpeed=1, ammunition=50, distanceMoved=0, coal=100, gold=0):
         self.body = arcade.Sprite(drillSpriteImage, drillSpriteScale)
         self.body.center_x = startPositionX
         self.body.center_y = startPositionY
@@ -26,6 +26,7 @@ class Drill():
         
         self.ammunition = ammunition
         self.coal = coal
+        self.gold = gold
         
         self.distanceMoved = distanceMoved
       
@@ -119,7 +120,14 @@ class Drill():
             drill_hole_list = arcade.check_for_collision_with_list(item, coalList)
             for coal in drill_hole_list:
                 coal.remove_from_sprite_lists()
-                self.coal += 1
+                self.coal += 1 # increment coal
+    # add gold removal
+    def collectGold(self, goldList):
+        for item in self.sprite_list:
+            drill_hole_list = arcade.check_for_collision_with_list(item, goldList)
+            for gold in drill_hole_list:
+                gold.remove_from_sprite_lists()
+                self.gold += 1 # increment gold
 
     def aimTurret(self, aimX, aimY):
         start_x = self.turret.center_x
