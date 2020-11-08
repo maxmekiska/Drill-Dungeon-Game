@@ -99,7 +99,7 @@ class DrillDungeonGame(arcade.Window):
         self.bullet_list.draw() # shooting/aiming
         self.explosions_list.draw() # explosion/smoke
 
-        hud = f"Ammunition: {self.drill_list.ammunition}" 
+        hud = f"Ammunition: {self.drill_list.ammunition}\nCoal:{self.drill_list.coal}" 
         
         arcade.draw_text(hud, self.view_left + 10, self.view_bottom + 20, arcade.color.BLACK, 20) # update hud with screen scroll
         

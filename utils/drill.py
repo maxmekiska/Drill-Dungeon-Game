@@ -6,9 +6,10 @@ such as speed.
 import arcade
 import math
 
+
 class Drill():
 
-    def __init__(self, drillSpriteImage, drillSpriteScale, turretSpriteImage, turretSpriteScale, startPositionX=64, startPositionY=128, drillSpeed=1, ammunition=50):
+    def __init__(self, drillSpriteImage, drillSpriteScale, turretSpriteImage, turretSpriteScale, startPositionX=64, startPositionY=128, drillSpeed=1, ammunition=50, distanceMoved=0, coal=100):
         self.body = arcade.Sprite(drillSpriteImage, drillSpriteScale)
         self.body.center_x = startPositionX
         self.body.center_y = startPositionY
@@ -24,7 +25,9 @@ class Drill():
         self.physicsEngines = []
         
         self.ammunition = ammunition
+        self.coal = coal
         
+        self.distanceMoved = distanceMoved
       
     def stopMoving(self):
         for item in self.sprite_list:
@@ -72,7 +75,25 @@ class Drill():
             self.turret.change_x = 0.5 * -self.drillSpeed
             self.body.change_y = 0.5 * -self.drillSpeed
             self.turret.change_y = 0.5 * -self.drillSpeed
+        
+        # implement ammunition increment after every 200 units of movement
+        # note: absolute values of x and y need to be summed because diagonal movement cancel distance out
+        self.distanceMoved += (abs(self.body.change_x) + abs(self.body.change_y)) 
+        self.distanceMoved = round(self.distanceMoved, 1)
+        print(self.distanceMoved)
+        
 
+        
+        # reset counter after every 200 units of movement and increment ammunition by 1
+        if self.distanceMoved > 200:
+            self.distanceMoved = 0
+            self.ammunition += 1
+            self.coal -= 1
+        
+        
+        
+    
+        
 
     def physicsEngineSetup(self, engineWall):
         for item in self.sprite_list:
