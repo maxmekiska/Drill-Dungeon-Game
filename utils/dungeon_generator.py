@@ -11,11 +11,13 @@ class MapLayer:
     A class that holds a single map layer 
     """
 
-    def __init__(self, height=200, width=200, meanDungeonSize=40):
+    def __init__(self, height=200, width=200, meanDungeonSize=40, meanCoalSize=5, meanGoldSize=5): # added meanCoalSize, meanGoldSize parameter
         self.mapLayerMatrix = []
         self.height = height 
         self.width = width
         self.meanDungeonSize = meanDungeonSize
+        self.meanCoalSize = meanCoalSize # coal
+        self.meanGoldSize = meanGoldSize # gold 
 
     def __repr__(self):
         """
@@ -40,6 +42,30 @@ class MapLayer:
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
+            
+    def generate_coal(self): # coal
+        """
+        Generates a.mapLayerMatrix on the map. Current issues are: it can repeat certain steps
+        """
+        x, y = self.generate_coal_start_point()
+        dungeonSize = self.generate_coal_size()
+        while dungeonSize > 0:
+            if self.mapLayerMatrix[y][x] != 'C':
+                self.mapLayerMatrix[y][x] = 'C'
+                dungeonSize -= 1
+            walkDirection = self.get_walk_direction(x, y)
+            x, y = self.update_dungeon_coords(x, y, walkDirection)
+            
+    def generate_gold(self): # gold
+        x, y = self.generate_coal_start_point()
+        dungeonSize = self.generate_coal_size()
+        while dungeonSize > 0:
+            if self.mapLayerMatrix[y][x] != 'G':
+                self.mapLayerMatrix[y][x] = 'G'
+                dungeonSize -= 1
+            walkDirection = self.get_walk_direction(x, y)
+            x, y = self.update_dungeon_coords(x, y, walkDirection)
+    
 
     def generate_blank_map(self):
         """
@@ -71,6 +97,32 @@ class MapLayer:
         startY = random.randint(0, self.height - 1)
         return startX, startY
 
+
+    def generate_coal_start_point(self): # might be possible to refactor
+        """
+        Generates the location of the first block in the.mapLayerMatrix
+        --------------------------------------------------------
+        Returns
+        int startX : The x coordinate of the first block in the.mapLayerMatrix
+        int startY : The y coordinate of the first block in the.mapLayerMatrix
+        """
+        startX = random.randint(0, self.width - 1)
+        startY = random.randint(0, self.height - 1)
+        return startX, startY
+        
+    def generate_gold_start_point(self): # might be possible ot refactor
+        """
+        Generates the location of the first block in the.mapLayerMatrix
+        --------------------------------------------------------
+        Returns
+        int startX : The x coordinate of the first block in the.mapLayerMatrix
+        int startY : The y coordinate of the first block in the.mapLayerMatrix
+        """
+        startX = random.randint(0, self.width - 1)
+        startY = random.randint(0, self.height - 1)
+        return startX, startY
+
+
     def generate_dungeon_size(self):
         """
         Generates the size of the.mapLayerMatrix using a poisson distribution with mean
@@ -82,7 +134,31 @@ class MapLayer:
         rng = np.random.default_rng()
         dungeonSize = rng.poisson(self.meanDungeonSize)
         return dungeonSize
-        
+
+
+    def generate_coal_size(self): # might be possible to refactor
+        """
+        Generates the size of the.mapLayerMatrix using a poisson distribution with mean
+        self.meanCoalSizeSize
+        ---------------------------------------------------------
+        Returns
+        int.mapLayerMatrixSize : The size of the dungeon in number of blocks
+        """
+        rng = np.random.default_rng()
+        dungeonSize = rng.poisson(self.meanCoalSize) #cluster of coal
+        return dungeonSize
+
+    def generate_gold_size(self): # might be possible to refactor
+        """
+        Generates the size of the.mapLayerMatrix using a poisson distribution with mean
+        self.meanGoldSizeSize
+        ---------------------------------------------------------
+        Returns
+        int.mapLayerMatrixSize : The size of the dungeon in number of blocks
+        """
+        rng = np.random.default_rng()
+        dungeonSize = rng.poisson(self.meanGoldSize) #cluster of gold
+        return dungeonSize         
 
     def update_dungeon_coords(self, x, y, walkDirection):
         """
