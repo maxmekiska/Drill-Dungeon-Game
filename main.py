@@ -34,6 +34,7 @@ class DrillDungeonGame(arcade.Window):
         #Sprite variables
         self.drill_list = None
         self.wall_list = None
+        self.coal_list = None # coal/fuel increment
         self.border_wall_list = None
         self.bullet_list = None #  shooting/aiming
         self.explosions_list = None
@@ -60,6 +61,7 @@ class DrillDungeonGame(arcade.Window):
         """
         self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
         self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
+        self.coal_list = arcade.SpriteList(use_spatial_hash=True) # coal/fuel
         self.bullet_list = arcade.SpriteList() # shooting/aiming
         self.explosions_list = arcade.SpriteList() # explosion/smoke
 
@@ -95,6 +97,7 @@ class DrillDungeonGame(arcade.Window):
         """
         arcade.start_render()
         self.wall_list.draw()
+        self.coal_list.draw() # coal/fuel
         self.drill_list.draw()
         self.bullet_list.draw() # shooting/aiming
         self.explosions_list.draw() # explosion/smoke
@@ -139,7 +142,7 @@ class DrillDungeonGame(arcade.Window):
                 #wallsprite.height = blockHeight
                 wallsprite.center_x = x
                 wallsprite.center_y = y
-                self.wall_list.append(wallsprite)
+                self.coal_list.append(wallsprite) # append coal to coal list
             x += blockWidth
 
     def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
@@ -305,6 +308,8 @@ class DrillDungeonGame(arcade.Window):
         self.drill_list.updatePhysicsEngine()
         #clears map to leave tunnel behind drill
         self.drill_list.clearDirt(self.wall_list)
+        #collects coal and increments fuel tank
+        self.drill_list.collectCoal(self.coal_list)
 
         #Check for side scrolling
         self.update_map_view()        
@@ -318,6 +323,7 @@ class DrillDungeonGame(arcade.Window):
        
         for bullet in self.bullet_list:
             hit_list = arcade.check_for_collision_with_list(bullet, self.wall_list)
+            hit_list = arcade.check_for_collision_with_list(bullet, self.coal_list) # add to remove coal block when shot
             # remove bullet
             if len(hit_list) > 0:
                 bullet.remove_from_sprite_lists()

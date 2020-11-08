@@ -112,6 +112,14 @@ class Drill():
             drill_hole_list = arcade.check_for_collision_with_list(item, dirtWallList)
             for dirt in drill_hole_list:
                 dirt.remove_from_sprite_lists()
+    
+    # add coal removal 
+    def collectCoal(self, coalList):
+        for item in self.sprite_list:
+            drill_hole_list = arcade.check_for_collision_with_list(item, coalList)
+            for coal in drill_hole_list:
+                coal.remove_from_sprite_lists()
+                self.coal += 1
 
     def aimTurret(self, aimX, aimY):
         start_x = self.turret.center_x
