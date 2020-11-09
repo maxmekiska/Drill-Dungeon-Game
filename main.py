@@ -351,7 +351,7 @@ class DrillDungeonGame(arcade.Window):
             for wall in hit_list_wall:
             # explosion and smoke when wall hit
                 for i in range(PARTICLE_COUNT):
-                    particle = Particle(self.explosions_list)
+                    particle = ParticleDirt(self.explosions_list)
                     particle.position = wall.position
                     self.explosions_list.append(particle)
                     
@@ -365,7 +365,7 @@ class DrillDungeonGame(arcade.Window):
                 bullet.remove_from_sprite_lists()
             for coal in hit_list_coal:       
                 for i in range(PARTICLE_COUNT):
-                    particle = Particle(self.explosions_list)
+                    particle = ParticleCoal(self.explosions_list)
                     particle.position = coal.position
                     self.explosions_list.append(particle)
                     
@@ -379,7 +379,7 @@ class DrillDungeonGame(arcade.Window):
                 bullet.remove_from_sprite_lists()                
             for gold in hit_list_gold:       
                 for i in range(PARTICLE_COUNT):
-                    particle = Particle(self.explosions_list)
+                    particle = ParticleGold(self.explosions_list)
                     particle.position = gold.position
                     self.explosions_list.append(particle)
                     

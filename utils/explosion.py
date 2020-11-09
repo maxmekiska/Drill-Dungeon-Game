@@ -22,11 +22,24 @@ PARTICLE_COUNT = 20
 PARTICLE_RADIUS = 3
 
 # Possible particle colors
-PARTICLE_COLORS = [arcade.color.ALIZARIN_CRIMSON,
+PARTICLE_COLORS_DIRT = [arcade.color.ALIZARIN_CRIMSON,
                    arcade.color.COQUELICOT,
                    arcade.color.LAVA,
                    arcade.color.KU_CRIMSON,
                    arcade.color.DARK_TANGERINE]
+                   
+PARTICLE_COLORS_COAL = [arcade.color.ALIZARIN_CRIMSON,
+                   arcade.color.COQUELICOT,
+                   arcade.color.LAVA,
+                   arcade.color.KU_CRIMSON,
+                   arcade.color.DARK_TANGERINE]
+
+PARTICLE_COLORS_GOLD = [arcade.color.ALIZARIN_CRIMSON,
+                   arcade.color.COQUELICOT,
+                   arcade.color.LAVA,
+                   arcade.color.KU_CRIMSON,
+                   arcade.color.DARK_TANGERINE] 
+
 
 # Chance we'll flip the texture to white and make it 'sparkle'
 PARTICLE_SPARKLE_CHANCE = 0.02
@@ -71,11 +84,13 @@ class Smoke(arcade.SpriteCircle):
             item.draw()
 
 
-class Particle(arcade.SpriteCircle):
+class ParticleDirt(arcade.SpriteCircle):
     """ Explosion particle """
     def __init__(self, my_list):
+    
+
         # Choose a random color
-        color = random.choice(PARTICLE_COLORS)
+        color = random.choice(PARTICLE_COLORS_DIRT)
 
         # Make the particle
         super().__init__(PARTICLE_RADIUS, color)
@@ -121,6 +136,129 @@ class Particle(arcade.SpriteCircle):
                 self.texture = self.normal_texture
 
             # Leave a smoke particle?
+            if random.random() <= SMOKE_CHANCE:
+                smoke = Smoke(5)
+                smoke.position = self.position
+                self.my_list.append(smoke)
+                
+    def draw(self):
+        for item in self.sprite_list:
+            item.draw()
+            
+            
+class ParticleCoal(arcade.SpriteCircle):
+    """ Explosion particle """
+    def __init__(self, my_list):
+    
+
+       
+        color = random.choice(PARTICLE_COLORS_COAL)
+
+        
+        super().__init__(PARTICLE_RADIUS, color)
+
+     
+        self.normal_texture = self.texture
+
+       
+        self.my_list = my_list
+
+      
+        speed = random.random() * PARTICLE_SPEED_RANGE + PARTICLE_MIN_SPEED
+        direction = random.randrange(360)
+        self.change_x = math.sin(math.radians(direction)) * speed
+        self.change_y = math.cos(math.radians(direction)) * speed
+
+        
+        
+        self.my_alpha = 255
+
+       
+        self.my_list = my_list
+
+
+    def update(self):
+        """ Update the particle """
+        if self.my_alpha <= PARTICLE_FADE_RATE:
+          
+            self.remove_from_sprite_lists()
+        else:
+           
+            self.my_alpha -= PARTICLE_FADE_RATE
+            self.alpha = self.my_alpha
+            self.center_x += self.change_x
+            self.center_y += self.change_y
+            self.change_y -= PARTICLE_GRAVITY
+
+        
+            if random.random() <= PARTICLE_SPARKLE_CHANCE:
+                self.alpha = 255
+                self.texture = arcade.make_circle_texture(self.width, arcade.color.WHITE)
+            else:
+                self.texture = self.normal_texture
+
+           
+            if random.random() <= SMOKE_CHANCE:
+                smoke = Smoke(5)
+                smoke.position = self.position
+                self.my_list.append(smoke)
+                
+    def draw(self):
+        for item in self.sprite_list:
+            item.draw()
+            
+class ParticleGold(arcade.SpriteCircle):
+    """ Explosion particle """
+    def __init__(self, my_list):
+    
+
+        
+        color = random.choice(PARTICLE_COLORS_GOLD)
+
+        
+        super().__init__(PARTICLE_RADIUS, color)
+
+      
+        self.normal_texture = self.texture
+
+        
+        self.my_list = my_list
+
+      
+        speed = random.random() * PARTICLE_SPEED_RANGE + PARTICLE_MIN_SPEED
+        direction = random.randrange(360)
+        self.change_x = math.sin(math.radians(direction)) * speed
+        self.change_y = math.cos(math.radians(direction)) * speed
+
+       
+        
+        self.my_alpha = 255
+
+      
+        self.my_list = my_list
+
+
+    def update(self):
+        """ Update the particle """
+        if self.my_alpha <= PARTICLE_FADE_RATE:
+           
+            self.remove_from_sprite_lists()
+        else:
+          
+            self.my_alpha -= PARTICLE_FADE_RATE
+            self.alpha = self.my_alpha
+            self.center_x += self.change_x
+            self.center_y += self.change_y
+            self.change_y -= PARTICLE_GRAVITY
+
+            
+            if random.random() <= PARTICLE_SPARKLE_CHANCE:
+                self.alpha = 255
+                self.texture = arcade.make_circle_texture(self.width, arcade.color.WHITE)
+            else:
+                self.texture = self.normal_texture
+
+          
             if random.random() <= SMOKE_CHANCE:
                 smoke = Smoke(5)
                 smoke.position = self.position
