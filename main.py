@@ -64,7 +64,7 @@ class DrillDungeonGame(arcade.Window):
         
         arcade.set_background_color(arcade.color.BROWN_NOSE)
 
-    def setup(self, number_of_coal_patches=20, number_of_gold_patches=20, number_of_dungeons=3):
+    def setup(self, number_of_coal_patches=20, number_of_gold_patches=20, number_of_dungeons=3, drillX=64, drillY=128):
         """
         Set up game and initialize variables
         """
@@ -92,19 +92,19 @@ class DrillDungeonGame(arcade.Window):
         drillSpriteImage="resources/images/drills/drill_v2_2.png"
         turretSpriteImage="resources/images/weapons/turret1.png"
 
-        self.drill_list=Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12)
+        self.drill_list=Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12, startPositionX=drillX, startPositionY=drillY)
         self.drill_list.physics_engine_setup(self.border_wall_list)
 
 
         #Set viewpoint boundaries - where the drill currently has scrolled to
-        self.view_left = 0
-        self.view_bottom = 0
+        self.view_left = 0 
+        self.view_bottom = 0 
 
     def draw_next_map_layer(self):
         """
         Generates and loads the next layer of the map when drilling down
         """
-        self.setup(self.coal_per_layer, self.gold_per_layer, self.dungeons_per_layer)
+        self.setup(self.coal_per_layer, self.gold_per_layer, self.dungeons_per_layer, self.drill_list.turret.center_x, self.drill_list.turret.center_y)
         self.current_layer += 1
         self.update_map_configuration()
 
