@@ -7,7 +7,6 @@ Created on Sat Oct 31 17:12:48 2020
 import math
 import random
 import arcade
-import time
 from utils.drill import *
 from utils.dungeon_generator import *
 from utils.explosion import * # explosion/smoke
@@ -123,7 +122,7 @@ class DrillDungeonGame(arcade.Window):
         """
         self.coal_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
         self.gold_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
-        self.dungeons_per_layer - generate_next_layer_dungeon_amount(self.current_layer)
+        self.dungeons_per_layer = generate_next_layer_dungeon_amount(self.current_layer)
       
 
     def on_draw(self):
@@ -188,24 +187,6 @@ class DrillDungeonGame(arcade.Window):
                 wallsprite.center_y = yBlockCenter
                 self.gold_list.append(wallsprite) # append gold to gold list
             xBlockCenter += blockWidth
-
-    def generate_random_walls(self, numberOfWalls=10, sizeOfWalls=10):
-        """
-        Generates random walls
-        int numberOfWalls : Number of walls to add
-        int sizeOfWalls   : The length of each wall (number of blocks)
-        """
-        for j in range(10):
-            x = random.randint(0, 800)
-            y = random.randint(0, 600)
-            for i in range(10):
-                wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.1)
-                wallsprite.center_x = x + i* wallsprite.width
-                wallsprite.center_y = y + i* wallsprite.height
-                self.wall_list.append(wallsprite)
-
-
-
 
     def on_key_press(self, key, modifiers): 
 
