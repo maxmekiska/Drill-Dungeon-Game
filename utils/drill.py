@@ -26,13 +26,13 @@ class Drill():
         self.drillSpeed = drillSpeed
         self.physicsEngines = []
 
-        
+
         self.ammunition = ammunition
         self.coal = coal
         self.gold = gold
-        
+
         self.distanceMoved = distanceMoved
-      
+
     def stopMoving(self):
 
         for item in self.sprite_list:
@@ -45,72 +45,50 @@ class Drill():
         if direction == "UP":
             self.body.angle = 0
             self.body.change_y = self.drillSpeed
-            self.turret.change_y = self.drillSpeed
         elif direction == "UPRIGHT":
             self.body.angle = 315
-
             self.body.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
-            self.turret.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
             self.body.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
-            self.turret.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
-
         elif direction == "DOWN":
             self.body.angle = 180
             self.body.change_y = -self.drillSpeed
-            self.turret.change_y = -self.drillSpeed
         elif direction == "DOWNRIGHT":
             self.body.angle = 225
-
             self.body.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
-            self.turret.change_x = self.drillSpeed/math.sqrt(2) * self.drillSpeed
             self.body.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
-            self.turret.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
-
         elif direction == "LEFT":
             self.body.angle = 90
             self.body.change_x = -self.drillSpeed
-            self.turret.change_x = -self.drillSpeed
         elif direction == "UPLEFT":
             self.body.angle = 45
-
             self.body.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
-            self.turret.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
             self.body.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
-            self.turret.change_y = self.drillSpeed/math.sqrt(2) * self.drillSpeed
-
         elif direction == "RIGHT":
             self.body.angle = 270
             self.body.change_x = self.drillSpeed
-            self.turret.change_x = self.drillSpeed
         elif direction == "DOWNLEFT":
             self.body.angle = 135
-
             self.body.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
-            self.turret.change_x = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
             self.body.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
-            self.turret.change_y = self.drillSpeed/math.sqrt(2) * -self.drillSpeed
 
 
-    
-
-        
         # implement ammunition increment after every 200 units of movement
         # note: absolute values of x and y need to be summed because diagonal movement cancel distance out
-        self.distanceMoved += (abs(self.body.change_x) + abs(self.body.change_y)) 
+        self.distanceMoved += (abs(self.body.change_x) + abs(self.body.change_y))
         self.distanceMoved = round(self.distanceMoved, 1)
-        
 
-        
+
+
         # reset counter after every 200 units of movement and increment ammunition by 1
         if self.distanceMoved > 200:
             self.distanceMoved = 0
             self.ammunition += 1
             self.coal -= 1
-        
-        
-        
-    
-        
+
+
+
+
+
 
     def physics_engine_setup(self, engineWall):
 
@@ -118,6 +96,8 @@ class Drill():
             self.physicsEngines.append(arcade.PhysicsEngineSimple(item, engineWall))
 
     def draw(self):
+        self.turret.center_x = self.body.center_x
+        self.turret.center_y = self.body.center_y
         for item in self.sprite_list:
             item.draw()
 
@@ -133,8 +113,8 @@ class Drill():
             for dirt in drill_hole_list:
                 dirt.remove_from_sprite_lists()
 
-    
-    # add coal removal 
+
+    # add coal removal
     def collectCoal(self, coalList):
         for item in self.sprite_list:
             drill_hole_list = arcade.check_for_collision_with_list(item, coalList)
