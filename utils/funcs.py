@@ -10,11 +10,7 @@ def generate_next_layer_resource_patch_amount(current_layer, base_amount=20, min
     return number_of_resource_patches
 
 
-
 def generate_next_layer_dungeon_amount(current_layer, base_amount=3, max_amount=10, initial_max_factor=6):
     upper_bound = int(max_amount - initial_max_factor * np.exp(-current_layer / 10))
     number_of_dungeons = random.randint(base_amount, upper_bound)
     return number_of_dungeons
-
-
-
