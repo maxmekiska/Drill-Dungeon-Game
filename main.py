@@ -379,11 +379,7 @@ class DrillDungeonGame(arcade.Window):
                     particle = ParticleDirt(self.explosions_list)
                     particle.position = wall.position
                     self.explosions_list.append(particle)
-                    
-                smoke = Smoke(50)
-                smoke.position = wall.position
-                self.explosions_list.append(smoke)
-                wall.remove_from_sprite_lists()
+                    wall.remove_from_sprite_lists()                   
                 
                 
             if len(hit_list_coal) > 0:
@@ -408,10 +404,9 @@ class DrillDungeonGame(arcade.Window):
                     particle.position = gold.position
                     self.explosions_list.append(particle)
                     
-                smoke = Smoke(50)
-                smoke.position = gold.position
-                self.explosions_list.append(smoke)
-                gold.remove_from_sprite_lists()                    
+                    gold.remove_from_sprite_lists()
+                    
+                   
 
      
                 

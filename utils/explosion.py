@@ -28,17 +28,14 @@ PARTICLE_COLORS_DIRT = [arcade.color.ALIZARIN_CRIMSON,
                    arcade.color.KU_CRIMSON,
                    arcade.color.DARK_TANGERINE]
                    
-PARTICLE_COLORS_COAL = [arcade.color.ALIZARIN_CRIMSON,
-                   arcade.color.COQUELICOT,
-                   arcade.color.LAVA,
-                   arcade.color.KU_CRIMSON,
-                   arcade.color.DARK_TANGERINE]
+PARTICLE_COLORS_COAL = [arcade.color.BLACK]
 
-PARTICLE_COLORS_GOLD = [arcade.color.ALIZARIN_CRIMSON,
-                   arcade.color.COQUELICOT,
-                   arcade.color.LAVA,
-                   arcade.color.KU_CRIMSON,
-                   arcade.color.DARK_TANGERINE] 
+PARTICLE_COLORS_GOLD = [arcade.color.GOLD,
+                   arcade.color.GOLDEN_POPPY,
+                   arcade.color.LEMON,
+                   arcade.color.MIKADO_YELLOW]
+
+PARTICLE_COLORS_ENEMY = [] # for enemy hits        
 
 
 # Chance we'll flip the texture to white and make it 'sparkle'
@@ -50,20 +47,20 @@ PARTICLE_SPARKLE_CHANCE = 0.02
 # using transform feedback. If to slow, just get rid of smoke.
 
 # Start scale of smoke, and how fast is scales up
-SMOKE_START_SCALE = 0       # 0.25
-SMOKE_EXPANSION_RATE = 0    # 0.03
+SMOKE_START_SCALE = 0.25       # 0.25
+SMOKE_EXPANSION_RATE = 0.03    # 0.03
 
 # Rate smoke fades, and rises
-SMOKE_FADE_RATE = 0     # 7
-SMOKE_RISE_RATE = 0     # 0.5
+SMOKE_FADE_RATE = 8    # 7
+SMOKE_RISE_RATE = 0.5     # 0.5
 
 # Chance we leave smoke trail
-SMOKE_CHANCE = 0      # 0.25
+SMOKE_CHANCE = 0.25     # 0.25
 
 class Smoke(arcade.SpriteCircle):
     """ This represents a puff of smoke """
     def __init__(self, size):
-        super().__init__(size, arcade.color.LIGHT_GRAY, soft=True)
+        super().__init__(size, arcade.color.BLACK, soft=True)
         self.change_y = SMOKE_RISE_RATE
         self.scale = SMOKE_START_SCALE
 
@@ -128,18 +125,6 @@ class ParticleDirt(arcade.SpriteCircle):
             self.center_y += self.change_y
             self.change_y -= PARTICLE_GRAVITY
 
-            # Should we sparkle this?
-            if random.random() <= PARTICLE_SPARKLE_CHANCE:
-                self.alpha = 255
-                self.texture = arcade.make_circle_texture(self.width, arcade.color.WHITE)
-            else:
-                self.texture = self.normal_texture
-
-            # Leave a smoke particle?
-            if random.random() <= SMOKE_CHANCE:
-                smoke = Smoke(5)
-                smoke.position = self.position
-                self.my_list.append(smoke)
                 
     def draw(self):
         for item in self.sprite_list:
@@ -190,12 +175,6 @@ class ParticleCoal(arcade.SpriteCircle):
             self.center_y += self.change_y
             self.change_y -= PARTICLE_GRAVITY
 
-        
-            if random.random() <= PARTICLE_SPARKLE_CHANCE:
-                self.alpha = 255
-                self.texture = arcade.make_circle_texture(self.width, arcade.color.WHITE)
-            else:
-                self.texture = self.normal_texture
 
            
             if random.random() <= SMOKE_CHANCE:
@@ -259,10 +238,6 @@ class ParticleGold(arcade.SpriteCircle):
                 self.texture = self.normal_texture
 
           
-            if random.random() <= SMOKE_CHANCE:
-                smoke = Smoke(5)
-                smoke.position = self.position
-                self.my_list.append(smoke)
                 
     def draw(self):
         for item in self.sprite_list:
