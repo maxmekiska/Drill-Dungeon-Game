@@ -100,12 +100,10 @@ class DrillDungeonGame(arcade.Window):
         self.view_left = 0
         self.view_bottom = 0
 
-
-
-
-
-
     def draw_next_map_layer(self):
+        """
+        Generates and loads the next layer of the map when drilling down
+        """
         self.setup(self.coal_per_layer, self.gold_per_layer, self.dungeons_per_layer)
         self.current_layer += 1
         self.update_map_configuration()
@@ -119,6 +117,10 @@ class DrillDungeonGame(arcade.Window):
         self.explosions_list.draw() 
         
     def update_map_configuration(self):
+        """
+        Updates the map's configuration specs for the next layer, allowing for
+        increased difficulty
+        """
         self.coal_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
         self.gold_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
         self.dungeons_per_layer - generate_next_layer_dungeon_amount(self.current_layer)
