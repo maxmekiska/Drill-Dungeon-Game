@@ -9,9 +9,9 @@ from .mixins import PathFindingMixin
 
 
 class SpaceshipEnemy(Enemy, PathFindingMixin):
-    def __init__(self, sprite_image: str, sprite_scale: float, turret_sprite: str, turret_sprite_scale: float,
+    def __init__(self, base_sprite: str, sprite_scale: float, turret_sprite: str, turret_sprite_scale: float,
                  pos_x: int, pos_y: int, vision: typing.Union[float, int], speed: typing.Union[float, int] = 1) -> None:
-        super().__init__(sprite_image, sprite_scale, pos_x, pos_y, speed)
+        super().__init__(base_sprite, sprite_scale, pos_x, pos_y, speed)
         self.turret = arcade.Sprite(turret_sprite, turret_sprite_scale)
         self.turret.center_x = pos_x
         self.turret.center_y = pos_y

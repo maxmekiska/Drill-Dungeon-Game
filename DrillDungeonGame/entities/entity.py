@@ -12,7 +12,7 @@ class Entity:
     """
     Parameters
     ----------
-    sprite_image: str
+    base_sprite: str
         The file path to the sprite image to load the entities with.
     sprite_scale: float
         The scale to draw the sprite at.
@@ -23,10 +23,10 @@ class Entity:
     speed: int
         The speed to move the entities at.
     """
-    def __init__(self, sprite_image: str, sprite_scale: float, pos_x: int, pos_y: int,
+    def __init__(self, base_sprite: str, sprite_scale: float, pos_x: int, pos_y: int,
                  speed: typing.Union[float, int] = 1) -> None:
         # TODO Make drill class extend from this.
-        self.body = arcade.Sprite(sprite_image, sprite_scale)
+        self.body = arcade.Sprite(base_sprite, sprite_scale)
         self.body.center_x = pos_x
         self.body.center_y = pos_y
 

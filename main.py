@@ -7,7 +7,7 @@ Created on Sat Oct 31 17:12:48 2020
 from DrillDungeonGame.entities.drill import Drill
 from DrillDungeonGame.entities.enemies import SpaceshipEnemy
 from utils.dungeon_generator import *
-from utils.explosion import * # explosion/smoke
+from utils.explosion import *  # explosion/smoke
 from utils.funcs import *
 
 SCREEN_WIDTH = 800
@@ -36,6 +36,7 @@ class DrillDungeonGame(arcade.Window):
         self.border_wall_list = None
         self.bullet_list = None  # shooting/aiming
         self.explosions_list = None
+        self.enemy_list = []  # TODO use SpriteList instead. Make entity inherit arcade.Sprite()
 
         self.a_pressed = False
         self.d_pressed = False
@@ -58,7 +59,7 @@ class DrillDungeonGame(arcade.Window):
         self.time = 0
         arcade.set_background_color(arcade.color.BROWN_NOSE)
 
-    def setup(self, number_of_coal_patches=20, number_of_gold_patches=20, number_of_dungeons=3, drillX=64, drillY=128):
+    def setup(self, number_of_coal_patches=20, number_of_gold_patches=20, number_of_dungeons=3, pos_x=64, pos_y=128):
         """
         Set up game and initialize variables
         """
@@ -68,30 +69,29 @@ class DrillDungeonGame(arcade.Window):
         self.gold_list = arcade.SpriteList(use_spatial_hash=True)  # gold increment
         self.bullet_list = arcade.SpriteList()  # shooting/aiming
         self.explosions_list = arcade.SpriteList()  # explosion/smoke
-        self.enemy_list = []  # TODO use SpriteList instead. Make entity inherit arcade.Sprite()
 
         # Initialize the map layer with some dungeon
-        mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
-        mapLayer.generate_blank_map()
+        map_layer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
+        map_layer.generate_blank_map()
         for i in range(number_of_dungeons):
-            mapLayer.generate_dungeon()
+            map_layer.generate_dungeon()
         for i in range(number_of_coal_patches):
-            mapLayer.generate_coal()
+            map_layer.generate_coal()
         for i in range(number_of_gold_patches):
-            mapLayer.generate_gold()
+            map_layer.generate_gold()
 
-        mapLayer.generate_border_walls()
+        map_layer.generate_border_walls()
 
         # Load map layer from mapLayer
-        self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
+        self.load_map_layer_from_matrix(map_layer.mapLayerMatrix)
 
-        drillSpriteImage="resources/images/drills/drill_v2_2.png"
-        turretSpriteImage="resources/images/weapons/turret1.png"
+        drill_sprite_image = "resources/images/drills/drill_v2_2.png"
+        turret_sprite_image = "resources/images/weapons/turret1.png"
         enemy_sprite_image = "resources/images/enemy/enemy.png"
 
-        self.drill_list = Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12, startPositionX=drillX, startPositionY=drillY)
+        self.drill_list = Drill(drill_sprite_image, 0.3, turret_sprite_image, 0.12, pos_x=pos_x, pos_y=pos_y)
         self.drill_list.physics_engine_setup(self.border_wall_list)
-        self.enemy_list.append(SpaceshipEnemy(enemy_sprite_image, 0.3, turretSpriteImage, 0.12, 200, 200, 200, 0.5))
+        self.enemy_list.append(SpaceshipEnemy(enemy_sprite_image, 0.3, turret_sprite_image, 0.12, 200, 200, 200, 0.5))
         for enemy in self.enemy_list:
             enemy.physics_engine_setup(self.border_wall_list)
 
@@ -103,7 +103,12 @@ class DrillDungeonGame(arcade.Window):
         """
         Generates and loads the next layer of the map when drilling down
         """
-        self.setup(self.coal_per_layer, self.gold_per_layer, self.dungeons_per_layer, self.drill_list.turret.center_x, self.drill_list.turret.center_y)
+        self.setup(self.coal_per_layer,
+                   self.gold_per_layer,
+                   self.dungeons_per_layer,
+                   self.drill_list.turret.center_x,
+                   self.drill_list.turret.center_y)
+
         self.current_layer += 1
         self.update_map_configuration()
 
@@ -124,7 +129,6 @@ class DrillDungeonGame(arcade.Window):
         self.coal_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
         self.gold_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
         self.dungeons_per_layer = generate_next_layer_dungeon_amount(self.current_layer)
-      
 
     def on_draw(self):
         """
@@ -132,12 +136,12 @@ class DrillDungeonGame(arcade.Window):
         """
         arcade.start_render()
         self.wall_list.draw()
-        self.coal_list.draw() # coal/fuel
-        self.gold_list.draw() # gold increment
+        self.coal_list.draw()  # coal/fuel
+        self.gold_list.draw()  # gold increment
         self.border_wall_list.draw()
         self.drill_list.draw()
-        self.bullet_list.draw() # shooting/aiming
-        self.explosions_list.draw() # explosion/smoke
+        self.bullet_list.draw()  # shooting/aiming
+        self.explosions_list.draw()  # explosion/smoke
         for enemy in self.enemy_list:
             enemy.draw()
 
@@ -146,25 +150,25 @@ class DrillDungeonGame(arcade.Window):
                 arcade.draw_line_strip(enemy.path, arcade.color.BLUE, 2)
 
         hud = f"Ammunition: {self.drill_list.ammunition}\nCoal:{self.drill_list.coal}\nGold:{self.drill_list.gold}"
+        # update hud with screen scroll
+        arcade.draw_text(hud, self.view_left + 10, self.view_bottom + 20, arcade.color.BLACK, 20)
         
-        arcade.draw_text(hud, self.view_left + 10, self.view_bottom + 20, arcade.color.BLACK, 20) # update hud with screen scroll
-        
-    def load_map_layer_from_matrix(self, mapLayerMatrix):
+    def load_map_layer_from_matrix(self, map_layer_matrix):
         """
         Loads a map from a layer matrix
         list mapLayer Matrix : A matrix containing the map configuration, as
         generated by the MapLayer class
         """
-        mapLayerHeight = len(mapLayerMatrix)
-        mapLayerWidth = len(mapLayerMatrix[0])
-        blockHeight = MAP_HEIGHT / mapLayerHeight
-        blockWidth = MAP_WIDTH / mapLayerWidth
-        yBlockCenter = 0.5 * blockHeight
-        for row in mapLayerMatrix:
-            self.fill_row_with_terrain(row, yBlockCenter, blockWidth, blockHeight)
-            yBlockCenter += blockHeight
+        map_layer_height = len(map_layer_matrix)
+        map_layer_width = len(map_layer_matrix[0])
+        block_height = MAP_HEIGHT / map_layer_height
+        block_width = MAP_WIDTH / map_layer_width
+        y_block_center = 0.5 * block_height
+        for row in map_layer_matrix:
+            self.fill_row_with_terrain(row, y_block_center, block_width, block_height)
+            y_block_center += block_height
 
-    def fill_row_with_terrain(self, mapRow, yBlockCenter, blockWidth, blockHeight):
+    def fill_row_with_terrain(self, map_row, y_block_center, block_width, block_height):
         """
         Fills a row with terrain
         list mapRow        : a row of the map matrix
@@ -172,33 +176,33 @@ class DrillDungeonGame(arcade.Window):
         int blockWidth     : width of the blocks to fill the terrain
         int blockHeight    : height of the blocks to fill the terrain
         """
-        xBlockCenter = 0.5 * blockWidth
-        for item in mapRow:
+        x_block_center = 0.5 * block_width
+        for item in map_row:
             if item == 'X':
-                wallsprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.18)
-                #wallsprite.width = blockWidth
-                #wallsprite.height = blockHeight
-                wallsprite.center_x = xBlockCenter
-                wallsprite.center_y = yBlockCenter
-                self.wall_list.append(wallsprite)
+                wall_sprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.18)
+                # wall_sprite.width = blockWidth
+                # wall_sprite.height = blockHeight
+                wall_sprite.center_x = x_block_center
+                wall_sprite.center_y = y_block_center
+                self.wall_list.append(wall_sprite)
             if item == 'C':
-                wallsprite = arcade.Sprite(":resources:images/tiles/dirtCenter.png", 0.18)
-                #wallsprite.width = blockWidth
-                #wallsprite.height = blockHeight
-                wallsprite.center_x = xBlockCenter
-                wallsprite.center_y = yBlockCenter
-                self.coal_list.append(wallsprite) # append coal to coal list
+                wall_sprite = arcade.Sprite(":resources:images/tiles/dirtCenter.png", 0.18)
+                # wall_sprite.width = blockWidth
+                # wall_sprite.height = blockHeight
+                wall_sprite.center_x = x_block_center
+                wall_sprite.center_y = y_block_center
+                self.coal_list.append(wall_sprite)  # append coal to coal list
             if item == 'G':
-                wallsprite = arcade.Sprite(":resources:images/tiles/lava.png", 0.18)
-                wallsprite.center_x = xBlockCenter
-                wallsprite.center_y = yBlockCenter
-                self.gold_list.append(wallsprite) # append gold to gold list
+                wall_sprite = arcade.Sprite(":resources:images/tiles/lava.png", 0.18)
+                wall_sprite.center_x = x_block_center
+                wall_sprite.center_y = y_block_center
+                self.gold_list.append(wall_sprite)  # append gold to gold list
             if item == 'O':
-                wallsprite = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.18)
-                wallsprite.center_x = xBlockCenter
-                wallsprite.center_y = yBlockCenter
-                self.border_wall_list.append(wallsprite)
-            xBlockCenter += blockWidth
+                wall_sprite = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.18)
+                wall_sprite.center_x = x_block_center
+                wall_sprite.center_y = y_block_center
+                self.border_wall_list.append(wall_sprite)
+            x_block_center += block_width
 
     def on_key_press(self, key, modifiers): 
 
@@ -255,7 +259,7 @@ class DrillDungeonGame(arcade.Window):
 
         # limited ammunition
         if self.drill_list.ammunition > 0:
-            self.bullet_list.append(bullet) # if empty, no more bullets append to bullet_list, no shooting
+            self.bullet_list.append(bullet)  # if empty, no more bullets append to bullet_list, no shooting
             self.drill_list.ammunition = self.drill_list.ammunition - 1
 
     def update_map_view(self):
@@ -270,32 +274,33 @@ class DrillDungeonGame(arcade.Window):
         self.view_bottom = int(self.view_bottom)
 
         if changed:
-            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left, self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
+            arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left,
+                                self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
 
     def move_drill(self):
         if self.w_pressed and not (self.s_pressed or self.a_pressed or self.d_pressed):
-            self.drill_list.moveDrill("UP")
+            self.drill_list.move_drill("UP")
         # move diagonal up right
         elif self.w_pressed and self.d_pressed and not (self.s_pressed or self.a_pressed):
-            self.drill_list.moveDrill("UPRIGHT")
+            self.drill_list.move_drill("UPRIGHT")
         # move down
         elif self.s_pressed and not (self.w_pressed or self.a_pressed or self.d_pressed):
-            self.drill_list.moveDrill("DOWN")
+            self.drill_list.move_drill("DOWN")
         # move diagonal down right
         elif self.s_pressed and self.d_pressed and not (self.w_pressed or self.a_pressed):
-            self.drill_list.moveDrill("DOWNRIGHT")
+            self.drill_list.move_drill("DOWNRIGHT")
         # move left
         elif self.a_pressed and not (self.w_pressed or self.s_pressed or self.d_pressed):
-            self.drill_list.moveDrill("LEFT")
-        # move digonal up left
-        elif self.a_pressed and self.w_pressed and not  ( self.s_pressed or self.d_pressed):
-            self.drill_list.moveDrill("UPLEFT")
+            self.drill_list.move_drill("LEFT")
+        # move diagonal up left
+        elif self.a_pressed and self.w_pressed and not (self.s_pressed or self.d_pressed):
+            self.drill_list.move_drill("UPLEFT")
         # move right
         elif self.d_pressed and not (self.w_pressed or self.s_pressed or self.a_pressed):
-            self.drill_list.moveDrill("RIGHT")
-        # move digonal down left
-        elif self.a_pressed and self.s_pressed and not  ( self.w_pressed or self.d_pressed):
-            self.drill_list.moveDrill("DOWNLEFT")
+            self.drill_list.move_drill("RIGHT")
+        # move diagonal down left
+        elif self.a_pressed and self.s_pressed and not (self.w_pressed or self.d_pressed):
+            self.drill_list.move_drill("DOWNLEFT")
 
     def check_for_scroll_left(self, changed):
         left_boundary = self.view_left + VIEWPOINT_MARGIN
@@ -331,7 +336,7 @@ class DrillDungeonGame(arcade.Window):
         self.frame += 1
         self.time += delta_time
 
-        self.drill_list.stopMoving()
+        self.drill_list.stop_moving()
         for enemy in self.enemy_list:
             enemy.stop_moving()
         self.move_drill()
@@ -343,9 +348,9 @@ class DrillDungeonGame(arcade.Window):
         # clears map to leave tunnel behind drill
         self.drill_list.clear_dirt(self.wall_list)
         # collects coal and increments fuel tank
-        self.drill_list.collectCoal(self.coal_list)
+        self.drill_list.collect_coal(self.coal_list)
         # collect gold and increments gold
-        self.drill_list.collectGold(self.gold_list)
+        self.drill_list.collect_gold(self.gold_list)
 
         # Check for side scrolling
         self.update_map_view()        
@@ -372,8 +377,9 @@ class DrillDungeonGame(arcade.Window):
     def bullet_update(self):
         for bullet in self.bullet_list:
             hit_list_wall = arcade.check_for_collision_with_list(bullet, self.wall_list)
-            hit_list_coal = arcade.check_for_collision_with_list(bullet, self.coal_list) #  add to remove coal block when shot
-            hit_list_gold = arcade.check_for_collision_with_list(bullet, self.gold_list) #  add to remove gold block when shot
+            # add to remove gold and coal blocks when they're shot
+            hit_list_coal = arcade.check_for_collision_with_list(bullet, self.coal_list)
+            hit_list_gold = arcade.check_for_collision_with_list(bullet, self.gold_list)
             # remove bullet
             if len(hit_list_wall) > 0:
                 bullet.remove_from_sprite_lists()
@@ -411,7 +417,8 @@ class DrillDungeonGame(arcade.Window):
 
             # later also add for enemies
             
-            if bullet.center_x > self.width+self.view_left or bullet.center_x < self.view_left or bullet.center_y > self.width+self.view_bottom or bullet.center_y < self.view_bottom:
+            if bullet.center_x > self.width + self.view_left or bullet.center_x < self.view_left or \
+                    bullet.center_y > self.width+self.view_bottom or bullet.center_y < self.view_bottom:
                 bullet.remove_from_sprite_lists()
 
 
