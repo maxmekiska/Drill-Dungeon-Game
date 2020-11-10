@@ -42,7 +42,7 @@ class PathFindingMixin:
                                            diagonal_movement=diagonal_movement)
 
         self.path = path if path is not None else []
-        self.path_index = 0
+        self.path_index = 1
 
     def look_at(self, x: float, y: float) -> None:
         """Sets the entities to face towards a certain position."""

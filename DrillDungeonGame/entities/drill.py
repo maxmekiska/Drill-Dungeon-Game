@@ -16,7 +16,6 @@ class Drill(Entity):
 
         self.sprite_list.extend([self.turret])
 
-        self.physicsEngines = []
         self.ammunition = ammunition
         self.coal = coal
         self.gold = gold
@@ -64,25 +63,11 @@ class Drill(Entity):
             self.ammunition += 1
             self.coal -= 1
 
-    def physics_engine_setup(self, engine_wall):
-        for item in self.sprite_list:
-            self.physicsEngines.append(arcade.PhysicsEngineSimple(item, engine_wall))
-
     def draw(self):
         self.turret.center_x = self.body.center_x
         self.turret.center_y = self.body.center_y
         for item in self.sprite_list:
             item.draw()
-
-    def update_physics_engine(self):
-        for engine in self.physicsEngines:
-            engine.update()
-
-    def clear_dirt(self, dirt_wall_list):
-        for item in self.sprite_list:
-            drill_hole_list = arcade.check_for_collision_with_list(item, dirt_wall_list)
-            for dirt in drill_hole_list:
-                dirt.remove_from_sprite_lists()
 
     # add coal removal
     def collect_coal(self, coal_list):
@@ -101,13 +86,12 @@ class Drill(Entity):
                 self.gold += 1  # increment gold
 
     def aim_turret(self, pos_x, pos_y):
-
         start_x = self.turret.center_x
         start_y = self.turret.center_y
+
         dest_x = pos_x
         dest_y = pos_y
 
         x_diff = dest_x - start_x
         y_diff = dest_y - start_y
-
         self.turret.angle = math.degrees(math.atan2(y_diff, x_diff))-90
