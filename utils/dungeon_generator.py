@@ -65,6 +65,19 @@ class MapLayer:
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
+
+
+    def generate_border_walls(self):
+        """
+        Generates impassable border walls for the map layer
+        """
+        for i, row in enumerate(self.mapLayerMatrix):
+            if i == 0 or i == len(self.mapLayerMatrix) - 1:
+                for j, item in enumerate(row):
+                    row[j] = 'O'
+            else:
+                row[0] = 'O'
+                row[-1] = 'O'
     
 
     def generate_blank_map(self):

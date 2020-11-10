@@ -85,6 +85,8 @@ class DrillDungeonGame(arcade.Window):
         for i in range(number_of_gold_patches):
             mapLayer.generate_gold()
 
+        mapLayer.generate_border_walls()
+
         #Load map layer from mapLayer
         self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
 
@@ -114,6 +116,7 @@ class DrillDungeonGame(arcade.Window):
         self.drill_list.draw()
         self.bullet_list.draw() 
         self.explosions_list.draw() 
+        self.border_wall_list.draw()
         
     def update_map_configuration(self):
         """
@@ -133,6 +136,7 @@ class DrillDungeonGame(arcade.Window):
         self.wall_list.draw()
         self.coal_list.draw() # coal/fuel
         self.gold_list.draw() # gold increment
+        self.border_wall_list.draw()
         self.drill_list.draw()
         self.bullet_list.draw() # shooting/aiming
         self.explosions_list.draw() # explosion/smoke
@@ -186,6 +190,11 @@ class DrillDungeonGame(arcade.Window):
                 wallsprite.center_x = xBlockCenter
                 wallsprite.center_y = yBlockCenter
                 self.gold_list.append(wallsprite) # append gold to gold list
+            if item == 'O':
+                wallsprite = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.18)
+                wallsprite.center_x = xBlockCenter
+                wallsprite.center_y = yBlockCenter
+                self.border_wall_list.append(wallsprite)
             xBlockCenter += blockWidth
 
     def on_key_press(self, key, modifiers): 
