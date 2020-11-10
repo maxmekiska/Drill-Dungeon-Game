@@ -7,10 +7,10 @@ Created on Sat Oct 31 17:12:48 2020
 import math
 import random
 import arcade
+import time
 from utils.drill import *
 from utils.dungeon_generator import *
 from utils.explosion import * # explosion/smoke
-
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -51,6 +51,9 @@ class DrillDungeonGame(arcade.Window):
         #Initialize scrolling variables
         self.view_bottom = 0
         self.view_left = 0
+
+
+        self.drill_down = False
 
         
         
@@ -95,7 +98,55 @@ class DrillDungeonGame(arcade.Window):
         #Set viewpoint boundaries - where the drill currently has scrolled to
         self.view_left = 0
         self.view_bottom = 0
-               
+
+
+
+
+
+
+    def draw_next_map_layer(self):
+        self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
+        self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
+        self.coal_list = arcade.SpriteList(use_spatial_hash=True) # coal/fuel
+        self.gold_list = arcade.SpriteList(use_spatial_hash=True) # gold increment
+        self.bullet_list = arcade.SpriteList() # shooting/aiming
+        self.explosions_list = arcade.SpriteList() # explosion/smoke
+
+
+        #Initialize the map layer with some dungeon
+        mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
+        mapLayer.generate_blank_map()
+        mapLayer.generate_dungeon()
+        mapLayer.generate_dungeon()
+        mapLayer.generate_dungeon()
+
+        for i in range(20):
+            mapLayer.generate_coal()
+        for j in range(20):
+            mapLayer.generate_gold()
+
+        #Load map layer from mapLayer
+        self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
+
+        drillSpriteImage="resources/images/drills/drill_v2_2.png"
+        turretSpriteImage="resources/images/weapons/turret1.png"
+
+        self.drill_list=Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12)
+        self.drill_list.physics_engine_setup(self.border_wall_list)
+
+
+        #Set viewpoint boundaries - where the drill currently has scrolled to
+        self.view_left = 0
+        self.view_bottom = 0
+        arcade.start_render()
+        self.wall_list.draw()
+        self.coal_list.draw() # coal/fuel
+        self.gold_list.draw() # gold increment
+        self.drill_list.draw()
+        self.bullet_list.draw() # shooting/aiming
+        self.explosions_list.draw() # explosion/smoke
+        
+        
         
       
 
@@ -192,6 +243,8 @@ class DrillDungeonGame(arcade.Window):
             self.a_pressed = True
         elif key == arcade.key.D:
             self.d_pressed = True
+        elif key == arcade.key.T:
+            self.drill_down = True
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
@@ -337,9 +390,15 @@ class DrillDungeonGame(arcade.Window):
         self.bullet_list.update()
         self.explosions_list.update()
 
+        self.bullet_update()
+
+        if self.drill_down:
+            self.draw_next_map_layer()
+            self.drill_down = False
+
         
-# design explosion effects for each material seperatly
        
+    def bullet_update(self):
         for bullet in self.bullet_list:
             hit_list_wall = arcade.check_for_collision_with_list(bullet, self.wall_list)
             hit_list_coal = arcade.check_for_collision_with_list(bullet, self.coal_list) # add to remove coal block when shot
