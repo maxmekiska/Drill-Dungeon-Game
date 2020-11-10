@@ -98,7 +98,6 @@ class Drill():
         # note: absolute values of x and y need to be summed because diagonal movement cancel distance out
         self.distanceMoved += (abs(self.body.change_x) + abs(self.body.change_y)) 
         self.distanceMoved = round(self.distanceMoved, 1)
-        print(self.distanceMoved)
         
 
         
