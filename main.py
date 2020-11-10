@@ -3,12 +3,14 @@
 Created on Sat Oct 31 17:12:48 2020
 
 """
+import arcade
+import math
 
 from DrillDungeonGame.entities.drill import Drill
 from DrillDungeonGame.entities.enemies import SpaceshipEnemy
-from utils.dungeon_generator import *
-from utils.explosion import *  # explosion/smoke
-from utils.funcs import *
+from DrillDungeonGame.map.dungeon_generator import *
+from DrillDungeonGame.particles.explosion import *
+from DrillDungeonGame.utility.utility import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
