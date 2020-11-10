@@ -58,8 +58,8 @@ class DrillDungeonGame(arcade.Window):
 
         self.current_layer = 0
 
-        self.gold_patches_per_layer = 20
-        self.coal_patches_per_layer = 20
+        self.gold_per_layer = 20
+        self.coal_per_layer = 20
         self.dungeons_per_layer = 3
         
         arcade.set_background_color(arcade.color.BROWN_NOSE)
@@ -106,7 +106,7 @@ class DrillDungeonGame(arcade.Window):
 
 
     def draw_next_map_layer(self):
-        self.setup(self.coal_parches_per_layer, self.gold_patches_per_layer, self.dungeons_per_layer)
+        self.setup(self.coal_per_layer, self.gold_per_layer, self.dungeons_per_layer)
         self.current_layer += 1
         self.update_map_configuration()
 
@@ -119,12 +119,9 @@ class DrillDungeonGame(arcade.Window):
         self.explosions_list.draw() 
         
     def update_map_configuration(self):
-        self.coal_patches_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
-        self.gold_patches_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
-        self.dungeons_per_layer - generate_next_dungeon_amount(self.current_layer)
-        
-        
-        
+        self.coal_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
+        self.gold_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
+        self.dungeons_per_layer - generate_next_layer_dungeon_amount(self.current_layer)
       
 
     def on_draw(self):
