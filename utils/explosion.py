@@ -60,7 +60,7 @@ SMOKE_CHANCE = 0.25     # 0.25
 class Smoke(arcade.SpriteCircle):
     """ This represents a puff of smoke """
     def __init__(self, size):
-        super().__init__(size, arcade.color.LIGHT_GRAY, soft=True)
+        super().__init__(size, arcade.color.BLACK, soft=True)
         self.change_y = SMOKE_RISE_RATE
         self.scale = SMOKE_START_SCALE
 
