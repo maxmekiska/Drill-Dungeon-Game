@@ -11,6 +11,7 @@ import time
 from utils.drill import *
 from utils.dungeon_generator import *
 from utils.explosion import * # explosion/smoke
+from utils.funcs import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -55,13 +56,15 @@ class DrillDungeonGame(arcade.Window):
 
         self.drill_down = False
 
-        
-        
-        
+        self.current_layer = 0
+
+        self.gold_patches_per_layer = 20
+        self.coal_patches_per_layer = 20
+        self.dungeons_per_layer = 3
         
         arcade.set_background_color(arcade.color.BROWN_NOSE)
 
-    def setup(self):
+    def setup(self, number_of_coal_patches=20, number_of_gold_patches=20, number_of_dungeons=3):
         """
         Set up game and initialize variables
         """
@@ -76,15 +79,13 @@ class DrillDungeonGame(arcade.Window):
         #Initialize the map layer with some dungeon
         mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
         mapLayer.generate_blank_map()
-        mapLayer.generate_dungeon()
-        mapLayer.generate_dungeon()
-        mapLayer.generate_dungeon()
-######################################## generate coal and gold block clusters ####################################        
-        for i in range(20):
+        for i in range(number_of_dungeons):
+            mapLayer.generate_dungeon()
+        for i in range(number_of_coal_patches):
             mapLayer.generate_coal()
-        for j in range(20):
+        for i in range(number_of_gold_patches):
             mapLayer.generate_gold()
-##########################################################################################################
+
         #Load map layer from mapLayer
         self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
 
@@ -105,46 +106,22 @@ class DrillDungeonGame(arcade.Window):
 
 
     def draw_next_map_layer(self):
-        self.wall_list = arcade.SpriteList(use_spatial_hash=True) # spatial hash, makes collision detection faster
-        self.border_wall_list = arcade.SpriteList(use_spatial_hash=True)
-        self.coal_list = arcade.SpriteList(use_spatial_hash=True) # coal/fuel
-        self.gold_list = arcade.SpriteList(use_spatial_hash=True) # gold increment
-        self.bullet_list = arcade.SpriteList() # shooting/aiming
-        self.explosions_list = arcade.SpriteList() # explosion/smoke
+        self.setup(self.coal_parches_per_layer, self.gold_patches_per_layer, self.dungeons_per_layer)
+        self.current_layer += 1
+        self.update_map_configuration()
 
-
-        #Initialize the map layer with some dungeon
-        mapLayer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
-        mapLayer.generate_blank_map()
-        mapLayer.generate_dungeon()
-        mapLayer.generate_dungeon()
-        mapLayer.generate_dungeon()
-
-        for i in range(20):
-            mapLayer.generate_coal()
-        for j in range(20):
-            mapLayer.generate_gold()
-
-        #Load map layer from mapLayer
-        self.load_map_layer_from_matrix(mapLayer.mapLayerMatrix)
-
-        drillSpriteImage="resources/images/drills/drill_v2_2.png"
-        turretSpriteImage="resources/images/weapons/turret1.png"
-
-        self.drill_list=Drill(drillSpriteImage, 0.3, turretSpriteImage, 0.12)
-        self.drill_list.physics_engine_setup(self.border_wall_list)
-
-
-        #Set viewpoint boundaries - where the drill currently has scrolled to
-        self.view_left = 0
-        self.view_bottom = 0
         arcade.start_render()
         self.wall_list.draw()
-        self.coal_list.draw() # coal/fuel
-        self.gold_list.draw() # gold increment
+        self.coal_list.draw() 
+        self.gold_list.draw()
         self.drill_list.draw()
-        self.bullet_list.draw() # shooting/aiming
-        self.explosions_list.draw() # explosion/smoke
+        self.bullet_list.draw() 
+        self.explosions_list.draw() 
+        
+    def update_map_configuration(self):
+        self.coal_patches_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
+        self.gold_patches_per_layer = generate_next_layer_resource_patch_amount(self.current_layer) 
+        self.dungeons_per_layer - generate_next_dungeon_amount(self.current_layer)
         
         
         
