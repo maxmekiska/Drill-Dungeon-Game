@@ -215,7 +215,8 @@ class DrillDungeonGame(arcade.Window):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.update_keys(self.keys_pressed)
 
-        # TODO maybe we want to process some keys as GUI? Opening inventory? Add that here.
+        if self.keys_pressed['T']:
+            self.drill_down = True
 
     def on_key_release(self, key, modifiers):
         """Same as above function, but it sets the value to False"""
@@ -228,7 +229,8 @@ class DrillDungeonGame(arcade.Window):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.update_keys(self.keys_pressed)
 
-        # TODO maybe we want to process some keys as GUI? Opening inventory? Add that here.
+        if self.keys_pressed['T']:
+            self.drill_down = False
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Handle Mouse Motion """
