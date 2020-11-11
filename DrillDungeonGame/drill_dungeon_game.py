@@ -15,11 +15,6 @@ SCREEN_TITLE = "Welcome to the Drill Dungeon"
 VIEWPOINT_MARGIN = 40
 
 
-class SpriteMap:
-    def __init__(self):
-
-
-
 class DrillDungeonGame(arcade.Window):
     """
     Basic map class
