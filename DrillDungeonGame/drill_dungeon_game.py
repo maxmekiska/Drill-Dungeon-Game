@@ -1,8 +1,8 @@
-import math
-
 import arcade
 
-from DrillDungeonGame.entities import Drill, SpaceshipEnemy
+from DrillDungeonGame.entity.mixins import ShootingMixin, DiggingMixin, PathFindingMixin, ControllableMixin
+from DrillDungeonGame.entity.entities.drill import Drill
+from DrillDungeonGame.entity.entities.spaceship_enemy import SpaceshipEnemy
 from DrillDungeonGame.map.dungeon_generator import MapLayer
 from DrillDungeonGame.particles.explosion import PARTICLE_COUNT, ParticleDirt, ParticleCoal, Smoke, ParticleGold
 from DrillDungeonGame.utility import *
@@ -19,6 +19,9 @@ class DrillDungeonGame(arcade.Window):
     """
     Basic map class
     """
+    # This builds a dictionary of all possible keys that arcade can register as 'pressed'.
+    # They unfortunately don't have another method to get this, and populating it before init is not taxing.
+    possible_keys = {value: key for key, value in arcade.key.__dict__.items() if not key.startswith('_')}
 
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
@@ -31,12 +34,13 @@ class DrillDungeonGame(arcade.Window):
         self.border_wall_list = None
         self.bullet_list = None  # shooting/aiming
         self.explosions_list = None
-        self.enemy_list = []  # TODO use SpriteList instead. Make entity inherit arcade.Sprite()
+        self.entity_list = None
 
         self.a_pressed = False
         self.d_pressed = False
         self.w_pressed = False
         self.s_pressed = False
+        self.keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
         # Initialize scrolling variables
         self.view_bottom = 0
@@ -54,7 +58,8 @@ class DrillDungeonGame(arcade.Window):
         self.time = 0
         arcade.set_background_color(arcade.color.BROWN_NOSE)
 
-    def setup(self, number_of_coal_patches=20, number_of_gold_patches=20, number_of_dungeons=3, pos_x=64, pos_y=128):
+    def setup(self, number_of_coal_patches=20, number_of_gold_patches=20,
+              number_of_dungeons=3, center_x=64, center_y=128):
         """
         Set up game and initialize variables
         """
@@ -64,6 +69,7 @@ class DrillDungeonGame(arcade.Window):
         self.gold_list = arcade.SpriteList(use_spatial_hash=True)  # gold increment
         self.bullet_list = arcade.SpriteList()  # shooting/aiming
         self.explosions_list = arcade.SpriteList()  # explosion/smoke
+        self.entity_list = arcade.SpriteList()  # All enemies
 
         # Initialize the map layer with some dungeon
         map_layer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
@@ -80,15 +86,12 @@ class DrillDungeonGame(arcade.Window):
         # Load map layer from mapLayer
         self.load_map_layer_from_matrix(map_layer.mapLayerMatrix)
 
-        drill_sprite_image = "resources/images/drills/drill_v2_2.png"
-        turret_sprite_image = "resources/images/weapons/turret1.png"
-        enemy_sprite_image = "resources/images/enemy/enemy.png"
-
-        self.drill_list = Drill(drill_sprite_image, 0.3, turret_sprite_image, 0.12, pos_x=pos_x, pos_y=pos_y)
+        self.drill_list = Drill(center_x=center_x, center_y=center_y)
         self.drill_list.physics_engine_setup(self.border_wall_list)
-        self.enemy_list.append(SpaceshipEnemy(enemy_sprite_image, 0.3, turret_sprite_image, 0.12, 200, 200, 200, 0.5))
-        for enemy in self.enemy_list:
-            enemy.physics_engine_setup(self.border_wall_list)
+        self.entity_list.append(SpaceshipEnemy(200, 200, 200, 0.3))
+
+        for entity in self.entity_list:
+            entity.physics_engine_setup(self.border_wall_list)
 
         # Set viewpoint boundaries - where the drill currently has scrolled to
         self.view_left = 0
@@ -137,12 +140,12 @@ class DrillDungeonGame(arcade.Window):
         self.drill_list.draw()
         self.bullet_list.draw()  # shooting/aiming
         self.explosions_list.draw()  # explosion/smoke
-        for enemy in self.enemy_list:
-            enemy.draw()
+        for entity in self.entity_list:
+            entity.draw()
 
-        for enemy in self.enemy_list:
-            if enemy.path:
-                arcade.draw_line_strip(enemy.path, arcade.color.BLUE, 2)
+        for entity in self.entity_list:
+            if entity.path:
+                arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
 
         hud = f"Ammunition: {self.drill_list.ammunition}\nCoal:{self.drill_list.coal}\nGold:{self.drill_list.gold}"
         # update hud with screen scroll
@@ -200,37 +203,41 @@ class DrillDungeonGame(arcade.Window):
             x_block_center += block_width
 
     def on_key_press(self, key, modifiers):
+        """If a key is pressed, it sets that key in self.keys_pressed dict to True, and passes the dict onto
+        every entity that requires this information. ie All that subclass ControllableMixin.
+        This will probably just be the drill... but maybe we wan't controllable minions?"""
+        key_stroke = self.possible_keys.get(key)
+        if key_stroke is None:
+            return
 
-        """Called whenever a key is pressed. """
+        self.keys_pressed[key_stroke] = True
+        for entity in (self.drill_list, *self.entity_list):
+            if issubclass(entity.__class__, ControllableMixin):
+                entity.update_keys(self.keys_pressed)
 
-        if key == arcade.key.W:
-            self.w_pressed = True
-        elif key == arcade.key.S:
-            self.s_pressed = True
-        elif key == arcade.key.A:
-            self.a_pressed = True
-        elif key == arcade.key.D:
-            self.d_pressed = True
-        elif key == arcade.key.T:
-            self.drill_down = True
+        # TODO maybe we want to process some keys as GUI? Opening inventory? Add that here.
 
     def on_key_release(self, key, modifiers):
-        """Called when the user releases a key. """
+        """Same as above function, but it sets the value to False"""
+        key_stroke = self.possible_keys.get(key)
+        if key_stroke is None:
+            return
 
-        if key == arcade.key.W:
-            self.w_pressed = False
-        elif key == arcade.key.S:
-            self.s_pressed = False
-        elif key == arcade.key.A:
-            self.a_pressed = False
-        elif key == arcade.key.D:
-            self.d_pressed = False
+        self.keys_pressed[key_stroke] = False
+        for entity in (self.drill_list, *self.entity_list):
+            if issubclass(entity.__class__, ControllableMixin):
+                entity.update_keys(self.keys_pressed)
+
+        # TODO maybe we want to process some keys as GUI? Opening inventory? Add that here.
 
     def on_mouse_motion(self, x, y, dx, dy):
         """ Handle Mouse Motion """
-        self.drill_list.aim_turret(x+self.view_left, y+self.view_bottom)
+        self.drill_list.aim(x+self.view_left, y+self.view_bottom)
 
     def on_mouse_press(self, x, y, button, modifiers):  # shooting/aiming
+        # for entity in (self.drill_list, *self.entity_list):
+        #     if issubclass(entity.__class__, ShootingMixin):
+        #         entity.shoot()
         # sprite scaling laser
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
 
@@ -272,31 +279,6 @@ class DrillDungeonGame(arcade.Window):
             arcade.set_viewport(self.view_left, SCREEN_WIDTH + self.view_left,
                                 self.view_bottom, SCREEN_HEIGHT + self.view_bottom)
 
-    def move_drill(self):
-        if self.w_pressed and not (self.s_pressed or self.a_pressed or self.d_pressed):
-            self.drill_list.move_drill("UP")
-        # move diagonal up right
-        elif self.w_pressed and self.d_pressed and not (self.s_pressed or self.a_pressed):
-            self.drill_list.move_drill("UPRIGHT")
-        # move down
-        elif self.s_pressed and not (self.w_pressed or self.a_pressed or self.d_pressed):
-            self.drill_list.move_drill("DOWN")
-        # move diagonal down right
-        elif self.s_pressed and self.d_pressed and not (self.w_pressed or self.a_pressed):
-            self.drill_list.move_drill("DOWNRIGHT")
-        # move left
-        elif self.a_pressed and not (self.w_pressed or self.s_pressed or self.d_pressed):
-            self.drill_list.move_drill("LEFT")
-        # move diagonal up left
-        elif self.a_pressed and self.w_pressed and not (self.s_pressed or self.d_pressed):
-            self.drill_list.move_drill("UPLEFT")
-        # move right
-        elif self.d_pressed and not (self.w_pressed or self.s_pressed or self.a_pressed):
-            self.drill_list.move_drill("RIGHT")
-        # move diagonal down left
-        elif self.a_pressed and self.s_pressed and not (self.w_pressed or self.d_pressed):
-            self.drill_list.move_drill("DOWNLEFT")
-
     def check_for_scroll_left(self, changed):
         left_boundary = self.view_left + VIEWPOINT_MARGIN
         if self.drill_list.left < left_boundary:
@@ -331,17 +313,17 @@ class DrillDungeonGame(arcade.Window):
         self.frame += 1
         self.time += delta_time
 
-        self.drill_list.stop_moving()
-        for enemy in self.enemy_list:
-            enemy.stop_moving()
-        self.move_drill()
+        # for entity in (self.drill_list, *self.entity_list):
+        #     entity.stop_moving()
 
-        self.drill_list.update_physics_engine()
-        for enemy in self.enemy_list:
-            enemy.update_physics_engine()
+        for entity in (self.drill_list, *self.entity_list):
+            entity.update_physics_engine()
 
-        # clears map to leave tunnel behind drill
-        self.drill_list.clear_dirt(self.wall_list)
+        for entity in (self.drill_list, *self.entity_list):
+            # clears map to leave tunnel behind drill
+            if issubclass(entity.__class__, DiggingMixin):
+                entity.dig(self.wall_list)
+
         # collects coal and increments fuel tank
         self.drill_list.collect_coal(self.coal_list)
         # collect gold and increments gold
@@ -351,23 +333,31 @@ class DrillDungeonGame(arcade.Window):
         self.update_map_view()
 
         # self.physics_engine.update()
+
+        for entity in (self.drill_list, *self.entity_list):
+            entity.update()
+
         self.bullet_list.update()
         self.explosions_list.update()
-
         self.bullet_update()
 
         if self.drill_down:
             self.draw_next_map_layer()
             self.drill_down = False
 
+        for entity in self.entity_list:
+            if isinstance(entity, ShootingMixin) and entity.has_line_of_sight_with(self.drill_list, self.wall_list):
+                entity.aim(self.drill_list.center_x, self.drill_list.center_y)
+
         # TODO don't use frame as measure of doing task every x loops. Use time instead.
         if self.frame % 30 == 0:
-            for enemy in self.enemy_list:
-                if enemy.has_line_of_sight_with(self.drill_list, self.wall_list):
-                    enemy.path_to_position(*self.drill_list.position, self.wall_list)
+            if isinstance(entity, PathFindingMixin) and \
+                    entity.has_line_of_sight_with(self.drill_list, self.wall_list):
+                entity.path_to_position(*self.drill_list.position, self.wall_list)
 
-        for enemy in self.enemy_list:
-            enemy.update()
+            for entity in self.entity_list:
+                if isinstance(entity, ShootingMixin) and entity.has_line_of_sight_with(self.drill_list, self.wall_list):
+                    entity.shoot()
 
     def bullet_update(self):
         for bullet in self.bullet_list:
