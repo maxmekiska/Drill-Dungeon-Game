@@ -15,6 +15,11 @@ SCREEN_TITLE = "Welcome to the Drill Dungeon"
 VIEWPOINT_MARGIN = 40
 
 
+class SpriteMap:
+    def __init__(self):
+
+
+
 class DrillDungeonGame(arcade.Window):
     """
     Basic map class
@@ -36,10 +41,6 @@ class DrillDungeonGame(arcade.Window):
         self.explosions_list = None
         self.entity_list = None
 
-        self.a_pressed = False
-        self.d_pressed = False
-        self.w_pressed = False
-        self.s_pressed = False
         self.keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
         # Initialize scrolling variables
