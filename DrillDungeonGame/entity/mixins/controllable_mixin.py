@@ -1,15 +1,23 @@
 from __future__ import annotations
+
+from typing import Callable, Union, Dict, Tuple
+
 import arcade
-import typing
 import math
 
 
 class ControllableMixin:
-    speed: typing.Union[float, int]
-    set_velocity: typing.Callable[[typing.Tuple[float, float]], None]
-    look_at: typing.Callable[[float, float], None]
+    speed: Union[float, int]
+    set_velocity: Callable[[Tuple[float, float]], None]
+    look_at: Callable[[float, float], None]
+    center_x: float
+    center_y: float
 
-    def update_keys(self, keys: typing.Dict[str, bool]):
+    def handle_key_press_release(self, keys: Dict[str, bool]):
+        """Handles how the Entity should move/rotate. Handles 8-way directional wasd movement.
+        We sum up the x, y velocity vector for each corresponding key press.
+        This has the BIG benefit of making two keys opposite in direction (w,s) and (a,d) cancelling out, but
+        also means diagonal movement results in being faster. We can fix this by normalizing the vector at the end."""
         x, y = 0, 0
         if keys['W']:
             y += 1
@@ -25,7 +33,7 @@ class ControllableMixin:
             normal = math.sqrt(abs(normal))
             x = x / normal
             y = y / normal
+
         x, y = x * self.speed, y * self.speed
-        # print(f"{x}, {y}")
         self.set_velocity((x, y))
         self.look_at(self.center_x + x, self.center_y + y)

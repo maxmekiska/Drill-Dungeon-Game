@@ -1,5 +1,5 @@
 import math
-import typing
+from typing import Union
 
 import numpy as np
 import random
@@ -19,7 +19,7 @@ def generate_next_layer_dungeon_amount(current_layer, base_amount=3, max_amount=
     return number_of_dungeons
 
 
-def is_near(a_x: float, a_y: float, b_x: float, b_y: float, distance: typing.Union[float, int]):
+def is_near(a_x: float, a_y: float, b_x: float, b_y: float, distance: Union[float, int]):
     """Function used in pathfinding. Returns True if entity is in range of a certain point. Else False"""
     length = math.sqrt(pow(a_x - b_x, 2) + pow(a_y - b_y, 2))
     return True if length < distance else False

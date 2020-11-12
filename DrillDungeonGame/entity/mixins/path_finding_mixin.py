@@ -1,6 +1,6 @@
 from __future__ import annotations
 import math
-import typing
+from typing import Tuple, List, Union, Callable
 
 import arcade
 
@@ -9,21 +9,21 @@ from DrillDungeonGame.utility import is_near
 
 
 class PathFindingMixin:
-    position: typing.Tuple[float, float]
+    position: Tuple[float, float]
     center_x: float
     center_y: float
     height: int
     width: int
     speed: float
     angle: float
-    path: typing.List[typing.Tuple[float, float]] = []
+    path: List[Tuple[float, float]] = []
     path_index: int = 0
     sprite_list: arcade.SpriteList
-    set_velocity: typing.Callable[[typing.Tuple[float, float]], None]
-    look_at: typing.Callable[[float, float], None]
-    stop_moving: typing.Callable[[None], None]
+    set_velocity: Callable[[Tuple[float, float]], None]
+    look_at: Callable[[float, float], None]
+    stop_moving: Callable[[None], None]
 
-    def __init__(self, vision: typing.Union[float, int]):
+    def __init__(self, vision: Union[float, int]):
         self.vision = vision  # How far the path finding can see.
 
     def path_to_entity(self, entity: Entity, blocking_sprites: arcade.SpriteList,
@@ -44,7 +44,7 @@ class PathFindingMixin:
         self.path = path if path is not None else []
         self.path_index = 0
 
-    def move_towards(self, x: typing.Union[float, int], y: typing.Union[float, int], use_angle: bool = False) -> None:
+    def move_towards(self, x: Union[float, int], y: Union[float, int], use_angle: bool = False) -> None:
         """Moves towards the position specified. If use_angle is true, it saves some computation of having to
         recalculate the vector component."""
         if use_angle:
@@ -67,7 +67,6 @@ class PathFindingMixin:
             destination_x, destination_y = self.path[self.path_index][0], self.path[self.path_index][1]
             self.move_towards(destination_x, destination_y)
             self.look_at(destination_x, destination_y)
-
         else:
             self.stop_moving()
         # else do nothing. Don't move

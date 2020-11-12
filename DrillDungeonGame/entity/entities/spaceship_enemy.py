@@ -1,13 +1,14 @@
 from __future__ import annotations
-import typing
+
+from typing import Union
 
 from ..enemy import Enemy
 from ..mixins import PathFindingMixin, ShootingMixin, DiggingMixin
 
 
 class SpaceshipEnemy(Enemy, ShootingMixin, PathFindingMixin, DiggingMixin):
-    def __init__(self, center_x: int, center_y: int, vision: typing.Union[float, int],
-                 speed: typing.Union[float, int] = 1) -> None:
+    def __init__(self, center_x: int, center_y: int, vision: Union[float, int],
+                 speed: Union[float, int] = 1) -> None:
         base_sprite: str = "resources/images/enemy/enemy.png"
         sprite_scale: float = 0.3
         turret_sprite = "resources/images/weapons/turret1.png"
