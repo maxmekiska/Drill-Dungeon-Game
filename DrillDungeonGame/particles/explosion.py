@@ -2,11 +2,7 @@ import random
 import math
 import arcade
 
-# --- Explosion Particles Related
 
-
-# How fast the particle will accelerate down. Make 0 if not desired
-PARTICLE_GRAVITY = 0
 
 # How fast to fade the particle
 PARTICLE_FADE_RATE = 12
@@ -22,11 +18,8 @@ PARTICLE_COUNT = 20
 PARTICLE_RADIUS = 3
 
 # Possible particle colors
-PARTICLE_COLORS_DIRT = [arcade.color.ALIZARIN_CRIMSON,
-                        arcade.color.COQUELICOT,
-                        arcade.color.LAVA,
-                        arcade.color.KU_CRIMSON,
-                        arcade.color.DARK_TANGERINE]
+PARTICLE_COLORS_DIRT = [arcade.color.GOLDEN_BROWN,
+                        arcade.color.CHAMOISEE]
                    
 PARTICLE_COLORS_COAL = [arcade.color.BLACK]
 
@@ -37,40 +30,31 @@ PARTICLE_COLORS_GOLD = [arcade.color.GOLD,
 
 PARTICLE_COLORS_ENEMY = []  # for enemy hits
 
-# Chance we'll flip the texture to white and make it 'sparkle'
 PARTICLE_SPARKLE_CHANCE = 0.02
 
-# --- Smoke
-# Note: Adding smoke trails makes for a lot of sprites and can slow things
-# down. If you want a lot, it will be necessary to move processing to GPU
-# using transform feedback. If to slow, just get rid of smoke.
 
-# Start scale of smoke, and how fast is scales up
-SMOKE_START_SCALE = 0.25       # 0.25
-SMOKE_EXPANSION_RATE = 0.03    # 0.03
+SMOKE_START_SCALE = 0.25      
+SMOKE_EXPANSION_RATE = 0.03    
 
-# Rate smoke fades, and rises
-SMOKE_FADE_RATE = 8    # 7
-SMOKE_RISE_RATE = 0.5     # 0.5
 
-# Chance we leave smoke trail
-SMOKE_CHANCE = 0.25     # 0.25
+SMOKE_FADE_RATE = 8   
+SMOKE_RISE_RATE = 0.5     
+
+
+SMOKE_CHANCE = 0.25  
 
 
 class Smoke(arcade.SpriteCircle):
-    """ This represents a puff of smoke """
+    """ Creation of smoke when block is hit, only used for coal blocks """
     def __init__(self, size):
         super().__init__(size, arcade.color.BLACK, soft=True)
         self.change_y = SMOKE_RISE_RATE
         self.scale = SMOKE_START_SCALE
 
     def update(self):
-        """ Update this particle """
         if self.alpha <= PARTICLE_FADE_RATE:
-            # Remove faded out particles
             self.remove_from_sprite_lists()
         else:
-            # Update values
             self.alpha -= SMOKE_FADE_RATE
             self.center_x += self.change_x
             self.center_y += self.change_y
@@ -82,7 +66,7 @@ class Smoke(arcade.SpriteCircle):
 
 
 class ParticleDirt(arcade.SpriteCircle):
-    """ Explosion particle """
+    """ Explosion particle for dirt blocks """
     def __init__(self, my_list):
         # Choose a random color
         color = random.choice(PARTICLE_COLORS_DIRT)
@@ -120,7 +104,7 @@ class ParticleDirt(arcade.SpriteCircle):
             self.alpha = self.my_alpha
             self.center_x += self.change_x
             self.center_y += self.change_y
-            self.change_y -= PARTICLE_GRAVITY
+           
 
     def draw(self):
         for item in self.sprite_list:
@@ -128,7 +112,7 @@ class ParticleDirt(arcade.SpriteCircle):
             
 
 class ParticleCoal(arcade.SpriteCircle):
-    """ Explosion particle """
+    """ Explosion particle for coal blocks """
     def __init__(self, my_list):
         color = random.choice(PARTICLE_COLORS_COAL)
         super().__init__(PARTICLE_RADIUS, color)
@@ -151,7 +135,7 @@ class ParticleCoal(arcade.SpriteCircle):
             self.alpha = self.my_alpha
             self.center_x += self.change_x
             self.center_y += self.change_y
-            self.change_y -= PARTICLE_GRAVITY
+            
 
             if random.random() <= SMOKE_CHANCE:
                 smoke = Smoke(5)
@@ -164,7 +148,7 @@ class ParticleCoal(arcade.SpriteCircle):
 
 
 class ParticleGold(arcade.SpriteCircle):
-    """ Explosion particle """
+    """ Explosion particle for gold blocks """
     def __init__(self, my_list):
         color = random.choice(PARTICLE_COLORS_GOLD)
         super().__init__(PARTICLE_RADIUS, color)
@@ -186,7 +170,7 @@ class ParticleGold(arcade.SpriteCircle):
             self.alpha = self.my_alpha
             self.center_x += self.change_x
             self.center_y += self.change_y
-            self.change_y -= PARTICLE_GRAVITY
+        
 
             if random.random() <= PARTICLE_SPARKLE_CHANCE:
                 self.alpha = 255
