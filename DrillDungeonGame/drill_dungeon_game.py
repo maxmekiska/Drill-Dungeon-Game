@@ -54,6 +54,7 @@ class DrillDungeonGame(arcade.Window):
         self.time = 0
         arcade.set_background_color(arcade.color.BROWN_NOSE)
         self.firing_mode = ShotType.BUCKSHOT
+        self.mouse_position = (0, 0)
 
     def setup(self, number_of_coal_patches: int = 20, number_of_gold_patches: int = 20,
               number_of_dungeons: int = 3, center_x: int = 64, center_y: int = 128) -> None:
@@ -248,7 +249,7 @@ class DrillDungeonGame(arcade.Window):
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float) -> None:
         """ Handle Mouse Motion """
-        self.sprites.drill.aim(x + self.view.left_offset, y + self.view.bottom_offset)
+        self.mouse_position = (x, y)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         self.sprites.drill.shoot(self.firing_mode)
@@ -304,6 +305,10 @@ class DrillDungeonGame(arcade.Window):
 
         # Check for side scrolling
         self.update_map_view()
+
+        # TODO move this into entities.Drill.update(). We need to pass view as a param to update()
+        self.sprites.drill.aim(self.mouse_position[0] + self.view.left_offset,
+                               self.mouse_position[1] + self.view.bottom_offset)
 
         for entity in self.sprites.entity_list:
             # pass the sprite Container so update function can interact with other sprites.
