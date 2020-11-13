@@ -327,15 +327,8 @@ class DrillDungeonGame(arcade.Window):
         self.frame += 1
         self.time += delta_time
 
-        # collects coal and increments fuel tank
-        self.sprites.drill.collect_coal(self.sprites.coal_list)
-        # collect gold and increments gold
-        self.sprites.drill.collect_gold(self.sprites.gold_list)
-
         # Check for side scrolling
         self.update_map_view()
-
-        # self.physics_engine.update()
 
         for entity in self.sprites.entity_list:
             # pass the sprite Container so update function can interact with other sprites.

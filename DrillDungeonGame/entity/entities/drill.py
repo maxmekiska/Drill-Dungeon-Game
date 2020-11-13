@@ -43,7 +43,7 @@ class Drill(Entity, ShootingMixin, DiggingMixin, ControllableMixin):
         self.collect_gold(sprites.gold_list)
 
         self.distance_moved += abs(self.change_x) + abs(self.change_y)
-        if round(self.distance_moved) > 200:
+        if self.distance_moved > 200:
             self.distance_moved = 0
             self.ammunition += 1
             self.coal -= 1

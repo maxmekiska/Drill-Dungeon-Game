@@ -28,6 +28,7 @@ class Entity(arcade.Sprite):
         # When arriving at the first tuple, the position will be popped off the list and it will move to the next.
         self.path = []
         self.distance_moved = 0.0
+        self._physics_engines = []
 
     def has_line_of_sight_with(self, entity: Entity, blocking_sprites: arcade.SpriteList) -> bool:
         """Returns True is this class has line of site with another given entity."""
@@ -44,14 +45,13 @@ class Entity(arcade.Sprite):
             sprite.change_x = vector[0]
             sprite.change_y = vector[1]
 
-    def update_physics_engine(self):
-        for engine in self.physics_engines:
+    def update_physics_engine(self, time: float, sprites: SpriteContainer):
+        for engine in self._physics_engines:
             engine.update()
 
     def physics_engine_setup(self, engine_wall):
-        return
         for sprite in self.sprite_list:
-            self.physics_engines.append(arcade.PhysicsEngineSimple(sprite, engine_wall))
+            self._physics_engines.append(arcade.PhysicsEngineSimple(sprite, engine_wall))
 
     def stop_moving(self):
         for sprite in self.sprite_list:
@@ -86,7 +86,7 @@ class Entity(arcade.Sprite):
     # noinspection PyMethodOverriding
     def update(self, time: float, sprites: SpriteContainer) -> None:
         """Read above note in draw function. Same applies"""
-        self.update_physics_engine()
+        self.update_physics_engine(time, sprites)
 
         for mixin in self.__class__.__mro__:
             # Used to be issubclass(mixin, Entity), but entity inherits from arcade.Sprite now. So we also don't want
@@ -94,5 +94,3 @@ class Entity(arcade.Sprite):
             # super().update() at the end instead and now do issubclass(mixin, arcade.Sprite)
             if hasattr(mixin, 'update') and not issubclass(mixin, arcade.Sprite):
                 mixin.update(self, time, sprites)
-
-        super().update()
