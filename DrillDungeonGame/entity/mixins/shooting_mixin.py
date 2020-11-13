@@ -9,6 +9,7 @@ from typing import Union, List
 
 from ..entities.bullet import Bullet
 from ..entity import Entity
+from ...inventory import Inventory
 
 from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
@@ -28,6 +29,7 @@ class ShootingMixin:
     speed = Union[float, int]
     has_line_of_sight_with: Callable[[Entity, arcade.SpriteList], bool]
     remove_from_sprite_lists: Callable[[None], None]
+    inventory: Inventory
 
     def __init__(self, turret_sprite: str, turret_sprite_scale: Union[float, int],
                  center_x: int, center_y: int, ammunition: int = -1) -> None:
@@ -52,17 +54,32 @@ class ShootingMixin:
     def _shoot(self, shot_type: ShotType, sprites: SpriteContainer) -> None:
         """Shoots a bullet from the turret location. Returns the bullet that was creates so it can be appended
         to the sprite list."""
-        if shot_type == ShotType.SINGLE and self.ammunition != 0:
-            self.ammunition -= 1
+        if hasattr(self, 'inventory'):
+            if shot_type == ShotType.SINGLE:
+                if self.inventory.ammunition > 0:
+                    self.inventory.ammunition -= 1
+                elif self.inventory.ammunition == -1:
+                    pass
+                else:
+                    return
+
+            elif shot_type == ShotType.BUCKSHOT:
+                if self.inventory.ammunition > 2:
+                    self.inventory.ammunition -= 3
+                elif self.inventory.ammunition == -1:
+                    pass
+                else:
+                    return
+
+        if shot_type == ShotType.SINGLE:
             bullet = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle)
             x_component = math.cos(math.radians(self.turret.angle)) * bullet.speed
             y_component = math.sin(math.radians(self.turret.angle)) * bullet.speed
             bullet.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet)
-            bullet.physics_engine_setup([sprites.all_blocks_list, sprites.entity_list])
+            bullet.physics_engine_setup([sprites.all_blocks_list])
 
-        elif shot_type == ShotType.BUCKSHOT and (self.ammunition == -1 or self.ammunition > 2):
-            self.ammunition -= 3
+        elif shot_type == ShotType.BUCKSHOT:
             bullet_middle = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle)
             bullet_left = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle - 10)
             bullet_right = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle + 10)
@@ -82,7 +99,7 @@ class ShootingMixin:
             bullet_right.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_right)
             for bullet in [bullet_left, bullet_middle, bullet_right]:
-                bullet.physics_engine_setup([sprites.all_blocks_list, sprites.entity_list])
+                bullet.physics_engine_setup([sprites.all_blocks_list])
 
     def draw(self) -> None:
         self.turret.draw()

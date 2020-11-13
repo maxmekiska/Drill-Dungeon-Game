@@ -147,7 +147,8 @@ class DrillDungeonGame(arcade.Window):
             if entity.path:
                 arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
 
-        hud = f"Ammunition: {self.sprites.drill.ammunition}\nCoal:{self.sprites.drill.coal}\nGold:{self.sprites.drill.gold}"
+        hud = f"Ammunition: {self.sprites.drill.inventory.ammunition}\nCoal:{self.sprites.drill.inventory.coal}" \
+              f"\nGold:{self.sprites.drill.inventory.gold}"
         # update hud with screen scroll
         arcade.draw_text(hud, self.view.left_offset + 10, self.view.bottom_offset + 20, arcade.color.BLACK, 20)
 
