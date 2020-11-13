@@ -11,6 +11,9 @@ class ControllableMixin:
     look_at: Callable[[float, float], None]
     center_x: float
     center_y: float
+    distance_moved: float
+    change_x: float
+    change_y: float
 
     def handle_key_press_release(self, keys: Dict[str, bool]):
         """Handles how the Entity should move/rotate. Handles 8-way directional wasd movement.
@@ -35,5 +38,5 @@ class ControllableMixin:
 
         x, y = x * self.speed, y * self.speed
         self.set_velocity((x, y))
-        if x != 0 or y != 0:
+        if any([keys['W'], keys['A'], keys['S'], keys['D']]):
             self.look_at(self.center_x + x, self.center_y + y)

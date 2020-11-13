@@ -3,7 +3,9 @@ from __future__ import annotations
 from typing import Union
 
 from ..enemy import Enemy
-from ..mixins import PathFindingMixin, ShootingMixin, DiggingMixin
+from ..mixins.path_finding_mixin import PathFindingMixin
+from ..mixins.shooting_mixin import ShootingMixin
+from ..mixins.digging_mixin import DiggingMixin
 
 
 class SpaceshipEnemy(Enemy, ShootingMixin, PathFindingMixin, DiggingMixin):
@@ -13,6 +15,6 @@ class SpaceshipEnemy(Enemy, ShootingMixin, PathFindingMixin, DiggingMixin):
         sprite_scale: float = 0.3
         turret_sprite = "resources/images/weapons/turret1.png"
         turret_sprite_scale = 0.3
-        super().__init__(base_sprite, sprite_scale, center_x, center_y, speed)
-        PathFindingMixin.__init__(self, vision)
-        ShootingMixin.__init__(self, turret_sprite, turret_sprite_scale, center_x, center_y)
+        super().__init__(base_sprite, sprite_scale, center_x, center_y, speed)  # Init Enemy
+        PathFindingMixin.__init__(self, vision)  # Init PathfindingMixin.
+        ShootingMixin.__init__(self, turret_sprite, turret_sprite_scale, center_x, center_y)  # Init ShootingMixin

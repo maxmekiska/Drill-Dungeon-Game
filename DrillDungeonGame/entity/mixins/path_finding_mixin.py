@@ -7,6 +7,10 @@ import arcade
 from ..entity import Entity
 from DrillDungeonGame.utility import is_near
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ...sprite_container import SpriteContainer
+
 
 class PathFindingMixin:
     position: Tuple[float, float]
@@ -56,7 +60,7 @@ class PathFindingMixin:
         y_vector = self.speed * math.sin(component)
         self.set_velocity((x_vector, y_vector))
 
-    def update(self) -> None:
+    def update(self, time: float, sprites: SpriteContainer) -> None:
         """If there is an element in the path, work on moving towards it"""
         while len(self.path) > self.path_index and \
                 (is_near(self.center_x, self.center_y, self.path[self.path_index][0],

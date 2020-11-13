@@ -4,15 +4,17 @@ such as speed.
 """
 from __future__ import annotations
 
-from typing import List, Tuple, Union
+from typing import Tuple, Union
 
 import arcade
 import math
 
-from ..utility import protect
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..sprite_container import SpriteContainer
 
 
-class Entity(arcade.Sprite, metaclass=protect("draw", "update")):
+class Entity(arcade.Sprite):
     def __init__(self, base_sprite: str, sprite_scale: float, center_x: int, center_y: int,
                  speed: Union[float, int] = 1, angle: float = 0.0) -> None:
         super().__init__(base_sprite, sprite_scale, center_x=center_x, center_y=center_y)
@@ -25,6 +27,7 @@ class Entity(arcade.Sprite, metaclass=protect("draw", "update")):
         # The enemies can be moved by appending a tuple of two floats (x, y) coordinates.
         # When arriving at the first tuple, the position will be popped off the list and it will move to the next.
         self.path = []
+        self.distance_moved = 0.0
 
     def has_line_of_sight_with(self, entity: Entity, blocking_sprites: arcade.SpriteList) -> bool:
         """Returns True is this class has line of site with another given entity."""
@@ -46,6 +49,7 @@ class Entity(arcade.Sprite, metaclass=protect("draw", "update")):
             engine.update()
 
     def physics_engine_setup(self, engine_wall):
+        return
         for sprite in self.sprite_list:
             self.physics_engines.append(arcade.PhysicsEngineSimple(sprite, engine_wall))
 
@@ -71,22 +75,24 @@ class Entity(arcade.Sprite, metaclass=protect("draw", "update")):
         order isn't suited for our needs and this code here provides means to call the draw method in ALL parent
         classes of any given subclass of this (Entity) class. That's what this does.
         Also note: The `not issubclass(parent, Entity)` prevents recursion.
-        TLDR: Don't override this method in any subclass
+        TLDR: If you override this method in a subclass of Entity, MAKE SURE TO CALL super().update()
         """
         self.sprite_list.draw()
 
-        for parent in self.__class__.__mro__:
-            if hasattr(parent, 'draw') and not issubclass(parent, Entity):
-                parent.draw(self)
+        for mixin in self.__class__.__mro__:
+            if hasattr(mixin, 'draw') and not issubclass(mixin, Entity):
+                mixin.draw(self)
 
-        super().draw()
-
-    def update(self) -> None:
+    # noinspection PyMethodOverriding
+    def update(self, time: float, sprites: SpriteContainer) -> None:
         """Read above note in draw function. Same applies"""
         self.update_physics_engine()
 
-        for parent in self.__class__.__mro__:
-            if hasattr(parent, 'update') and not issubclass(parent, Entity):
-                parent.update(self)
+        for mixin in self.__class__.__mro__:
+            # Used to be issubclass(mixin, Entity), but entity inherits from arcade.Sprite now. So we also don't want
+            # to pass the sprite list to the update function of arcade.Sprite as this doesn't take args. We use
+            # super().update() at the end instead and now do issubclass(mixin, arcade.Sprite)
+            if hasattr(mixin, 'update') and not issubclass(mixin, arcade.Sprite):
+                mixin.update(self, time, sprites)
 
         super().update()
