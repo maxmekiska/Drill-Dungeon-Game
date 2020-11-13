@@ -4,7 +4,7 @@ such as speed.
 """
 from __future__ import annotations
 
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 import arcade
 import math
@@ -49,9 +49,10 @@ class Entity(arcade.Sprite):
         for engine in self._physics_engines:
             engine.update()
 
-    def physics_engine_setup(self, engine_wall):
+    def physics_engine_setup(self, collidables: List[arcade.SpriteList]):
         for sprite in self.sprite_list:
-            self._physics_engines.append(arcade.PhysicsEngineSimple(sprite, engine_wall))
+            for collidable_list in collidables:
+                self._physics_engines.append(arcade.PhysicsEngineSimple(sprite, collidable_list))
 
     def stop_moving(self):
         for sprite in self.sprite_list:

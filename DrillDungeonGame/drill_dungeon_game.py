@@ -65,22 +65,22 @@ class DrillDungeonGame(arcade.Window):
         gold_list = arcade.SpriteList(use_spatial_hash=True)  # gold increment
         explosion_list = arcade.SpriteList()  # explosion/smoke
         entity_list = arcade.SpriteList()  # All enemies
+        bullet_list = arcade.SpriteList()
         drill = Drill(center_x=center_x, center_y=center_y)
         all_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         destructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         indestructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         self.sprites = SpriteContainer(drill=drill, dirt_list=dirt_list, border_wall_list=border_wall_list,
                                        coal_list=coal_list, gold_list=gold_list,
-                                       explosion_list=explosion_list, entity_list=entity_list,
+                                       explosion_list=explosion_list, entity_list=entity_list, bullet_list=bullet_list,
                                        all_blocks_list=all_blocks_list,
                                        destructible_blocks_list=destructible_blocks_list,
                                        indestructible_blocks_list=indestructible_blocks_list)
-        self.sprites.entity_list.append(drill)
-        self.sprites.drill.physics_engine_setup(self.sprites.border_wall_list)
+        self.sprites.drill.physics_engine_setup([self.sprites.border_wall_list])
         self.sprites.entity_list.append(SpaceshipEnemy(200, 200, 200, 0.7))
 
-        for entity in self.sprites.entity_list:
-            entity.physics_engine_setup(self.sprites.border_wall_list)
+        for entity in (*self.sprites.entity_list, self.sprites.drill):
+            entity.physics_engine_setup([self.sprites.border_wall_list])
 
         # Initialize the map layer with some dungeon
         map_layer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
@@ -141,7 +141,7 @@ class DrillDungeonGame(arcade.Window):
         self.sprites.border_wall_list.draw()
         self.sprites.explosion_list.draw()
 
-        for entity in self.sprites.entity_list:
+        for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
             entity.draw()
 
         for entity in self.sprites.entity_list:
@@ -220,7 +220,7 @@ class DrillDungeonGame(arcade.Window):
             return
 
         self.keys_pressed[key_stroke] = True
-        for entity in self.sprites.entity_list:
+        for entity in (*self.sprites.entity_list, self.sprites.drill):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.handle_key_press_release(self.keys_pressed)
 
@@ -240,7 +240,7 @@ class DrillDungeonGame(arcade.Window):
             return
 
         self.keys_pressed[key_stroke] = False
-        for entity in self.sprites.entity_list:
+        for entity in (*self.sprites.entity_list, self.sprites.drill):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.handle_key_press_release(self.keys_pressed)
 
@@ -310,7 +310,7 @@ class DrillDungeonGame(arcade.Window):
         self.sprites.drill.aim(self.mouse_position[0] + self.view.left_offset,
                                self.mouse_position[1] + self.view.bottom_offset)
 
-        for entity in self.sprites.entity_list:
+        for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
             # pass the sprite Container so update function can interact with other sprites.
             entity.update(self.time, self.sprites)
 
@@ -320,23 +320,21 @@ class DrillDungeonGame(arcade.Window):
             self.draw_next_map_layer()
             self.drill_down = False
 
-        for entity in self.sprites.entity_list:
-            if isinstance(entity, Bullet):
-                if entity.center_x > self.width + self.view.left_offset or entity.center_x < self.view.left_offset or \
-                        entity.center_y > self.width + self.view.bottom_offset or \
-                        entity.center_y < self.view.bottom_offset:
-                    entity.remove_from_sprite_lists()
+        for bullet in self.sprites.bullet_list:
+            if bullet.center_x > self.width + self.view.left_offset or bullet.center_x < self.view.left_offset or \
+                    bullet.center_y > self.width + self.view.bottom_offset or \
+                    bullet.center_y < self.view.bottom_offset:
+                bullet.remove_from_sprite_lists()
 
         # TODO don't use frame as measure of doing task every x loops. Store a variable in each entity class such
         # as last_updated. We can iterate over all entities and check when entity tasks were last updated.
         if self.frame % 30 == 0:  # Do something every 30 frames.
             for entity in self.sprites.entity_list:
-                if not isinstance(entity, Drill):
-                    # When this gets moved to entity.update(), we won't need to do all this isinstance checks
-                    # We only have this code here now as it isn't abstracted yet.
-                    if isinstance(entity, (PathFindingMixin, ShootingMixin)) and \
-                            entity.has_line_of_sight_with(self.sprites.drill, self.sprites.all_blocks_list):
-                        if isinstance(entity, PathFindingMixin):
-                            entity.path_to_position(*self.sprites.drill.position, self.sprites.destructible_blocks_list)
-                        if isinstance(entity, ShootingMixin):
-                            entity.shoot(ShotType.SINGLE)
+                # When this gets moved to entity.update(), we won't need to do all this isinstance checks
+                # We only have this code here now as it isn't abstracted yet.
+                if isinstance(entity, (PathFindingMixin, ShootingMixin)) and \
+                        entity.has_line_of_sight_with(self.sprites.drill, self.sprites.all_blocks_list):
+                    if isinstance(entity, PathFindingMixin):
+                        entity.path_to_position(*self.sprites.drill.position, self.sprites.destructible_blocks_list)
+                    if isinstance(entity, ShootingMixin):
+                        entity.shoot(ShotType.SINGLE)

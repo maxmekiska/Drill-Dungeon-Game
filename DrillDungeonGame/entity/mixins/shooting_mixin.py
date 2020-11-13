@@ -58,8 +58,8 @@ class ShootingMixin:
             x_component = math.cos(math.radians(self.turret.angle)) * bullet.speed
             y_component = math.sin(math.radians(self.turret.angle)) * bullet.speed
             bullet.set_velocity((x_component, y_component))
-            sprites.entity_list.append(bullet)
-            bullet.physics_engine_setup(sprites.all_blocks_list)
+            sprites.bullet_list.append(bullet)
+            bullet.physics_engine_setup([sprites.all_blocks_list, sprites.entity_list])
 
         elif shot_type == ShotType.BUCKSHOT and (self.ammunition == -1 or self.ammunition > 2):
             self.ammunition -= 3
@@ -70,19 +70,19 @@ class ShootingMixin:
             x_component = math.cos(math.radians(self.turret.angle)) * bullet_middle.speed
             y_component = math.sin(math.radians(self.turret.angle)) * bullet_middle.speed
             bullet_middle.set_velocity((x_component, y_component))
-            sprites.entity_list.append(bullet_middle)
+            sprites.bullet_list.append(bullet_middle)
             # Left
             x_component = math.cos(math.radians(self.turret.angle - 10)) * bullet_left.speed
             y_component = math.sin(math.radians(self.turret.angle - 10)) * bullet_left.speed
             bullet_left.set_velocity((x_component, y_component))
-            sprites.entity_list.append(bullet_left)
+            sprites.bullet_list.append(bullet_left)
             # Right
             x_component = math.cos(math.radians(self.turret.angle + 10)) * bullet_right.speed
             y_component = math.sin(math.radians(self.turret.angle + 10)) * bullet_right.speed
             bullet_right.set_velocity((x_component, y_component))
-            sprites.entity_list.append(bullet_right)
+            sprites.bullet_list.append(bullet_right)
             for bullet in [bullet_left, bullet_middle, bullet_right]:
-                bullet.physics_engine_setup(sprites.all_blocks_list)
+                bullet.physics_engine_setup([sprites.all_blocks_list, sprites.entity_list])
 
     def draw(self) -> None:
         self.turret.draw()
