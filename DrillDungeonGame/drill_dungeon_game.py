@@ -17,7 +17,7 @@ SCREEN_HEIGHT = 600
 MAP_WIDTH = 2400
 MAP_HEIGHT = 2400
 SCREEN_TITLE = "Welcome to the Drill Dungeon"
-VIEWPOINT_MARGIN = 40
+VIEWPOINT_MARGIN = 120
 
 
 class View:
@@ -76,7 +76,6 @@ class DrillDungeonGame(arcade.Window):
                                        all_blocks_list=all_blocks_list,
                                        destructible_blocks_list=destructible_blocks_list,
                                        indestructible_blocks_list=indestructible_blocks_list)
-        self.sprites.drill.physics_engine_setup([self.sprites.border_wall_list])
         self.sprites.entity_list.append(SpaceshipEnemy(200, 200, 200, 0.7))
 
         for entity in (*self.sprites.entity_list, self.sprites.drill):
