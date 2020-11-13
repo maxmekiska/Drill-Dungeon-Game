@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Callable, Union, Dict, Tuple
 
-import arcade
 import math
 
 
@@ -36,4 +35,5 @@ class ControllableMixin:
 
         x, y = x * self.speed, y * self.speed
         self.set_velocity((x, y))
-        self.look_at(self.center_x + x, self.center_y + y)
+        if x != 0 or y != 0:
+            self.look_at(self.center_x + x, self.center_y + y)
