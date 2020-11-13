@@ -252,31 +252,6 @@ class DrillDungeonGame(arcade.Window):
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         self.sprites.drill.shoot(self.firing_mode)
-        # TODO remove this
-        # bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", 0.4)
-        #
-        # start_x = self.sprites.drill.turret.center_x
-        # start_y = self.sprites.drill.turret.center_y
-        # bullet.center_x = start_x
-        # bullet.center_y = start_y
-        #
-        # dest_x = x + self.view_left
-        # dest_y = y + self.view_bottom
-        #
-        # x_diff = dest_x - start_x
-        # y_diff = dest_y - start_y
-        # angle = math.atan2(y_diff, x_diff)
-        #
-        # bullet.angle = math.degrees(angle)
-        #
-        # # bullet speed at the end
-        # bullet.change_x = math.cos(angle) * 7
-        # bullet.change_y = math.sin(angle) * 7
-        #
-        # # limited ammunition
-        # if self.sprites.drill.ammunition > 0:
-        #     self.sprites.bullet_list.append(bullet)  # if empty, no more bullets append to bullet_list, no shooting
-        #     self.sprites.drill.ammunition = self.sprites.drill.ammunition - 1
 
     def update_map_view(self) -> None:
         # Check if the drill has reached the edge of the box
