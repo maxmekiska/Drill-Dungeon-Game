@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Union
+
 from ..entity import Entity
 from ..mixins.digging_mixin import DiggingMixin
 from ..mixins.shooting_mixin import ShootingMixin
@@ -8,7 +10,9 @@ from ...inventory import Inventory
 
 
 class Drill(Entity, ShootingMixin, DiggingMixin, ControllableMixin):
-    def __init__(self, center_x=64, center_y=128, speed=1, ammunition=50, distance_moved=0, coal=100, gold=0):
+    def __init__(self, center_x: Union[float, int] = 64, center_y: Union[float, int] = 128,
+                 speed: Union[float, int] = 1, ammunition: int = 50, distance_moved: Union[float, int] = 0,
+                 coal: int = 100, gold: int = 0) -> None:
         base_sprite: str = "resources/images/drills/drill_v2_2.png"
         turret_sprite: str = "resources/images/weapons/turret1.png"
         sprite_scale = 0.3

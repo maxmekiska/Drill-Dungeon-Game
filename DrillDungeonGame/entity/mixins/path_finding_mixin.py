@@ -27,7 +27,7 @@ class PathFindingMixin:
     look_at: Callable[[float, float], None]
     stop_moving: Callable[[None], None]
 
-    def __init__(self, vision: Union[float, int]):
+    def __init__(self, vision: Union[float, int]) -> None:
         self.vision = vision  # How far the path finding can see.
 
     def path_to_entity(self, entity: Entity, blocking_sprites: arcade.SpriteList,

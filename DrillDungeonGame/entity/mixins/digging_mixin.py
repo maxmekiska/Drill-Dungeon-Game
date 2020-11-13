@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class DiggingMixin:
     sprite_list: arcade.SpriteList
 
-    def update(self, time: float, sprites: SpriteContainer):
+    def update(self, time: float, sprites: SpriteContainer) -> None:
         """dirt_wall_list, the list of mineable blocks."""
         blocks_to_remove = []
         destructible_blocks = sprites.destructible_blocks_list

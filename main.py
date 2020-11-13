@@ -2,7 +2,7 @@ import arcade
 from DrillDungeonGame.drill_dungeon_game import DrillDungeonGame
 
 
-def main():
+def main() -> None:
     window = DrillDungeonGame()
     window.setup()
     arcade.run()

@@ -46,7 +46,7 @@ SMOKE_CHANCE = 0.25
 
 class Smoke(arcade.SpriteCircle):
     """ Creation of smoke when block is hit, only used for coal blocks """
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         super().__init__(size, arcade.color.BLACK, soft=True)
         self.change_y = SMOKE_RISE_RATE
         self.scale = SMOKE_START_SCALE
@@ -93,7 +93,7 @@ class ParticleDirt(arcade.SpriteCircle):
         # What list do we add smoke particles to?
         self.my_list = my_list
 
-    def update(self):
+    def update(self) -> None:
         """ Update the particle """
         if self.my_alpha <= PARTICLE_FADE_RATE:
             # Faded out, remove
@@ -104,9 +104,8 @@ class ParticleDirt(arcade.SpriteCircle):
             self.alpha = self.my_alpha
             self.center_x += self.change_x
             self.center_y += self.change_y
-           
 
-    def draw(self):
+    def draw(self) -> None:
         for item in self.sprite_list:
             item.draw()
             
@@ -126,7 +125,7 @@ class ParticleCoal(arcade.SpriteCircle):
         self.my_alpha = 255
         self.my_list = my_list
 
-    def update(self):
+    def update(self) -> None:
         """ Update the particle """
         if self.my_alpha <= PARTICLE_FADE_RATE:
             self.remove_from_sprite_lists()
@@ -142,14 +141,14 @@ class ParticleCoal(arcade.SpriteCircle):
                 smoke.position = self.position
                 self.my_list.append(smoke)
                 
-    def draw(self):
+    def draw(self) -> None:
         for item in self.sprite_list:
             item.draw()
 
 
 class ParticleGold(arcade.SpriteCircle):
     """ Explosion particle for gold blocks """
-    def __init__(self, my_list):
+    def __init__(self, my_list) -> None:
         color = random.choice(PARTICLE_COLORS_GOLD)
         super().__init__(PARTICLE_RADIUS, color)
         self.normal_texture = self.texture
@@ -161,7 +160,7 @@ class ParticleGold(arcade.SpriteCircle):
         self.my_alpha = 255
         self.my_list = my_list
 
-    def update(self):
+    def update(self) -> None:
         """ Update the particle """
         if self.my_alpha <= PARTICLE_FADE_RATE:
             self.remove_from_sprite_lists()
@@ -178,6 +177,6 @@ class ParticleGold(arcade.SpriteCircle):
             else:
                 self.texture = self.normal_texture
 
-    def draw(self):
+    def draw(self) -> None:
         for item in self.sprite_list:
             item.draw()

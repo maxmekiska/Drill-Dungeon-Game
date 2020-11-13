@@ -46,14 +46,14 @@ class Entity(arcade.Sprite):
             sprite.change_x = vector[0]
             sprite.change_y = vector[1]
 
-    def update_physics_engine(self, time: float, sprites: SpriteContainer):
+    def update_physics_engine(self, time: float, sprites: SpriteContainer) -> None:
         """This is called from the entity.update() function. It handles all collisions for this entity
         in each iteration. If there is a collision, update() returns a list of collisions. Override this function
         in any entity subclass to implement any logic."""
         for engine in self._physics_engines:
             engine.update()
 
-    def physics_engine_setup(self, collidables: List[arcade.SpriteList]):
+    def physics_engine_setup(self, collidables: List[arcade.SpriteList]) -> None:
         """If there is any collision which needs to take place with this entity. We need to setup a physics engine
         for it. The physics engine will return a list containing other sprites it collided with when you call the
         update() function on it. We call this in the update_physics_engine() function."""
@@ -61,7 +61,7 @@ class Entity(arcade.Sprite):
             for collidable_list in collidables:
                 self._physics_engines.append(arcade.PhysicsEngineSimple(sprite, collidable_list))
 
-    def stop_moving(self):
+    def stop_moving(self) -> None:
         """Call this to change the velocity of the entity to 0. (Stops moving)"""
         self.set_velocity((0.0, 0.0))
 

@@ -15,7 +15,7 @@ class ControllableMixin:
     change_x: float
     change_y: float
 
-    def handle_key_press_release(self, keys: Dict[str, bool]):
+    def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
         """Handles how the Entity should move/rotate. Handles 8-way directional wasd movement.
         We sum up the x, y velocity vector for each corresponding key press.
         This has the BIG benefit of making two keys opposite in direction (w,s) and (a,d) cancelling out, but
