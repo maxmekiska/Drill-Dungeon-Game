@@ -225,9 +225,11 @@ class DrillDungeonGame(arcade.Window):
                 entity.handle_key_press_release(self.keys_pressed)
 
         if self.keys_pressed['T']:
+            # Drill down to the next layer.
             self.drill_down = True
 
         if self.keys_pressed['B']:
+            # Change firing mode.
             if self.firing_mode == ShotType.BUCKSHOT:
                 self.firing_mode = ShotType.SINGLE
             elif self.firing_mode == ShotType.SINGLE:
@@ -299,7 +301,9 @@ class DrillDungeonGame(arcade.Window):
 
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
-        """ Movement and game logic """
+        """This function is called by the arcade library every iteration (or frame).
+        Delta time is the time since the last iteration. We can add these up each time this function is called
+        to get the 'running time' of the game."""
         self.frame += 1
         self.time += delta_time
 

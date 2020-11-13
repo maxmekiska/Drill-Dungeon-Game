@@ -31,7 +31,7 @@ class Entity(arcade.Sprite):
         self._physics_engines = []
 
     def has_line_of_sight_with(self, entity: Entity, blocking_sprites: arcade.SpriteList) -> bool:
-        """Returns True is this class has line of site with another given entity."""
+        """Returns True is this class has line of site with another given entity, given a list of obstacles."""
         return arcade.has_line_of_sight(self.position, entity.position, blocking_sprites)
 
     def look_at(self, x: float, y: float) -> None:
@@ -41,23 +41,29 @@ class Entity(arcade.Sprite):
             sprite.angle = math.degrees(math.atan2(y_diff, x_diff))
 
     def set_velocity(self, vector: Tuple[float, float]) -> None:
+        """Sets the velocity of this entity to the corresponding vector."""
         for sprite in self.sprite_list:
             sprite.change_x = vector[0]
             sprite.change_y = vector[1]
 
     def update_physics_engine(self, time: float, sprites: SpriteContainer):
+        """This is called from the entity.update() function. It handles all collisions for this entity
+        in each iteration. If there is a collision, update() returns a list of collisions. Override this function
+        in any entity subclass to implement any logic."""
         for engine in self._physics_engines:
             engine.update()
 
     def physics_engine_setup(self, collidables: List[arcade.SpriteList]):
+        """If there is any collision which needs to take place with this entity. We need to setup a physics engine
+        for it. The physics engine will return a list containing other sprites it collided with when you call the
+        update() function on it. We call this in the update_physics_engine() function."""
         for sprite in self.sprite_list:
             for collidable_list in collidables:
                 self._physics_engines.append(arcade.PhysicsEngineSimple(sprite, collidable_list))
 
     def stop_moving(self):
-        for sprite in self.sprite_list:
-            sprite.change_x = 0
-            sprite.change_y = 0
+        """Call this to change the velocity of the entity to 0. (Stops moving)"""
+        self.set_velocity((0.0, 0.0))
 
     def draw(self) -> None:
         """
