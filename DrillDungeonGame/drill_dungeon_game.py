@@ -24,13 +24,52 @@ class View:
     def __init__(self) -> None:
         self.left_offset = 0
         self.bottom_offset = 0
+        self._centre_sprite = None
         # TODO store the width/height of the screen. This can then be passed to the Entity.update() function
+
+    def update(self, centre_sprite: arcade.Sprite) -> None:
+        # Check if the drill has reached the edge of the box
+        self._centre_sprite = centre_sprite
+        changed = any((self.check_for_scroll_left(), self.check_for_scroll_right(),
+                      self.check_for_scroll_up(), self.check_for_scroll_down()))
+
+        self.left_offset = int(self.left_offset)
+        self.bottom_offset = int(self.bottom_offset)
+
+        if changed:
+            arcade.set_viewport(self.left_offset, SCREEN_WIDTH + self.left_offset,
+                                self.bottom_offset, SCREEN_HEIGHT + self.bottom_offset)
+
+    def check_for_scroll_left(self) -> bool:
+        left_boundary = self.left_offset + VIEWPOINT_MARGIN
+        if self._centre_sprite.left < left_boundary:
+            self.left_offset -= left_boundary - self._centre_sprite.left
+            return True
+        return False
+
+    def check_for_scroll_right(self) -> bool:
+        right_boundary = self.left_offset + SCREEN_WIDTH - VIEWPOINT_MARGIN
+        if self._centre_sprite.right > right_boundary:
+            self.left_offset += self._centre_sprite.right - right_boundary
+            return True
+        return False
+
+    def check_for_scroll_up(self) -> bool:
+        top_boundary = self.bottom_offset + SCREEN_HEIGHT - VIEWPOINT_MARGIN
+        if self._centre_sprite.top > top_boundary:
+            self.bottom_offset += self._centre_sprite.top - top_boundary
+            return True
+        return False
+
+    def check_for_scroll_down(self) -> bool:
+        bottom_boundary = self.bottom_offset + VIEWPOINT_MARGIN
+        if self._centre_sprite.bottom < bottom_boundary:
+            self.bottom_offset -= bottom_boundary - self._centre_sprite.bottom
+            return True
+        return False
 
 
 class DrillDungeonGame(arcade.Window):
-    """
-    Basic map class
-    """
     # This builds a dictionary of all possible keys that arcade can register as 'pressed'.
     # They unfortunately don't have another method to get this, and populating it before init is not taxing.
     possible_keys = {value: key for key, value in arcade.key.__dict__.items() if not key.startswith('_')}
@@ -228,7 +267,7 @@ class DrillDungeonGame(arcade.Window):
             # Drill down to the next layer.
             self.drill_down = True
 
-        if self.keys_pressed['B']:
+        elif self.keys_pressed['B']:
             # Change firing mode.
             if self.firing_mode == ShotType.BUCKSHOT:
                 self.firing_mode = ShotType.SINGLE
@@ -256,49 +295,6 @@ class DrillDungeonGame(arcade.Window):
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         self.sprites.drill.shoot(self.firing_mode)
 
-    def update_map_view(self) -> None:
-        # Check if the drill has reached the edge of the box
-        changed = False
-        changed = self.check_for_scroll_left(changed)
-        changed = self.check_for_scroll_right(changed)
-        changed = self.check_for_scroll_up(changed)
-        changed = self.check_for_scroll_down(changed)
-
-        self.view.left_offset = int(self.view.left_offset)
-        self.view.bottom_offset = int(self.view.bottom_offset)
-
-        if changed:
-            arcade.set_viewport(self.view.left_offset, SCREEN_WIDTH + self.view.left_offset,
-                                self.view.bottom_offset, SCREEN_HEIGHT + self.view.bottom_offset)
-
-    def check_for_scroll_left(self, changed: bool) -> bool:
-        left_boundary = self.view.left_offset + VIEWPOINT_MARGIN
-        if self.sprites.drill.left < left_boundary:
-            self.view.left_offset -= left_boundary - self.sprites.drill.left
-            changed = True
-        return changed
-
-    def check_for_scroll_right(self, changed: bool) -> bool:
-        right_boundary = self.view.left_offset + SCREEN_WIDTH - VIEWPOINT_MARGIN
-        if self.sprites.drill.right > right_boundary:
-            self.view.left_offset += self.sprites.drill.right - right_boundary
-            changed = True
-        return changed
-
-    def check_for_scroll_up(self, changed: bool) -> bool:
-        top_boundary = self.view.bottom_offset + SCREEN_HEIGHT - VIEWPOINT_MARGIN
-        if self.sprites.drill.top > top_boundary:
-            self.view.bottom_offset += self.sprites.drill.top - top_boundary
-            changed = True
-        return changed
-
-    def check_for_scroll_down(self, changed: bool) -> bool:
-        bottom_boundary = self.view.bottom_offset + VIEWPOINT_MARGIN
-        if self.sprites.drill.bottom < bottom_boundary:
-            self.view.bottom_offset -= bottom_boundary - self.sprites.drill.bottom
-            changed = True
-        return changed
-
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
         """This function is called by the arcade library every iteration (or frame).
@@ -308,7 +304,7 @@ class DrillDungeonGame(arcade.Window):
         self.time += delta_time
 
         # Check for side scrolling
-        self.update_map_view()
+        self.view.update(self.sprites.drill)
 
         # TODO move this into entities.Drill.update(). We need to pass view as a param to update()
         self.sprites.drill.aim(self.mouse_position[0] + self.view.left_offset,

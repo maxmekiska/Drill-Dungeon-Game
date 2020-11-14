@@ -1,7 +1,3 @@
-"""
-Module to create drill and control its specifications
-such as speed.
-"""
 from __future__ import annotations
 
 from typing import Tuple, Union, List
@@ -81,7 +77,7 @@ class Entity(arcade.Sprite):
         pet, but in two different classes with a single method available in any subclass of Entity. This normal
         order isn't suited for our needs and this code here provides means to call the draw method in ALL parent
         classes of any given subclass of this (Entity) class. That's what this does.
-        Also note: The `not issubclass(parent, Entity)` prevents recursion.
+        Also note: The `not issubclass(parent, arcade.Sprite)` prevents recursion.
         TLDR: If you override this method in a subclass of Entity, MAKE SURE TO CALL super().update()
         """
         self.sprite_list.draw()

@@ -20,14 +20,9 @@ class DiggingMixin:
         for block in blocks_to_remove:
             if hasattr(self, 'inventory'):
                 if block in sprites.coal_list:
-                    block.remove_from_sprite_lists()
                     self.inventory.coal += 1  # We found coal!
 
                 elif block in sprites.gold_list:
-                    block.remove_from_sprite_lists()
                     self.inventory.gold += 1  # We found gold!
-
-                elif block in sprites.destructible_blocks_list:
-                    block.remove_from_sprite_lists()
 
             block.remove_from_sprite_lists()

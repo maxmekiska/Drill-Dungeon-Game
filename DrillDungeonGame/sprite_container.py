@@ -20,8 +20,9 @@ class SpriteContainer:
         self.entity_list = entity_list
         self.bullet_list = bullet_list
 
-        # NOTE: The following sprite lists contain duplicates of sprites that will exist in sprite lists detailed above.
         self.drill = drill
+
+        # NOTE: The following sprite lists contain duplicates of sprites that will exist in sprite lists detailed above.
         self.all_blocks_list = all_blocks_list
         self.destructible_blocks_list = destructible_blocks_list
         self.indestructible_blocks_list = indestructible_blocks_list
