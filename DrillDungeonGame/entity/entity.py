@@ -83,7 +83,7 @@ class Entity(arcade.Sprite):
         self.sprite_list.draw()
 
         for mixin in self.__class__.__mro__:
-            if hasattr(mixin, 'draw') and not issubclass(mixin, Entity):
+            if hasattr(mixin, 'draw') and not issubclass(mixin, arcade.Sprite):
                 mixin.draw(self)
 
     # noinspection PyMethodOverriding
