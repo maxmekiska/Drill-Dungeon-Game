@@ -30,8 +30,8 @@ class View:
     def update(self, centre_sprite: arcade.Sprite) -> None:
         # Check if the drill has reached the edge of the box
         self._centre_sprite = centre_sprite
-        changed = any((self.check_for_scroll_left(), self.check_for_scroll_right(),
-                      self.check_for_scroll_up(), self.check_for_scroll_down()))
+        changed = any((self._check_for_scroll_left(), self._check_for_scroll_right(),
+                      self._check_for_scroll_up(), self._check_for_scroll_down()))
 
         self.left_offset = int(self.left_offset)
         self.bottom_offset = int(self.bottom_offset)
@@ -40,28 +40,28 @@ class View:
             arcade.set_viewport(self.left_offset, SCREEN_WIDTH + self.left_offset,
                                 self.bottom_offset, SCREEN_HEIGHT + self.bottom_offset)
 
-    def check_for_scroll_left(self) -> bool:
+    def _check_for_scroll_left(self) -> bool:
         left_boundary = self.left_offset + VIEWPOINT_MARGIN
         if self._centre_sprite.left < left_boundary:
             self.left_offset -= left_boundary - self._centre_sprite.left
             return True
         return False
 
-    def check_for_scroll_right(self) -> bool:
+    def _check_for_scroll_right(self) -> bool:
         right_boundary = self.left_offset + SCREEN_WIDTH - VIEWPOINT_MARGIN
         if self._centre_sprite.right > right_boundary:
             self.left_offset += self._centre_sprite.right - right_boundary
             return True
         return False
 
-    def check_for_scroll_up(self) -> bool:
+    def _check_for_scroll_up(self) -> bool:
         top_boundary = self.bottom_offset + SCREEN_HEIGHT - VIEWPOINT_MARGIN
         if self._centre_sprite.top > top_boundary:
             self.bottom_offset += self._centre_sprite.top - top_boundary
             return True
         return False
 
-    def check_for_scroll_down(self) -> bool:
+    def _check_for_scroll_down(self) -> bool:
         bottom_boundary = self.bottom_offset + VIEWPOINT_MARGIN
         if self._centre_sprite.bottom < bottom_boundary:
             self.bottom_offset -= bottom_boundary - self._centre_sprite.bottom
