@@ -6,18 +6,26 @@ file type, depending on how performance is affected.
 import random
 import numpy as np
 
+
+
+MAP_WIDTH = 2400
+MAP_HEIGHT = 2400
+
+
+
 class MapLayer:
     """ 
     A class that holds a single map layer 
     """
 
-    def __init__(self, height=200, width=200, meanDungeonSize=40, meanCoalSize=5, meanGoldSize=5): # added meanCoalSize, meanGoldSize parameter
+    def __init__(self, height=128, width=128, meanDungeonSize=40, meanCoalSize=5, meanGoldSize=5): # added meanCoalSize, meanGoldSize parameter
         self.mapLayerMatrix = []
         self.height = height 
         self.width = width
         self.meanDungeonSize = meanDungeonSize
         self.meanCoalSize = meanCoalSize # coal
         self.meanGoldSize = meanGoldSize # gold 
+        self.map_layer_configuration = []
 
     def __repr__(self):
         """
@@ -30,11 +38,33 @@ class MapLayer:
             mapLayerMatrixString += "\n"
         return mapLayerMatrixString
 
+
+    def generate_map_layer_configuration(self):
+        """
+        Generates a map layer matrix that includes the coordinates of each item
+        """
+        block_height = MAP_HEIGHT / self.height
+        block_width = MAP_WIDTH / self.width
+
+        y_block_center = 0.5 * block_height
+        for row in self.mapLayerMatrix:
+            configuration_row = self.load_row_from_matrix(row, y_block_center, block_width, block_height)
+            self.map_layer_configuration.append(configuration_row)
+            y_block_center += block_height
+            
+    def load_row_from_matrix(self, row, y_block_center, block_width, block_height) -> list:
+        x_block_center = 0.5 * block_width
+        configuration_row = []
+        for item in row:
+            configuration_row.append((item, x_block_center, y_block_center))
+            x_block_center += block_width
+        return configuration_row
+
     def generate_dungeon(self):
         """
         Generates a.mapLayerMatrix on the map. Current issues are: it can repeat certain steps
         """
-        x, y = self.generate_dungeon_start_point()
+        x, y = self.generate_random_start_point()
         dungeonSize = self.generate_dungeon_size()
         while dungeonSize > 0:
             if self.mapLayerMatrix[y][x] != ' ':
@@ -47,7 +77,7 @@ class MapLayer:
         """
         Generates a.mapLayerMatrix on the map. Current issues are: it can repeat certain steps
         """
-        x, y = self.generate_coal_start_point()
+        x, y = self.generate_random_start_point()
         dungeonSize = self.generate_coal_size()
         while dungeonSize > 0:
             if self.mapLayerMatrix[y][x] != 'C':
@@ -57,7 +87,7 @@ class MapLayer:
             x, y = self.update_dungeon_coords(x, y, walkDirection)
             
     def generate_gold(self): # gold
-        x, y = self.generate_coal_start_point()
+        x, y = self.generate_random_start_point()
         dungeonSize = self.generate_coal_size()
         while dungeonSize > 0:
             if self.mapLayerMatrix[y][x] != 'G':
@@ -98,7 +128,7 @@ class MapLayer:
             row.append('X')
         self.mapLayerMatrix.append(row)
            
-    def generate_dungeon_start_point(self):
+    def generate_random_start_point(self):
         """
         Generates the location of the first block in the.mapLayerMatrix
         --------------------------------------------------------
@@ -109,32 +139,6 @@ class MapLayer:
         startX = random.randint(0, self.width - 1)
         startY = random.randint(0, self.height - 1)
         return startX, startY
-
-
-    def generate_coal_start_point(self): # might be possible to refactor
-        """
-        Generates the location of the first block in the.mapLayerMatrix
-        --------------------------------------------------------
-        Returns
-        int startX : The x coordinate of the first block in the.mapLayerMatrix
-        int startY : The y coordinate of the first block in the.mapLayerMatrix
-        """
-        startX = random.randint(0, self.width - 1)
-        startY = random.randint(0, self.height - 1)
-        return startX, startY
-        
-    def generate_gold_start_point(self): # might be possible ot refactor
-        """
-        Generates the location of the first block in the.mapLayerMatrix
-        --------------------------------------------------------
-        Returns
-        int startX : The x coordinate of the first block in the.mapLayerMatrix
-        int startY : The y coordinate of the first block in the.mapLayerMatrix
-        """
-        startX = random.randint(0, self.width - 1)
-        startY = random.randint(0, self.height - 1)
-        return startX, startY
-
 
     def generate_dungeon_size(self):
         """
@@ -234,3 +238,5 @@ class MapLayer:
             return random.choice([1,2,3])
         else:   
             return random.choice([0, 1, 2, 3]) 
+
+

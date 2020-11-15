@@ -6,7 +6,7 @@ from ..entity import Entity
 from ..mixins.digging_mixin import DiggingMixin
 from ..mixins.shooting_mixin import ShootingMixin
 from ..mixins.controllable_mixin import ControllableMixin
-from ...inventory import Inventory
+from ..inventory import Inventory
 
 
 class Drill(Entity, ShootingMixin, DiggingMixin, ControllableMixin):

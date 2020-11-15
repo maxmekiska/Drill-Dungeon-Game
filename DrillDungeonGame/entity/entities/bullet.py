@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Union
 
-from DrillDungeonGame.entity.entity import Entity
-from DrillDungeonGame.particles.explosion import ParticleGold, PARTICLE_COUNT, Smoke, ParticleCoal, ParticleDirt
+from entity.entity import Entity
+from particles.explosion import ParticleGold, PARTICLE_COUNT, Smoke, ParticleCoal, ParticleDirt
 
 
 class Bullet(Entity):
