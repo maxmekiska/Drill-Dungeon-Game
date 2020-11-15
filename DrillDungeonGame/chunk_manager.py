@@ -1,13 +1,20 @@
 from __future__ import annotations
 
+
 from sprite_container.py import SpriteContainer
 import numpy as np
+from map.dungeon_generator import *
 
 
+mapLayer = MapLayer()
+mapLayer.generate_blank_map()
+
+cmanager = ChunkManager(mapLayer.mapLayerMatrix)
+cmanager._load_chunks_from_map_config(mapLayer.mapLayerMatrix, 25)
 
 class Chunk:
 
-    def __init__(self, chunk_matrix: list, chunk_sprites: SpriteContainer, x_boundaries: tuple, y_boundaries: tuple)
+    def __init__(self, chunk_matrix: list, chunk_sprites: SpriteContainer, x_boundaries: tuple, y_boundaries: tuple):
         self.chunk_matrix = chunk_matrix
         self.chunk_sprites = chunk_sprites
         self.x_boundaries = x_boundaries
@@ -48,9 +55,27 @@ class ChunkManager:
         map_layer_width = len(map_layer_matrix[0])
         chunk_height = int(map_layer_height / np.sqrt(n_chunks))
         chunk_width = int(map_layer_width / np.sqrt(n_chunks))
+        x_start = 0
+        y_start = 0
         for i in range(n_chunks):
-            #need to go
+            current_chunk = self._load_single_chunk(map_layer_matrix, x_start, y_start, chunk_height, chunk_width)
+            self.chunks_dictionary[i] = current_chunk
+            x_start += chunk_width
+            if x_start > map_layer_height:
+                y_start += chunk_height
+                x_start = 0
 
+        
+
+    def _load_single_chunk(self, map_layer_matrix, x_start, y_start, chunk_height, chunk_width):
+        """
+        Returns a single chunk
+        """
+        chunk = []
+        for i in range(y_start, chunk_height + y_start - 1):
+            chunk_row = map_layer_matrix[i][x_start : x_start + chunk_width - 1]
+            chunk.append(chunk_row)
+        return chunk
 
     def load_map_layer_from_matrix(self, map_layer_matrix) -> None:
         map_layer_height = len(map_layer_matrix)
