@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Union
 
-from entity.entity import Entity
-from particles.explosion import ParticleGold, PARTICLE_COUNT, Smoke, ParticleCoal, ParticleDirt
+from DrillDungeonGame.entity.entity import Entity
+from DrillDungeonGame.particles.explosion import ParticleGold, PARTICLE_COUNT, Smoke, ParticleCoal, ParticleDirt
 
 
 class Bullet(Entity):
@@ -16,8 +16,9 @@ class Bullet(Entity):
     def update_physics_engine(self, time: float, sprites) -> None:
         """Override default handling of the physics engine."""
         for engine in self._physics_engines:
+            print(engine)
             collision_list = engine.update()
-
+            print(collision_list)
             for block in collision_list:
                 if block in sprites.gold_list:
                     for i in range(PARTICLE_COUNT):
