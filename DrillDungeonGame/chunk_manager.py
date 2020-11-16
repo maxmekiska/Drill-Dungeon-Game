@@ -20,26 +20,26 @@ class Chunk:
             for item in row:
                 if item[0] == 'X':  # Dirt
                     wall_sprite = arcade.Sprite(":resources:images/tiles/grassCenter.png", 0.18)
-                    wall_sprite.center_x = row[1] 
-                    wall_sprite.center_y = row[2]
+                    wall_sprite.center_x = item[1] 
+                    wall_sprite.center_y = item[2]
                     self.chunk_sprites.dirt_list.append(wall_sprite)
                     self.chunk_sprites.destructible_blocks_list.append(wall_sprite)
                 if item == 'C':  # Coal
                     wall_sprite = arcade.Sprite("resources/images/material/Coal_square.png", 0.03)
-                    wall_sprite.center_x = row[1] 
-                    wall_sprite.center_y = row[2]
+                    wall_sprite.center_x = item[1] 
+                    wall_sprite.center_y = item[2]
                     self.chunk_sprites.coal_list.append(wall_sprite)
                     self.chunk_sprites.destructible_blocks_list.append(wall_sprite)
                 if item == 'G':  # Gold
                     wall_sprite = arcade.Sprite("resources/images/material/Gold_square.png", 0.03)
-                    wall_sprite.center_x = row[1] 
-                    wall_sprite.center_y = row[2]
+                    wall_sprite.center_x = item[1] 
+                    wall_sprite.center_y = item[2]
                     self.chunk_sprites.gold_list.append(wall_sprite)
                     self.chunk_sprites.destructible_blocks_list.append(wall_sprite)
                 if item == 'O':  # Border block.
                     wall_sprite = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.18)
-                    wall_sprite.center_x = row[1] 
-                    wall_sprite.center_y = row[2]
+                    wall_sprite.center_x = item[1] 
+                    wall_sprite.center_y = item[2]
                     self.chunk_sprites.border_wall_list.append(wall_sprite)
                     self.chunk_sprites.indestructible_blocks_list.append(wall_sprite)
 

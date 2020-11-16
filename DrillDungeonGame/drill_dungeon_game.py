@@ -108,7 +108,7 @@ class DrillDungeonGame(arcade.Window):
         all_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         destructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         indestructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
-
+        self.sprites  = SpriteContainer(drill, dirt_list, border_wall_list, coal_list, gold_list, explosion_list, entity_list, bullet_list, all_blocks_list, destructible_blocks_list, indestructible_blocks_list)
 
         # Initialize the map layer with some dungeon
         map_layer = MapLayer()
@@ -129,15 +129,10 @@ class DrillDungeonGame(arcade.Window):
         
         cmanager = ChunkManager(map_layer.map_layer_configuration)
         cmanager._load_chunks_from_map_config(map_layer.map_layer_configuration)
-        self.sprites = cmanager.chunks_dictionary[0].chunk_sprites
-        self.sprites.entity_list.append(SpaceshipEnemy(200, 200, 200, 0.7))
+        for active_chunk in cmanager.active_chunks:
+            self.sprites.extend(cmanager.chunks_dictionary[active_chunk].chunk_sprites)
         for entity in (*self.sprites.entity_list, self.sprites.drill):
             entity.physics_engine_setup([self.sprites.border_wall_list])
-        """
-        for active_chunk in cmanager.active_chunks:
-            cmanager.chunks_dictionary[active_chunk].load_chunk_sprites()
-            self.sprites += cmanager.chunks_dictionary[active_chunk].chunk_sprites
-        """
 
 
         # Set viewpoint boundaries - where the drill currently has scrolled to

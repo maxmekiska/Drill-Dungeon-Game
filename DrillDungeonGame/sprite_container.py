@@ -27,26 +27,24 @@ class SpriteContainer:
         self.destructible_blocks_list = destructible_blocks_list
         self.indestructible_blocks_list = indestructible_blocks_list
 
-    def __add__(self, other):
+    def extend(self, other):
         """
         Defines addition behaviour of the class. Should return new instance fo SpriteContainer
         with the two sprite lists added up basically
         """
-        new_dirt_list = self.dirt_list.extend(other.dirt_list)
-        new_border_wall_list = self.border_wall_list.extend(other.border_wall_list)
-        new_coal_list = self.coal_list.extend(other.coal_list)
-        new_gold_list = self.gold_list.extend(other.gold_list)
-        new_explosion_list = self.explosion_list.extend(other.explosion_list)
-        new_entity_list = self.entity_list.extend(other.entity_list)
-        new_bullet_list = self.bullet_list.extend(other.bullet_list)
+        self.dirt_list.extend(other.dirt_list)
+        self.border_wall_list.extend(other.border_wall_list)
+        self.coal_list.extend(other.coal_list)
+        self.gold_list.extend(other.gold_list)
+        self.explosion_list.extend(other.explosion_list)
+        self.entity_list.extend(other.entity_list)
+        self.bullet_list.extend(other.bullet_list)
 
-        new_drill = self.drill #unchanged
 
-        new_all_blocks_list = self.all_blocks_list.extend(other.all_blocks_list)
-        new_destructible_blocks_list = self.destructible_blocks_list.extend(other.destructible_blocks_list)
-        new_indestructible_blocks_list = self.indestructible_blocks_list.extend(other.indestructible_blocks_list)
-        return SpriteContainer(new_drill, new_dir_list, new_border_wall_list, new_coal_list, new_gold_list, new_explosion_list, new_entity_list, new_bullet_list, new_all_blocks_list, new_destructible_blocks_list, new_indestructible_blocks_list)
-
+        self.all_blocks_list.extend(other.all_blocks_list)
+        self.destructible_blocks_list.extend(other.destructible_blocks_list)
+        self.indestructible_blocks_list.extend(other.indestructible_blocks_list)
+        
 
 
     @property
