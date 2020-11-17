@@ -156,6 +156,8 @@ class DrillDungeonGame(arcade.Window):
         self.current_layer += 1
         self.update_map_configuration()
 
+        self.reload_chunks()
+
         arcade.start_render()
         self.sprites.dirt_list.draw()
         self.sprites.border_wall_list.draw()
@@ -308,10 +310,9 @@ class DrillDungeonGame(arcade.Window):
         self.cmanager._update_chunks(self.sprites.drill.center_x, self.sprites.drill.center_y)
         self.sprites = SpriteContainer(self.sprites.drill, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), self.sprites.entity_list, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList())
         #The above line may cause issues down the road with combat, will need to change what goes into the all_blocks_list
-        print("RELOADING CHUNKS")
         for active_chunk in self.cmanager.active_chunks:
             self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
-        for entity in (*self.sprites.entity_list, self.sprites.drill):
+        for entity in self.sprites.entity_list:
             entity.physics_engine_setup([self.sprites.border_wall_list])
 
 
@@ -349,7 +350,7 @@ class DrillDungeonGame(arcade.Window):
 
         # TODO don't use frame as measure of doing task every x loops. Store a variable in each entity class such
         # as last_updated. We can iterate over all entities and check when entity tasks were last updated.
-        if self.frame % 100 == 0:
+        if self.frame % 300 == 0: #TODO Create better way of determining when to update
             self.reload_chunks()
         if self.frame % 30 == 0:  # Do something every 30 frames.
             for entity in self.sprites.entity_list:
