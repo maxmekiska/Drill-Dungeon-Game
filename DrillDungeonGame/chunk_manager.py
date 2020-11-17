@@ -25,21 +25,21 @@ class Chunk:
                     self.chunk_sprites.dirt_list.append(wall_sprite)
                     self.chunk_sprites.destructible_blocks_list.append(wall_sprite)
                     self.chunk_sprites.all_blocks_list.append(wall_sprite)
-                if item == 'C':  # Coal
+                if item[0] == 'C':  # Coal
                     wall_sprite = arcade.Sprite("resources/images/material/Coal_square.png", 0.03)
                     wall_sprite.center_x = item[1] 
                     wall_sprite.center_y = item[2]
                     self.chunk_sprites.coal_list.append(wall_sprite)
                     self.chunk_sprites.destructible_blocks_list.append(wall_sprite)
                     self.chunk_sprites.all_blocks_list.append(wall_sprite)
-                if item == 'G':  # Gold
+                if item[0] == 'G':  # Gold
                     wall_sprite = arcade.Sprite("resources/images/material/Gold_square.png", 0.03)
                     wall_sprite.center_x = item[1] 
                     wall_sprite.center_y = item[2]
                     self.chunk_sprites.gold_list.append(wall_sprite)
                     self.chunk_sprites.destructible_blocks_list.append(wall_sprite)
                     self.chunk_sprites.all_blocks_list.append(wall_sprite)
-                if item == 'O':  # Border block.
+                if item[0] == 'O':  # Border block.
                     wall_sprite = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.18)
                     wall_sprite.center_x = item[1] 
                     wall_sprite.center_y = item[2]
@@ -53,7 +53,7 @@ class ChunkManager:
         self.chunks_dictionary = {}
         self.number_of_chunks = number_of_chunks
         self.chunk_side_length = chunk_side_length
-        self.active_chunks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] #list of all currently active chunks by dict index
+        self.active_chunks = [0, 1, 2] #list of all currently active chunks by dict index
         self._load_chunks_from_map_config(map_layer_matrix)
 
     def _update_chunks(self):
