@@ -77,6 +77,7 @@ class DrillDungeonGame(arcade.Window):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         self.keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
+        self.base_sprites = None #Will contain all sprites that arent included in Chunk
         self.sprites = None
         # Initialize scrolling variables
         self.view = View()
@@ -109,6 +110,8 @@ class DrillDungeonGame(arcade.Window):
         destructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         indestructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         self.sprites  = SpriteContainer(drill, dirt_list, border_wall_list, coal_list, gold_list, explosion_list, entity_list, bullet_list, all_blocks_list, destructible_blocks_list, indestructible_blocks_list)
+        
+        self.base_sprites = self.sprites
 
         # Initialize the map layer with some dungeon
         map_layer = MapLayer()
@@ -127,11 +130,11 @@ class DrillDungeonGame(arcade.Window):
         
         #Test out the chunk manager functionality
         
-        cmanager = ChunkManager(map_layer.map_layer_configuration)
-        cmanager._load_chunks_from_map_config(map_layer.map_layer_configuration)
-        cmanager._update_chunks(64, 128)
-        for active_chunk in cmanager.active_chunks:
-            self.sprites.extend(cmanager.chunks_dictionary[active_chunk].chunk_sprites)
+        self.cmanager = ChunkManager(map_layer.map_layer_configuration)
+        self.cmanager._load_chunks_from_map_config(map_layer.map_layer_configuration)
+        self.cmanager._update_chunks(64, 128)
+        for active_chunk in self.cmanager.active_chunks:
+            self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
         for entity in (*self.sprites.entity_list, self.sprites.drill):
             entity.physics_engine_setup([self.sprites.border_wall_list])
 
@@ -297,6 +300,22 @@ class DrillDungeonGame(arcade.Window):
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         self.sprites.drill.shoot(self.firing_mode)
 
+
+    def reload_chunks(self):
+        """
+        Loads up the fresh set of chunks for interaction
+        """
+        self.cmanager._update_chunks(self.sprites.drill.center_x, self.sprites.drill.center_y)
+        self.sprites = SpriteContainer(self.sprites.drill, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), self.sprites.entity_list, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList())
+        #The above line may cause issues down the road with combat, will need to change what goes into the all_blocks_list
+        print("RELOADING CHUNKS")
+        for active_chunk in self.cmanager.active_chunks:
+            self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
+        for entity in (*self.sprites.entity_list, self.sprites.drill):
+            entity.physics_engine_setup([self.sprites.border_wall_list])
+
+
+
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
         """This function is called by the arcade library every iteration (or frame).
@@ -330,6 +349,8 @@ class DrillDungeonGame(arcade.Window):
 
         # TODO don't use frame as measure of doing task every x loops. Store a variable in each entity class such
         # as last_updated. We can iterate over all entities and check when entity tasks were last updated.
+        if self.frame % 100 == 0:
+            self.reload_chunks()
         if self.frame % 30 == 0:  # Do something every 30 frames.
             for entity in self.sprites.entity_list:
                 # When this gets moved to entity.update(), we won't need to do all this isinstance checks
