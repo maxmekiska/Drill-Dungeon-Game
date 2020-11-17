@@ -60,7 +60,7 @@ class MapLayer:
             x_block_center += block_width
         return configuration_row
 
-    def generate_dungeon(self):
+    def generate_dungeon(self, enemy_chance = 0.1):
         """
         Generates a.mapLayerMatrix on the map. Current issues are: it can repeat certain steps
         """
@@ -68,7 +68,10 @@ class MapLayer:
         dungeonSize = self.generate_dungeon_size()
         while dungeonSize > 0:
             if self.mapLayerMatrix[y][x] != ' ':
-                self.mapLayerMatrix[y][x] = ' '
+                if np.random.randint(0, 100) * 0.01 < enemy_chance:
+                    self.mapLayerMatrix[y][x] = 'E'
+                else:
+                    self.mapLayerMatrix[y][x] = ' '
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
