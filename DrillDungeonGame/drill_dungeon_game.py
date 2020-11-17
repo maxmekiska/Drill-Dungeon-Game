@@ -129,6 +129,7 @@ class DrillDungeonGame(arcade.Window):
         
         cmanager = ChunkManager(map_layer.map_layer_configuration)
         cmanager._load_chunks_from_map_config(map_layer.map_layer_configuration)
+        cmanager._update_chunks(64, 128)
         for active_chunk in cmanager.active_chunks:
             self.sprites.extend(cmanager.chunks_dictionary[active_chunk].chunk_sprites)
         for entity in (*self.sprites.entity_list, self.sprites.drill):

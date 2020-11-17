@@ -14,6 +14,7 @@ class Chunk:
         self.chunk_matrix = chunk_matrix
         self.chunk_sprites = SpriteContainer(Drill(center_x=100,center_y=100), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList()) 
         self.load_chunk_sprites()
+        self.chunk_center = self.get_chunk_center()
 
     def load_chunk_sprites(self):
         for row in self.chunk_matrix:
@@ -47,20 +48,43 @@ class Chunk:
                     self.chunk_sprites.indestructible_blocks_list.append(wall_sprite)
                     self.chunk_sprites.all_blocks_list.append(wall_sprite)
 
+
+    def get_chunk_center(self):
+        """
+        Returns the x, y coordinates of the center of the chunk
+        """
+        startX, startY = self.chunk_matrix[0][0][1], self.chunk_matrix[0][0][2]
+        endX, endY = self.chunk_matrix[-1][-1][1], self.chunk_matrix[-1][-1][2]
+        middleX = (endX + startX) / 2
+        middleY = (endY + startY) / 2
+        return (middleX, middleY)
+
 class ChunkManager:
 
-    def __init__(self, map_layer_matrix, number_of_chunks=64, chunk_side_length=16):
+    def __init__(self, map_layer_matrix, number_of_chunks=64, chunk_side_length=16, number_of_active_chunks=9):
         self.chunks_dictionary = {}
         self.number_of_chunks = number_of_chunks
         self.chunk_side_length = chunk_side_length
         self.active_chunks = [0, 1, 2] #list of all currently active chunks by dict index
         self._load_chunks_from_map_config(map_layer_matrix)
+        self.number_of_active_chunks = number_of_active_chunks
 
-    def _update_chunks(self):
+    def _update_chunks(self, drill_x, drill_y):
         """
         Checks all chunks to see if they should be activated/deactivated
+        Checks for the nearest 9? Chunks or so and loads them in. Basically anything that could potentially be on screen soon, but can move this number based on need
+        The nicer way of doing this would be to have some kind of k nearest neighbours approach,
+        But hard coding it to only consider those within a certain x range would probably
+        be faster
         """
-        pass
+        current_active_chunks = []
+        for key in self.chunks_dictionary:
+            chunkX, chunkY = self.chunks_dictionary[key].chunk_center
+            if chunkX < drill_x + 800 and chunkX > drill_x - 800:
+                if chunkY < drill_y + 800 and chunkY > drill_y - 800:
+                    current_active_chunks.append(key)
+        self.active_chunks = current_active_chunks
+
 
     def _load_chunks_from_map_config(self, map_layer_matrix):
         """
