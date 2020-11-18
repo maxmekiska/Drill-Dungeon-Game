@@ -77,11 +77,13 @@ class DrillDungeonGame(arcade.Window):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         self.keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
-        self.base_sprites = None #Will contain all sprites that arent included in Chunk
         self.sprites = None
+        self.upwards_layer = None
+        self.downwards_layer = None
         # Initialize scrolling variables
         self.view = View()
 
+        self.drill_up = False
         self.drill_down = False
         self.current_layer = 0
 
@@ -125,14 +127,11 @@ class DrillDungeonGame(arcade.Window):
 
         map_layer.generate_border_walls()
         map_layer.generate_map_layer_configuration()
-        # Load map layer from mapLayer
-        #self.load_map_layer_from_matrix(map_layer.mapLayerMatrix)
-        
         #Test out the chunk manager functionality
         
         self.cmanager = ChunkManager(map_layer.map_layer_configuration)
         self.cmanager._load_chunks_from_map_config(map_layer.map_layer_configuration)
-        self.cmanager._update_chunks(64, 128)
+        self.cmanager._update_chunks(center_x, center_y)
         for active_chunk in self.cmanager.active_chunks:
             self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
         for entity in (*self.sprites.entity_list, self.sprites.drill):
@@ -147,16 +146,38 @@ class DrillDungeonGame(arcade.Window):
         """
         Generates and loads the next layer of the map when drilling down
         """
-        self.setup(self.coal_per_layer,
-                   self.gold_per_layer,
-                   self.dungeons_per_layer,
-                   self.sprites.drill.turret.center_x,
-                   self.sprites.drill.turret.center_y)
+        self.upwards_layer = self.cmanager
+        if self.downwards_layer == None:
+            self.setup(self.coal_per_layer,
+                       self.gold_per_layer,
+                       self.dungeons_per_layer,
+                       self.sprites.drill.turret.center_x,
+                       self.sprites.drill.turret.center_y)
+
+            self.update_map_configuration()
+
+
+        else:
+            self.cmanager = self.downwards_layer
+            self.downwards_layer = None
 
         self.current_layer += 1
-        self.update_map_configuration()
-
         self.reload_chunks()
+
+        arcade.start_render()
+        self.sprites.dirt_list.draw()
+        self.sprites.border_wall_list.draw()
+        self.sprites.coal_list.draw()
+        self.sprites.gold_list.draw()
+        self.sprites.drill.draw()
+        self.sprites.explosion_list.draw()
+
+    def draw_previous_layer(self) -> None:
+        self.current_layer -= 1
+        self.downwards_layer = self.cmanager
+        self.cmanager = self.upwards_layer
+        self.reload_chunks()
+        self.upwards_layer = None
 
         arcade.start_render()
         self.sprites.dirt_list.draw()
@@ -280,6 +301,11 @@ class DrillDungeonGame(arcade.Window):
                 self.firing_mode = ShotType.SINGLE
             elif self.firing_mode == ShotType.SINGLE:
                 self.firing_mode = ShotType.BUCKSHOT
+        elif self.keys_pressed['U']:
+            if not self.upwards_layer == None:
+                self.drill_up = True
+            else:
+                print("No saved upwards layer")
 
     def on_key_release(self, key: int, modifiers: int) -> None:
         """Same as above function, but it sets the value to False"""
@@ -295,6 +321,9 @@ class DrillDungeonGame(arcade.Window):
         if self.keys_pressed['T']:
             self.drill_down = False
 
+        elif self.keys_pressed['U']:
+            self.drill_up = False 
+
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float) -> None:
         """ Handle Mouse Motion """
         self.mouse_position = (x, y)
@@ -307,6 +336,7 @@ class DrillDungeonGame(arcade.Window):
         """
         Loads up the fresh set of chunks for interaction
         """
+        print("RELOADING CHUNKS")
         self.cmanager._update_chunks(self.sprites.drill.center_x, self.sprites.drill.center_y)
         self.sprites = SpriteContainer(self.sprites.drill, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), self.sprites.entity_list, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList())
         #The above line may cause issues down the road with combat, will need to change what goes into the all_blocks_list
@@ -341,6 +371,10 @@ class DrillDungeonGame(arcade.Window):
         if self.drill_down:
             self.draw_next_map_layer()
             self.drill_down = False
+
+        if self.drill_up:
+            self.draw_previous_layer()
+            self.drill_up = False
 
         for bullet in self.sprites.bullet_list:
             if bullet.center_x > self.width + self.view.left_offset or bullet.center_x < self.view.left_offset or \

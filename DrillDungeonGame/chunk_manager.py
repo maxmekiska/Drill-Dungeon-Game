@@ -12,7 +12,7 @@ class Chunk:
 
     def __init__(self, chunk_matrix: list):
         self.chunk_matrix = chunk_matrix
-        self.chunk_sprites = SpriteContainer(Drill(center_x=100,center_y=100), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList()) 
+        self.chunk_sprites = SpriteContainer(None, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList()) 
         self.load_chunk_sprites()
         self.chunk_center = self.get_chunk_center()
 
