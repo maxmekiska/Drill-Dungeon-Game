@@ -117,20 +117,11 @@ class DrillDungeonGame(arcade.Window):
 
         # Initialize the map layer with some dungeon
         map_layer = MapLayer()
-        map_layer.generate_blank_map()
-        for i in range(number_of_dungeons):
-            map_layer.generate_dungeon()
-        for i in range(number_of_coal_patches):
-            map_layer.generate_coal()
-        for i in range(number_of_gold_patches):
-            map_layer.generate_gold()
 
-        map_layer.generate_border_walls()
-        map_layer.generate_map_layer_configuration()
+        map_layer_configuration = map_layer.get_full_map_layer_configuration(number_of_dungeons, number_of_coal_patches, number_of_gold_patches)
         #Test out the chunk manager functionality
         
-        self.cmanager = ChunkManager(map_layer.map_layer_configuration)
-        self.cmanager._load_chunks_from_map_config(map_layer.map_layer_configuration)
+        self.cmanager = ChunkManager(map_layer_configuration)
         self.cmanager._update_chunks(center_x, center_y)
         for active_chunk in self.cmanager.active_chunks:
             self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)

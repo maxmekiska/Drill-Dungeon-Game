@@ -39,6 +39,23 @@ class MapLayer:
         return mapLayerMatrixString
 
 
+    def get_full_map_layer_configuration(self, number_of_dungeons, number_of_coal_patches, number_of_gold_patches):
+        """
+        Returns a configuration for the whole map.
+        """
+        self.generate_blank_map()
+        for i in range(number_of_dungeons):
+            self.generate_dungeon()
+        for i in range(number_of_coal_patches):
+            self.generate_coal()
+        for i in range(number_of_gold_patches):
+            self.generate_gold()
+
+        self.generate_border_walls()
+        self.generate_map_layer_configuration()
+        return self.map_layer_configuration
+
+
     def generate_map_layer_configuration(self):
         """
         Generates a map layer matrix that includes the coordinates of each item
