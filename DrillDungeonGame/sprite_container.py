@@ -9,11 +9,12 @@ class SpriteContainer:
     """This class is used as a storage class for all sprites in our game. Don't add them in DrillDungeonGame class.
     Furthermore, it allows getting all sprites of a certain category through the property methods."""
     def __init__(self, drill: Drill, dirt_list: arcade.SpriteList, border_wall_list: arcade.SpriteList,
-                 coal_list: arcade.SpriteList, gold_list: arcade.SpriteList, explosion_list: arcade.SpriteList,
+                 shop_list: arcade.SpriteList, coal_list: arcade.SpriteList, gold_list: arcade.SpriteList, explosion_list: arcade.SpriteList,
                  entity_list: arcade.SpriteList, bullet_list: arcade.SpriteList, all_blocks_list: arcade.SpriteList,
                  destructible_blocks_list: arcade.SpriteList, indestructible_blocks_list: arcade.SpriteList) -> None:
         self.dirt_list = dirt_list
         self.border_wall_list = border_wall_list
+        self.shop_list = shop_list
         self.coal_list = coal_list
         self.gold_list = gold_list
         self.explosion_list = explosion_list

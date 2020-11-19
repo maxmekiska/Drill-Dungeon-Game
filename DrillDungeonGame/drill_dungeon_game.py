@@ -8,6 +8,7 @@ from DrillDungeonGame.entity.mixins.path_finding_mixin import PathFindingMixin
 from DrillDungeonGame.entity.mixins.controllable_mixin import ControllableMixin
 from DrillDungeonGame.entity.entities.drill import Drill
 from DrillDungeonGame.entity.entities.spaceship_enemy import SpaceshipEnemy
+from DrillDungeonGame.in_game_menus import *
 from DrillDungeonGame.map.dungeon_generator import MapLayer
 from DrillDungeonGame.sprite_container import SpriteContainer
 from DrillDungeonGame.utility import *
@@ -69,13 +70,14 @@ class View:
         return False
 
 
-class DrillDungeonGame(arcade.Window):
+class DrillDungeonGame(arcade.View):
     # This builds a dictionary of all possible keys that arcade can register as 'pressed'.
     # They unfortunately don't have another method to get this, and populating it before init is not taxing.
     possible_keys = {value: key for key, value in arcade.key.__dict__.items() if not key.startswith('_')}
 
-    def __init__(self) -> None:
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    def __init__(self, window) -> None:
+        super().__init__()
+        self.game_window = window
         self.keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
         self.sprites = None
@@ -92,7 +94,7 @@ class DrillDungeonGame(arcade.Window):
         self.frame = 0
         self.time = 0
         arcade.set_background_color(arcade.color.BROWN_NOSE)
-        self.firing_mode = ShotType.BUCKSHOT
+        self.firing_mode = ShotType.SINGLE
         self.mouse_position = (0, 0)
 
     def setup(self, number_of_coal_patches: int = 20, number_of_gold_patches: int = 20,
@@ -100,6 +102,7 @@ class DrillDungeonGame(arcade.Window):
         """Set up game and initialize variables"""
         dirt_list = arcade.SpriteList(use_spatial_hash=True)  # spatial hash, makes collision detection faster
         border_wall_list = arcade.SpriteList(use_spatial_hash=True)
+        shop_list = arcade.SpriteList(use_spatial_hash=True)
         coal_list = arcade.SpriteList(use_spatial_hash=True)  # coal/fuel
         gold_list = arcade.SpriteList(use_spatial_hash=True)  # gold increment
         explosion_list = arcade.SpriteList()  # explosion/smoke
@@ -110,7 +113,7 @@ class DrillDungeonGame(arcade.Window):
         destructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         indestructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         self.sprites = SpriteContainer(drill=drill, dirt_list=dirt_list, border_wall_list=border_wall_list,
-                                       coal_list=coal_list, gold_list=gold_list,
+                                       shop_list=shop_list, coal_list=coal_list, gold_list=gold_list,
                                        explosion_list=explosion_list, entity_list=entity_list, bullet_list=bullet_list,
                                        all_blocks_list=all_blocks_list,
                                        destructible_blocks_list=destructible_blocks_list,
@@ -118,7 +121,7 @@ class DrillDungeonGame(arcade.Window):
         self.sprites.entity_list.append(SpaceshipEnemy(200, 200, 200, 0.7))
 
         for entity in (*self.sprites.entity_list, self.sprites.drill):
-            entity.physics_engine_setup([self.sprites.border_wall_list])
+            entity.physics_engine_setup([self.sprites.indestructible_blocks_list])
 
         # Initialize the map layer with some dungeon
         map_layer = MapLayer(100, 100, meanDungeonSize=400, meanCoalSize=10, meanGoldSize=10)
@@ -129,6 +132,7 @@ class DrillDungeonGame(arcade.Window):
             map_layer.generate_coal()
         for i in range(number_of_gold_patches):
             map_layer.generate_gold()
+        map_layer.generate_shop()
 
         map_layer.generate_border_walls()
         # Load map layer from mapLayer
@@ -154,6 +158,7 @@ class DrillDungeonGame(arcade.Window):
         arcade.start_render()
         self.sprites.dirt_list.draw()
         self.sprites.border_wall_list.draw()
+        self.sprites.shop_list.draw()
         self.sprites.coal_list.draw()
         self.sprites.gold_list.draw()
         self.sprites.drill.draw()
@@ -177,6 +182,7 @@ class DrillDungeonGame(arcade.Window):
         self.sprites.coal_list.draw()
         self.sprites.gold_list.draw()
         self.sprites.border_wall_list.draw()
+        self.sprites.shop_list.draw()
         self.sprites.explosion_list.draw()
 
         for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
@@ -226,7 +232,7 @@ class DrillDungeonGame(arcade.Window):
                 wall_sprite.center_y = y_block_center
                 self.sprites.dirt_list.append(wall_sprite)
                 self.sprites.destructible_blocks_list.append(wall_sprite)
-            if item == 'C':  # Coal
+            elif item == 'C':  # Coal
                 wall_sprite = arcade.Sprite("resources/images/material/Coal_square.png", 0.03)
                 # wall_sprite.width = blockWidth
                 # wall_sprite.height = blockHeight
@@ -234,17 +240,23 @@ class DrillDungeonGame(arcade.Window):
                 wall_sprite.center_y = y_block_center
                 self.sprites.coal_list.append(wall_sprite)
                 self.sprites.destructible_blocks_list.append(wall_sprite)
-            if item == 'G':  # Gold
+            elif item == 'G':  # Gold
                 wall_sprite = arcade.Sprite("resources/images/material/Gold_square.png", 0.03)
                 wall_sprite.center_x = x_block_center
                 wall_sprite.center_y = y_block_center
                 self.sprites.gold_list.append(wall_sprite)
                 self.sprites.destructible_blocks_list.append(wall_sprite)
-            if item == 'O':  # Border block.
+            elif item == 'O':  # Border block.
                 wall_sprite = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.18)
                 wall_sprite.center_x = x_block_center
                 wall_sprite.center_y = y_block_center
                 self.sprites.border_wall_list.append(wall_sprite)
+                self.sprites.indestructible_blocks_list.append(wall_sprite)
+            elif item == 'S':  # Shop.
+                wall_sprite = arcade.Sprite("resources/images/shop/shop.png", 0.18)
+                wall_sprite.center_x = x_block_center
+                wall_sprite.center_y = y_block_center
+                self.sprites.shop_list.append(wall_sprite)
                 self.sprites.indestructible_blocks_list.append(wall_sprite)
             if wall_sprite is not None:
                 self.sprites.all_blocks_list.append(wall_sprite)
@@ -274,6 +286,13 @@ class DrillDungeonGame(arcade.Window):
             elif self.firing_mode == ShotType.SINGLE:
                 self.firing_mode = ShotType.BUCKSHOT
 
+        elif self.keys_pressed['ESCAPE']:
+            # pause game
+            self.keys_pressed = {key:False for key in self.keys_pressed}
+            self.sprites.drill.stop_moving()
+            pause_menu = PauseMenu(self, self.window, self.view)
+            self.window.show_view(pause_menu)
+
     def on_key_release(self, key: int, modifiers: int) -> None:
         """Same as above function, but it sets the value to False"""
         key_stroke = self.possible_keys.get(key)
@@ -294,6 +313,14 @@ class DrillDungeonGame(arcade.Window):
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         self.sprites.drill.shoot(self.firing_mode)
+
+        for shop in self.sprites.shop_list:
+            if shop.collides_with_point((self.view.left_offset+x,self.view.bottom_offset+y,)) and (arcade.get_distance_between_sprites(shop, self.sprites.drill)<70):
+              self.sprites.drill.stop_moving()
+              self.keys_pressed = {key:False for key in self.keys_pressed}
+              shop = ShopMenu(self, self.window, self.view)
+              self.window.show_view(shop)
+
 
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
@@ -321,8 +348,8 @@ class DrillDungeonGame(arcade.Window):
             self.drill_down = False
 
         for bullet in self.sprites.bullet_list:
-            if bullet.center_x > self.width + self.view.left_offset or bullet.center_x < self.view.left_offset or \
-                    bullet.center_y > self.width + self.view.bottom_offset or \
+            if bullet.center_x > self.game_window.width + self.view.left_offset or bullet.center_x < self.view.left_offset or \
+                    bullet.center_y > self.game_window.width + self.view.bottom_offset or \
                     bullet.center_y < self.view.bottom_offset:
                 bullet.remove_from_sprite_lists()
 
