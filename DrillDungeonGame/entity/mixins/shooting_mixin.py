@@ -5,15 +5,13 @@ import arcade
 
 from enum import Enum
 
-from typing import Union, List
+from typing import Union, List, Type
 
-from ..entities.bullet import Bullet
+from ..bullet import Bullet
 from ..entity import Entity
 from ...inventory import Inventory
 
-from typing import TYPE_CHECKING, Callable
-if TYPE_CHECKING:
-    from ...sprite_container import SpriteContainer
+from typing import Callable
 
 
 class ShotType(Enum):
@@ -30,12 +28,13 @@ class ShootingMixin:
     has_line_of_sight_with: Callable[[Entity, arcade.SpriteList], bool]
     remove_from_sprite_lists: Callable[[None], None]
     inventory: Inventory
+    angle: float
+    bullet_type: Type[Bullet]
+    parent: Entity
+    children: List[Entity]
+    firing_mode: ShotType
 
-    def __init__(self, turret_sprite: str, turret_sprite_scale: Union[float, int],
-                 center_x: int, center_y: int, ammunition: int = -1) -> None:
-        self.turret = arcade.Sprite(turret_sprite, turret_sprite_scale, center_x=center_x, center_y=center_y)
-        self.ammunition = ammunition
-
+    def __init__(self) -> None:
         self._last_shoot_time = 0
         self._bullets_to_shoot = []  # type: List[ShotType]
 
@@ -43,18 +42,19 @@ class ShootingMixin:
         # Note that all of the trig functions convert between an angle and the ratio of two sides of a triangle.
         # cos, sin, and tan take an angle in radians as input and return the ratio; acos, asin, and atan take a ratio
         # as input and return an angle in radians. You only convert the angles, never the ratios.
-        start_x, start_y = self.turret.center_x, self.turret.center_y
+        start_x, start_y = self.center_x, self.center_y
         x_diff, y_diff = dest_x - start_x, dest_y - start_y
         angle = math.degrees(math.atan2(y_diff, x_diff))
-        self.turret.angle = angle
+        self.angle = angle
 
-    def shoot(self, shot_type: ShotType) -> None:
-        self._bullets_to_shoot.append(shot_type)
+    def shoot(self) -> None:
+        self._bullets_to_shoot.append(self.firing_mode)
 
-    def _shoot(self, shot_type: ShotType, sprites: SpriteContainer) -> None:
+    # noinspection PyArgumentList
+    def _shoot(self, shot_type: ShotType, sprites) -> None:
         """Shoots a bullet from the turret location. Returns the bullet that was creates so it can be appended
         to the sprite list."""
-        if hasattr(self, 'inventory'):
+        if self.inventory is not None:
             if shot_type == ShotType.SINGLE:
                 if self.inventory.ammunition > 0:
                     self.inventory.ammunition -= 1
@@ -72,44 +72,37 @@ class ShootingMixin:
                     return
 
         if shot_type == ShotType.SINGLE:
-            bullet = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle)
-            x_component = math.cos(math.radians(self.turret.angle)) * bullet.speed
-            y_component = math.sin(math.radians(self.turret.angle)) * bullet.speed
+            bullet = self.bullet_type(self, angle=self.angle)
+            self.children.append(bullet)
+            x_component = math.cos(math.radians(self.angle)) * bullet.speed
+            y_component = math.sin(math.radians(self.angle)) * bullet.speed
             bullet.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet)
-            bullet.physics_engine_setup([sprites.all_blocks_list])
 
         elif shot_type == ShotType.BUCKSHOT:
-            bullet_middle = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle)
-            bullet_left = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle - 10)
-            bullet_right = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle + 10)
+            bullet_middle = self.bullet_type(self, angle=self.angle)
+            bullet_left = self.bullet_type(self, angle=self.angle - 10)
+            bullet_right = self.bullet_type(self, angle=self.angle + 10)
+            self.children.append(bullet_middle)
+            self.children.append(bullet_left)
+            self.children.append(bullet_right)
             # Middle
-            x_component = math.cos(math.radians(self.turret.angle)) * bullet_middle.speed
-            y_component = math.sin(math.radians(self.turret.angle)) * bullet_middle.speed
+            x_component = math.cos(math.radians(self.angle)) * bullet_middle.speed
+            y_component = math.sin(math.radians(self.angle)) * bullet_middle.speed
             bullet_middle.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_middle)
             # Left
-            x_component = math.cos(math.radians(self.turret.angle - 10)) * bullet_left.speed
-            y_component = math.sin(math.radians(self.turret.angle - 10)) * bullet_left.speed
+            x_component = math.cos(math.radians(self.angle - 10)) * bullet_left.speed
+            y_component = math.sin(math.radians(self.angle - 10)) * bullet_left.speed
             bullet_left.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_left)
             # Right
-            x_component = math.cos(math.radians(self.turret.angle + 10)) * bullet_right.speed
-            y_component = math.sin(math.radians(self.turret.angle + 10)) * bullet_right.speed
+            x_component = math.cos(math.radians(self.angle + 10)) * bullet_right.speed
+            y_component = math.sin(math.radians(self.angle + 10)) * bullet_right.speed
             bullet_right.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_right)
-            for bullet in [bullet_left, bullet_middle, bullet_right]:
-                bullet.physics_engine_setup([sprites.all_blocks_list])
 
-    def draw(self) -> None:
-        self.turret.draw()
-
-    def update(self, time: float, sprites: SpriteContainer) -> None:
-        self.turret.center_x, self.turret.center_y = self.center_x, self.center_y
-
-        if self != sprites.drill and self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list):
-            self.aim(*sprites.drill.position)
-
+    def update(self, time: float, sprites) -> None:
         if len(self._bullets_to_shoot) > 0:
             shot_type = self._bullets_to_shoot.pop(0)
             self._shoot(shot_type, sprites)

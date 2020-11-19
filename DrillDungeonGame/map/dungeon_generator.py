@@ -1,27 +1,27 @@
 """
 A module to generate the specifications of the map which can then be loaded up by arcade.
-Initially will configure the maps as arrays, but can look to save these as some other
+Initially will configure the maps as arrays, but can look to save these as some other 
 file type, depending on how performance is affected.
 """
 import random
 import numpy as np
 
 class MapLayer:
-    """
-    A class that holds a single map layer
+    """ 
+    A class that holds a single map layer 
     """
 
     def __init__(self, height=200, width=200, meanDungeonSize=40, meanCoalSize=5, meanGoldSize=5): # added meanCoalSize, meanGoldSize parameter
         self.mapLayerMatrix = []
-        self.height = height
+        self.height = height 
         self.width = width
         self.meanDungeonSize = meanDungeonSize
         self.meanCoalSize = meanCoalSize # coal
-        self.meanGoldSize = meanGoldSize # gold
+        self.meanGoldSize = meanGoldSize # gold 
 
     def __repr__(self):
         """
-        Prints the.mapLayerMatrix row by row.
+        Prints the.mapLayerMatrix row by row. 
         """
         mapLayerMatrixString = ''
         for row in self.mapLayerMatrix:
@@ -42,7 +42,7 @@ class MapLayer:
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
-
+            
     def generate_coal(self): # coal
         """
         Generates a.mapLayerMatrix on the map. Current issues are: it can repeat certain steps
@@ -55,7 +55,7 @@ class MapLayer:
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
-
+            
     def generate_gold(self): # gold
         x, y = self.generate_coal_start_point()
         dungeonSize = self.generate_coal_size()
@@ -83,7 +83,7 @@ class MapLayer:
             else:
                 row[0] = 'O'
                 row[-1] = 'O'
-
+    
 
     def generate_blank_map(self):
         """
@@ -95,14 +95,14 @@ class MapLayer:
 
     def generate_blank_row(self):
         """
-        Appends a blank row (full of 'X' - meaning full of blocks) to
+        Appends a blank row (full of 'X' - meaning full of blocks) to 
         self.mapLayerMatrix
         """
         row = []
         for i in range(self.width):
             row.append('X')
         self.mapLayerMatrix.append(row)
-
+           
     def generate_dungeon_start_point(self):
         """
         Generates the location of the first block in the.mapLayerMatrix
@@ -127,7 +127,7 @@ class MapLayer:
         startX = random.randint(0, self.width - 1)
         startY = random.randint(0, self.height - 1)
         return startX, startY
-
+        
     def generate_gold_start_point(self): # might be possible ot refactor
         """
         Generates the location of the first block in the.mapLayerMatrix
@@ -176,11 +176,11 @@ class MapLayer:
         """
         rng = np.random.default_rng()
         dungeonSize = rng.poisson(self.meanGoldSize) #cluster of gold
-        return dungeonSize
+        return dungeonSize         
 
     def update_dungeon_coords(self, x, y, walkDirection):
         """
-        Moves the.mapLayerMatrix block coordinate in the direction dictated by the
+        Moves the.mapLayerMatrix block coordinate in the direction dictated by the 
         walkDirection
         int x             : The x (horizontal) coordinate of the current block
         int y             : The y (vertical) coordinate of the current block
@@ -203,11 +203,11 @@ class MapLayer:
         if walkDirection == 3:
             x -= 1
         return x, y
-
+        
 
     def get_walk_direction(self, x, y):
         """
-        Generates the walk direction for the.mapLayerMatrix's random walk.
+        Generates the walk direction for the.mapLayerMatrix's random walk. 
         int x : The x (horizontal) coordinate of the current block
         int y : The y (vertical) coordinate of the current block
         ----------------------------------------------------------
@@ -237,5 +237,5 @@ class MapLayer:
                 return random.choice([0,2,3])
         elif y == self.height -1:
             return random.choice([1,2,3])
-        else:
-            return random.choice([0, 1, 2, 3])
+        else:   
+            return random.choice([0, 1, 2, 3]) 

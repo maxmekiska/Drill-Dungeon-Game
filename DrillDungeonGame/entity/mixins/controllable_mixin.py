@@ -40,3 +40,7 @@ class ControllableMixin:
         self.set_velocity((x, y))
         if any([keys['W'], keys['A'], keys['S'], keys['D']]):
             self.look_at(self.center_x + x, self.center_y + y)
+
+    def handle_mouse_click(self, button: int) -> None:
+        """Called when the mouse is clicked."""
+        pass
