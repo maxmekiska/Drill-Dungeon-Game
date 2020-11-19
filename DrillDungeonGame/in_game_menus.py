@@ -318,7 +318,7 @@ class ShopMenu(InGameMenu):
         self.game_view.sprites.drill.inventory.ammunition += amount
 
     def upgrade_to_buckshot(self):
-        self.game_view.firing_mode = ShotType.BUCKSHOT
+        self.game_view.sprites.drill.children[0].firing_mode = ShotType.BUCKSHOT
 
     def upgrade_speed(self):
         self.game_view.sprites.drill.speed = self.game_view.sprites.drill.speed*1.5
