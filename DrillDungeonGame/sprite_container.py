@@ -2,7 +2,7 @@ from typing import List, TYPE_CHECKING
 
 import arcade
 
-from DrillDungeonGame.entity.entities.drill import Drill
+from DrillDungeonGame.entity.entities.drill import * 
 
 
 class SpriteContainer:
@@ -34,6 +34,26 @@ class SpriteContainer:
         self.all_blocks_list = all_blocks_list
         self.destructible_blocks_list = destructible_blocks_list
         self.indestructible_blocks_list = indestructible_blocks_list
+
+    def extend(self, other):
+        """
+        Defines addition behaviour of the class. Should return new instance fo SpriteContainer
+        with the two sprite lists added up basically
+        """
+        self.dirt_list.extend(other.dirt_list)
+        self.border_wall_list.extend(other.border_wall_list)
+        self.coal_list.extend(other.coal_list)
+        self.gold_list.extend(other.gold_list)
+        self.explosion_list.extend(other.explosion_list)
+        self.entity_list.extend(other.entity_list)
+        self.bullet_list.extend(other.bullet_list)
+
+
+        self.all_blocks_list.extend(other.all_blocks_list)
+        self.destructible_blocks_list.extend(other.destructible_blocks_list)
+        self.indestructible_blocks_list.extend(other.indestructible_blocks_list)
+        
+
 
     @property
     def all(self) -> List[arcade.SpriteList]:
