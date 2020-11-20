@@ -3,6 +3,7 @@ from typing import List
 import arcade
 
 from DrillDungeonGame.entity.mixins.controllable_mixin import ControllableMixin
+from DrillDungeonGame.entity.mixins.path_finding_mixin import PathFindingMixin
 from DrillDungeonGame.entity.entities.drill import Drill
 from DrillDungeonGame.entity.entities.spaceship_enemy import SpaceshipEnemy
 from DrillDungeonGame.in_game_menus import *
@@ -171,8 +172,8 @@ class DrillDungeonGame(arcade.View):
             self.setup(self.coal_per_layer,
                        self.gold_per_layer,
                        self.dungeons_per_layer,
-                       self.sprites.drill.turret.center_x,
-                       self.sprites.drill.turret.center_y)
+                       self.sprites.drill.center_x,
+                       self.sprites.drill.center_y)
 
             self.update_map_configuration()
 
@@ -381,14 +382,32 @@ class DrillDungeonGame(arcade.View):
         """
         print("RELOADING CHUNKS")
         self.cmanager._update_chunks(self.sprites.drill.center_x, self.sprites.drill.center_y)
-        self.sprites = SpriteContainer(self.sprites.drill, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), self.sprites.entity_list, arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList())
+        self.sprites = SpriteContainer(drill = self.sprites.drill, 
+                                        dirt_list = arcade.SpriteList(), 
+                                        border_wall_list = arcade.SpriteList(), 
+                                        shop_list = self.sprites.shop_list, 
+                                        coal_list = arcade.SpriteList(), 
+                                        gold_list = arcade.SpriteList(), 
+                                        explosion_list = self.sprites.explosion_list, 
+                                        entity_list = self.sprites.entity_list, 
+                                        drill_list = self.sprites.drill_list, 
+                                        enemy_list = self.sprites.enemy_list, 
+                                        bullet_list = arcade.SpriteList(), 
+                                        all_blocks_list = arcade.SpriteList(), 
+                                        destructible_blocks_list = arcade.SpriteList(), 
+                                        indestructible_blocks_list = arcade.SpriteList())
         #The above line may cause issues down the road with combat, will need to change what goes into the all_blocks_list
+        self.sprites.all_blocks_list.extend(self.sprites.entity_list)
+        self.sprites.all_blocks_list.extend(self.sprites.enemy_list)
+        self.sprites.all_blocks_list.extend(self.sprites.explosion_list)
+        self.sprites.all_blocks_list.extend(self.sprites.shop_list)
+        self.sprites.all_blocks_list.extend(self.sprites.drill_list)
         for active_chunk in self.cmanager.active_chunks:
             self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
+        """
         for entity in self.sprites.entity_list:
             entity.physics_engine_setup([self.sprites.border_wall_list])
-
-
+        """
 
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
@@ -409,6 +428,7 @@ class DrillDungeonGame(arcade.View):
             # pass the sprite Container so update function can interact with other sprites.
             entity.update(self.time, self.sprites)
 
+        print(len(self.sprites.enemy_list))
         self.sprites.explosion_list.update()
 
         if self.drill_down:
