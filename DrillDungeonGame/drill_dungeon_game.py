@@ -399,10 +399,8 @@ class DrillDungeonGame(arcade.View):
         self.sprites.all_blocks_list.extend(self.sprites.drill_list)
         for active_chunk in self.cmanager.active_chunks:
             self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
-        """
         for entity in self.sprites.entity_list:
-            entity.physics_engine_setup([self.sprites.border_wall_list])
-        """
+            entity.setup_collision_engine([self.sprites.border_wall_list])
 
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
@@ -441,7 +439,7 @@ class DrillDungeonGame(arcade.View):
 
         # TODO don't use frame as measure of doing task every x loops. Store a variable in each entity class such
         # as last_updated. We can iterate over all entities and check when entity tasks were last updated.
-        if self.frame % 300 == 0: #TODO Create better way of determining when to update
+        if self.frame % 30000000 == 0: #TODO Create better way of determining when to update
             self.reload_chunks()
         if self.frame % 30 == 0:  # Do something every 30 frames.
             for entity in self.sprites.entity_list:
