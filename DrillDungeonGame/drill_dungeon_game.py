@@ -161,12 +161,6 @@ class DrillDungeonGame(arcade.View):
         """
         Generates and loads the next layer of the map when drilling down
         """
-        self.setup(self.coal_per_layer,
-                   self.gold_per_layer,
-                   self.dungeons_per_layer,
-                   self.sprites.drill.center_x,
-                   self.sprites.drill.center_y)
-
         self.upwards_layer = self.cmanager
         if self.downwards_layer == None:
             self.setup(self.coal_per_layer,
@@ -194,6 +188,7 @@ class DrillDungeonGame(arcade.View):
         self.sprites.explosion_list.draw()
 
     def draw_previous_layer(self) -> None:
+        print(self.upwards_layer)
         self.current_layer -= 1
         self.downwards_layer = self.cmanager
         self.cmanager = self.upwards_layer
