@@ -65,7 +65,6 @@ class ChunkManager:
         self.chunks_dictionary = {}
         self.number_of_chunks = number_of_chunks
         self.chunk_side_length = chunk_side_length
-        self.map_layer_matrix = map_layer_matrix
         self.active_chunks = [0, 1, 2] #list of all currently active chunks by dict index
         self._load_chunks_from_map_config(map_layer_matrix)
         self.number_of_active_chunks = number_of_active_chunks
