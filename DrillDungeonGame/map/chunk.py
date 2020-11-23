@@ -1,3 +1,4 @@
+import arcade
 from DrillDungeonGame.sprite_container import SpriteContainer
 
 

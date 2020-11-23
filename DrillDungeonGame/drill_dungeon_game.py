@@ -10,7 +10,7 @@ from DrillDungeonGame.in_game_menus import *
 from DrillDungeonGame.map.dungeon_generator import MapLayer
 from DrillDungeonGame.map.dungeon_generator import MapLayer, MAP_WIDTH, MAP_HEIGHT
 from DrillDungeonGame.sprite_container import SpriteContainer
-from DrillDungeonGame.chunk_manager import Chunk, ChunkManager
+from DrillDungeonGame.map.chunk_manager import Chunk, ChunkManager
 from DrillDungeonGame.utility import *
 
 SCREEN_WIDTH = 800
@@ -439,7 +439,7 @@ class DrillDungeonGame(arcade.View):
 
         # TODO don't use frame as measure of doing task every x loops. Store a variable in each entity class such
         # as last_updated. We can iterate over all entities and check when entity tasks were last updated.
-        if self.frame % 30000000 == 0: #TODO Create better way of determining when to update
+        if self.frame % 300 == 0: #TODO Create better way of determining when to update
             self.reload_chunks()
         if self.frame % 30 == 0:  # Do something every 30 frames.
             for entity in self.sprites.entity_list:
