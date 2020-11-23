@@ -13,6 +13,7 @@ from ..mixins.digging_mixin import DiggingMixin
 class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
     def __init__(self, center_x: int, center_y: int, vision: Union[float, int],
                  speed: Union[float, int] = 1) -> None:
+
         base_sprite: str = "resources/images/enemy/enemy.png"
         sprite_scale: float = 0.3
         turret_sprite = "resources/images/weapons/turret1.png"
@@ -26,6 +27,22 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
         self._last_pathfind_time = 0
 
     def update(self, time: float, sprites) -> None:
+        """
+        Handles update logic specific to this Enemy. Currently attempts to shoot at and pathfind to the drill every
+        x seconds.
+
+        Note
+        ----
+        As this function is implemented in an Entity subclass, we need to call super().update() at the end of this
+        function so that collision engines are updated accordingly.
+
+        Parameters
+        ----------
+        time: float
+            The time that the game has been running for. We can store this to do something every x amount of time.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        """
         if (time - self._last_shot_time) > 1.5:
             self._last_shot_time = time
             if self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list):

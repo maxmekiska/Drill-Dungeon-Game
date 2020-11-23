@@ -16,10 +16,22 @@ class ControllableMixin:
     change_y: float
 
     def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
-        """Handles how the Entity should move/rotate. Handles 8-way directional wasd movement.
+        """Called when a key is pressed or released. Handles how the Entity should move/rotate. Uses 8-way directional
+        wasd movement.
+
+        Notes
+        -----
         We sum up the x, y velocity vector for each corresponding key press.
-        This has the BIG benefit of making two keys opposite in direction (w,s) and (a,d) cancelling out, but
-        also means diagonal movement results in being faster. We can fix this by normalizing the vector at the end."""
+        This has the big benefit of making two keys opposite in direction (w,s) and (a,d) cancelling out, but
+        also means diagonal movement results in being faster. We can fix this by normalizing the vector at the end.
+
+        Parameters
+        ----------
+        keys: Dict[str, bool]
+            A dictionary of all keys and a bool corresponding to whether it is pressed or not.
+
+        """
+
         x, y = 0, 0
         if keys['W']:
             y += 1
@@ -42,5 +54,14 @@ class ControllableMixin:
             self.look_at(self.center_x + x, self.center_y + y)
 
     def handle_mouse_click(self, button: int) -> None:
-        """Called when the mouse is clicked."""
+        """Called when left or right mouse button are pressed.
+
+        Override this function in a subclass to provide functionality here.
+
+        Parameters
+        ----------
+        button: int
+            The button pressed. 1 = Left click, 4 = Right click.
+
+        """
         pass

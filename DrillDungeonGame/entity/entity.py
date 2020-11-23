@@ -14,6 +14,25 @@ if TYPE_CHECKING:
 class Entity(arcade.Sprite):
     def __init__(self, base_sprite: str, sprite_scale: float, center_x: Union[float, int], center_y: Union[float, int],
                  speed: Union[float, int] = 1, angle: float = 0.0, health: float = -1) -> None:
+        """Instantiates this Entity.
+
+        Parameters
+        ----------
+        base_sprite: str
+            The path to the file containing the sprite for this entity.
+        sprite_scale: float
+            The scale to draw the sprite for this entity
+        center_x: Union[float, int]
+            The starting x position in the map for this entity.
+        center_y: Union[float, int]
+            The starting y position in the map for this entity.
+        speed: Union[float, int]
+            The speed that entity can move at.
+        angle: float
+            The starting angle for this entity.
+        health: float:
+            The starting health for this entity.
+        """
         super().__init__(base_sprite, sprite_scale, center_x=center_x, center_y=center_y)
         self.angle = angle
         self.speed = speed
@@ -28,28 +47,41 @@ class Entity(arcade.Sprite):
         self.collision_engine = []  # Any Physics engine. One for each sprite list in sprite container.
         self.health = health  # The health of this entity. -1 means invincible.
 
-    @property
-    def parents(self) -> List[Entity]:
-        """If an entity is a child to another class. And that class is a child to another. Example: Such as a bullet
-        is a child to the turret, and the turret is a child to the drill. Returns all parent instances to this child."""
-        parents = []
-        klass = self
-        while hasattr(klass, 'parent') and klass.parent is not None:
-            parents.append(klass.parent)
-            klass = klass.parent
-        return parents
-
     def get_all_children(self) -> List[Entity]:
+        """Returns a list of all entities that are a child to this one.
+
+        Notes
+        -----
+        This is recursive and all indirect children are also present in this list (ie children of children of ...).
+
+        Returns
+        -------
+        List[Entity]
+            A list of all Entities that are a child to this one.
+
+        """
         children = []
         klass = self
         for child in klass.children:
             children.append(child)
             if hasattr(child, 'get_all_children'):
                 children.extend(child.get_all_children())
+        # noinspection PyTypeChecker
         return children
 
-    def hurt(self, damage) -> None:
-        """Calling this function deals damage to the entity."""
+    def hurt(self, damage: Union[float, int]) -> None:
+        """Calling this function deals damage to the entity.
+
+        Notes
+        -----
+        If the health goes below or equal to 0, the Entity is also deleted along with all children Entities.
+
+        Parameters
+        ----------
+        damage: Union[float, int]
+            The amount of damage to deal to this entity.
+
+        """
         if self.health != -1:
             self.health -= damage
             if self.health <= 0:
@@ -58,28 +90,96 @@ class Entity(arcade.Sprite):
                 self.remove_from_sprite_lists()
 
     def has_line_of_sight_with(self, entity: Entity, blocking_sprites: arcade.SpriteList) -> bool:
-        """Returns True is this class has line of site with another given entity, given a list of obstacles."""
+        """Returns True is this class has line of site with another given entity, given a list of obstacles.
+
+        Parameters
+        ----------
+        entity: Entity
+            The entity to check if if this entity has line of sight with.
+        blocking_sprites: arcade.SpriteList
+            The sprite list containing sprites which block line of sight.
+
+        Returns
+        -------
+        bool
+            True if there is line of sight, False otherwise.
+
+        """
         return arcade.has_line_of_sight(self.position, entity.position, blocking_sprites)
 
     def look_at(self, x: float, y: float) -> None:
-        """Sets the entity to face towards a certain position."""
+        """Sets the entity to face towards a certain position.
+
+        Notes
+        ----
+        Children angle will also be updated if maintain_parent_angle is set to true in the child class.
+
+        See Also
+        --------
+        ChildEntity.update: Where the child angle is updated to match the parent.
+
+        Parameters
+        ----------
+        x: float
+            The x position to look at.
+        y: float
+            The y position to look at.
+
+        """
         x_diff, y_diff = x - self.center_x, y - self.center_y
         angle = math.degrees(math.atan2(y_diff, x_diff))
         self.angle = angle
 
     def set_velocity(self, vector: Tuple[float, float]) -> None:
-        """Sets the velocity of this entity to the corresponding vector."""
+        """Sets the velocity of this entity to the corresponding vector.
+
+        Notes
+        ----
+        Children velocity will also be updated if maintain_relative_position is set to True in the child class.
+
+        See Also
+        --------
+        ChildEntity.update: Where the child velocity is updated to match the parent.
+
+        Parameters
+        ----------
+        vector: Tuple[float, float]
+            The corresponding x, y vector that this entity's velocity will be set to.
+
+        """
         self.change_x = vector[0]
         self.change_y = vector[1]
 
     def on_collision(self, sprite: arcade.Sprite, time: float, sprites) -> None:
-        """Override this method in subclasses to handle what entities should do when colliding."""
+        """Override this method in subclasses to handle what entities should do when colliding.
+
+        Parameters
+        ----------
+        sprite: arcade.Sprite
+            The sprite that the Entity collided with.
+        time: float
+            The time that the collision happened.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        """
         pass
 
     def update_collision_engine(self, time: float, sprites: SpriteContainer) -> None:
-        """This is called from the entity.update() function. It handles all collisions for this entity
-        in each iteration. If there is a collision, update() returns a list of collisions. Override this function
-        in any entity subclass to implement any logic."""
+        """This is called from the entity.update() function. It handles all collisions for this entity in each loop.
+
+        See Also
+        --------
+        on_collision: a handler which can be subclassed to handle collisions with specific sprites.
+
+        Parameters
+        ----------
+        time: float
+            The time that the game has been running for. We can store this to do something every x amount of time.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        """
         if len(self.collision_engine) == 0:
             super().update()
 
@@ -94,9 +194,15 @@ class Entity(arcade.Sprite):
             child.update_collision_engine(time, sprites)
 
     def setup_collision_engine(self, collidables: List[arcade.SpriteList]) -> None:
-        """If there is any collision which needs to take place with this entity. We need to setup a physics engine
-        for it. The physics engine will return a list containing other sprites it collided with when you call the
-        update() function on it. We call this in the update_physics_engine() function."""
+        """Appends a list of collidable sprites to check for a collision with each game loop iteration to the
+        collision_list.
+
+        Parameters
+        ----------
+        collidables: List[arcade.SpriteList]
+            A list of different sprite lists to check for collisions for.
+
+        """
         for collidable_list in collidables:
             self.collision_engine.append(arcade.PhysicsEngineSimple(self, collidable_list))
             for child in self.children:
@@ -107,23 +213,14 @@ class Entity(arcade.Sprite):
         self.set_velocity((0.0, 0.0))
 
     def draw(self) -> None:
-        """
-        This may seem difficult to understand.. Let me explain. Given the Mixin programming structure I've used for
-        entity, you are never going to be using the <Entity> class directly. It will ALWAYS be subclassed.
-        The idea is that additional functionalities that entity will have will be written in MixinClasses.
-        Why? Mixins and inheritance save repeating the same chunk of code a silly amount of times.
-        Now, __mro__ stands for method resolution order. If a class inherits from multiple parent classes,
-        __mro__ provides a method for Python to figure out which have priority. Example: Lets say in the following:
-        `class Foo(A, B, C): pass`, all parent classes have a draw function implemented. How does Python know which
-        draw functions gets called when you do self.draw() within Foo? Usually this would call whichever
-        is first in the inheritance list. In this case, that would be A.draw() that would get priority.
-        In our case, we could have multiple Mixins extending class functionality. One for Shooting,
-        and maybe maybe having a pet following the enemy. We need to call the draw method to draw the bullet and the
-        pet, but in two different classes with a single method available in any subclass of Entity. This normal
-        order isn't suited for our needs and this code here provides means to call the draw method in ALL parent
-        classes of any given subclass of this (Entity) class. That's what this does.
-        Also note: The `not issubclass(parent, arcade.Sprite)` prevents recursion.
-        TLDR: If you override this method in a subclass of Entity, MAKE SURE TO CALL super().update()
+        """Draws this Entity and all entities which are children to this one.
+
+        In addition to this, it draws any mixins which have a draw function implemented.
+
+        Note
+        ____
+        If this function is overridden in a subclass, make sure to call super().draw() at the end so that
+        all children classes are drawn too.
         """
         super().draw()
 
@@ -136,7 +233,26 @@ class Entity(arcade.Sprite):
 
     # noinspection PyMethodOverriding
     def update(self, time: float, sprites: SpriteContainer) -> None:
-        """Read above note in draw function. Same applies"""
+        """This function is called every game loop iteration for each entity so it can update all collision engines.
+
+        Furthermore, it loops over and updates every child entity to this entity. For example: the Bullet class is a
+        child to the Turret class and the Turret class is a child to the Drill class The SpriteContainer only has
+        reference to the root parent, so we need to update all children here.
+
+        In addition to this, it calls the update() function in all mixin classes.
+
+        Note
+        ----
+        If this function is overridden in a subclass, make sure to call super().update(time, sprites) at the end so that
+        all children classes are properly updated.
+
+        Parameters
+        ----------
+        time: float
+            The time that the game has been running for. We can store this to do something every x amount of time.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        """
         self.update_collision_engine(time, sprites)
 
         for mixin in self.__class__.__mro__:
@@ -147,6 +263,7 @@ class Entity(arcade.Sprite):
                 mixin.update(self, time, sprites)
 
         for child in self.children:
+            # noinspection PyArgumentList
             child.update(time, sprites)
 
 
@@ -166,24 +283,44 @@ class ChildEntity(Entity):
         self._maintain_parent_angle = maintain_parent_angle
 
     @property
-    def parents(self) -> List[Entity]:
-        """If an entity is a child to another class. And that class is a child to another. Example: Such as a bullet
-        is a child to the turret, and the turret is a child to the drill. Returns all parent instances to this child."""
+    def get_all_parents(self) -> List[Entity]:
+        """Returns a list containing the Entity that is a parent to this class, as well as the parent of that parent
+        and so on.
+
+        Notes
+        -----
+        This is recursive and all indirect parents are also present in this list.
+
+        Returns
+        -------
+        List[Entity]
+            A list of all Entities that are both a parent to this class and indirect parents (parents of that parent
+            and so on)
+
+        """
         parents = []
-        parent_class = self
-        while hasattr(parent_class, 'parent') and parent_class.parent is not None:
-            parents.append(parent_class.parent)
-            parent_class = parent_class.parent
+        klass = self
+        while hasattr(klass, 'parent') and klass.parent is not None:
+            parents.append(klass.parent)
+            klass = klass.parent
         return parents
 
-    def draw(self) -> None:
-        super().draw()
-
-        for mixin in self.__class__.__mro__:
-            if hasattr(mixin, 'draw') and not issubclass(mixin, arcade.Sprite):
-                mixin.draw(self)
-
     def update(self, time: float, sprites: SpriteContainer) -> None:
+        """Adds additional logic to the Entity.update function so that the child can maintain position/angle with
+        respect to the parent.
+
+        See Also
+        --------
+        Entity.update: The parent class implementation of update.
+
+        Parameters
+        ----------
+        time: float
+            The time that the game has been running for. We can store this to do something every x amount of time.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        """
         if self._maintain_relative_position:
             self.center_x = self.parent.center_x + self.relative_x
             self.center_y = self.parent.center_y + self.relative_y
