@@ -423,8 +423,13 @@ class ChildEntity(Entity):
 
         """
         if self._maintain_relative_position:
-            self.center_x = self.parent.center_x + self.relative_x
-            self.center_y = self.parent.center_y + self.relative_y
+            angle = math.radians(self.parent.angle)
+            point_x = self.parent.center_x + self.relative_x
+            point_y = self.parent.center_y + self.relative_y
+            self.center_x = (math.cos(angle) * (point_x - self.parent.center_x)) + \
+                            (math.sin(angle) * (point_y - self.parent.center_y) + self.parent.center_x)
+            self.center_y = (math.sin(angle) * (point_x - self.parent.center_x)) + \
+                            (math.cos(angle) * (point_y - self.parent.center_y) + self.parent.center_y)
 
         if self._maintain_parent_angle:
             self.angle = self.parent.angle
