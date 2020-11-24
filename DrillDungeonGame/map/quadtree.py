@@ -98,7 +98,7 @@ class QuadNode:
 
         Parameters
         ----------
-        
+
         """
         self.children = {}
         self.x_range = None
