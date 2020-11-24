@@ -25,6 +25,10 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         Left or right mouse click logic.
     update(time: float, sprites)
         Specific update logic for drill.
+    enable_shield()
+        Enables the shield. Consumes coal at a steady rate and makes the drill untargetable while active.
+    disable_shield()
+        Disables the shield which stops coal consumption and makes you once again targetable.
 
     """
     def __init__(self, center_x: Union[float, int], center_y: Union[float, int],
