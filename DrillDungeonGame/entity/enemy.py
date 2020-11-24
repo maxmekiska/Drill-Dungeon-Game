@@ -48,7 +48,7 @@ class Enemy(Entity):
         position_x = self.center_x  # Slightly above the sprite.
         position_y = self.center_y - 20
         width = self.width
-        height = 3
+        height = 5
         arcade.draw_rectangle_filled(
             position_x, position_y, width, height, arcade.color.WHITE
         )
@@ -65,7 +65,8 @@ class Enemy(Entity):
             position_y,
             width,
             height,
-            arcade.color.BLACK
+            arcade.color.BLACK,
+            border_width=1.5
         )
 
     def draw(self) -> None:

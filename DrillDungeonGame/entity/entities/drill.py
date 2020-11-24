@@ -205,7 +205,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         if self.shield_enabled:
             self._total_shield_uptime += delta_time
-            if self._total_shield_uptime > 3.0:  # Remove one coal every 3 seconds.
+            if self._total_shield_uptime > 1.5:  # Remove one coal every 3 seconds.
                 self._total_shield_uptime = 0.0
                 self.inventory.coal -= 1
 
