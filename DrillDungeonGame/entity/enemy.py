@@ -69,8 +69,7 @@ class Enemy(Entity):
         )
 
     def draw(self) -> None:
-        """Draws a health bar if current and max health are not infinite.
-        """
+        """Draws a health bar if current and max health are not infinite."""
         if self.current_health != -1 and self.max_health != -1:
             self.draw_health_bar()
 
