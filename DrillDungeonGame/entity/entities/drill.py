@@ -114,7 +114,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         if button == 1:  # Left click
             self.children[0].pull_trigger()
         elif button == 4:  # Right click
-            self.enable_shield()
+            if self.inventory.coal >= 1:
+                self.enable_shield()
 
     def handle_mouse_release(self, button: int) -> None:
         """
