@@ -23,6 +23,24 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
     """
     def __init__(self, center_x: int, center_y: int, vision: Union[float, int],
                  speed: Union[float, int] = 1) -> None:
+        """
+
+        Parameters
+        ----------
+        center_x    :   int
+            The starting x position in the map for this entity.
+        center_y    :   int
+            The starting y position in the map for this entity.
+        vision      :   Union[float, int]
+            The vision/detection field of the enemy.
+        speed       :   Union[float, int]
+            The movement speed of the enemy.
+
+        Returns
+        -------
+        None
+
+        """
 
         base_sprite: str = "resources/images/enemy/enemy.png"
         sprite_scale: float = 0.3
@@ -35,24 +53,7 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
                                     firing_mode=ShotType.SINGLE))
         self._last_shot_time = 0
         self._last_pathfind_time = 0
-        """
-                
-        Parameters
-        ----------
-        center_x    :   int
-            The starting x position in the map for this entity.
-        center_y    :   int
-            The starting y position in the map for this entity.
-        vision      :   Union[float, int]
-            The vision/detection field of the enemy.
-        speed       :   Union[float, int]
-            The movement speed of the enemy.
-        
-        Returns
-        -------
-        None
-                         
-        """
+
 
     def update(self, time: float, sprites) -> None:
         """
