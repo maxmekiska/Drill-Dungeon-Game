@@ -17,68 +17,170 @@ window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
 class MyFlatButtonStartGame(arcade.gui.UIFlatButton):
     """
-    To capture a button click, subclass the button and override on_click.
+
+    Class to create a flat button that starts the game.
+
+    Methods
+    -------
+    on_click()
+        Executes logic when button is clicked.
+
     """
     def on_click(self):
+        """
+
+        Changes View to game view (game window starts running).
+
+        """
         MenuView.start_game()
         
         
 class MyFlatButtonStartInstruction(arcade.gui.UIFlatButton):
     """
-    To capture a button click, subclass the button and override on_click.
+
+    Class to create a flat button that leads to the instruction menu.
+
+    Methods
+    -------
+    on_click()
+        Executes logic when button is clicked.
+
     """
     def on_click(self):
+        """
+
+        Changes View to the instructions window.
+
+        """
         instructions_view = InstructionView()
         window.show_view(instructions_view)
         
 class MyFlatButtonMenu(arcade.gui.UIFlatButton):
     """
-    
+
+    Class to create a flat button that leads to the main menu.
+
+    Methods
+    -------
+    on_click()
+        Executes logic when button is clicked.
+
     """
     def on_click(self):
+        """
+
+        Changes View to the main menu.
+
+        """
         menu_view = MenuView()
         window.show_view(menu_view)
 class MyFlatButtonObjectives(arcade.gui.UIFlatButton):
     """
-    
+
+    Class to create a flat button that leads to the main menu.
+
+    Methods
+    -------
+    on_click()
+        Executes logic when button is clicked.
+
     """
     def on_click(self):
+        """
+
+        Changes View to the objectives window.
+
+        """
         objectives_view = ObjectivesView()
         window.show_view(objectives_view)
         
 class MyFlatButtonExit(arcade.gui.UIFlatButton):
     """
-    To capture a button click, subclass the button and override on_click.
+
+    Class to create a flat button that closes the game.
+
+    Methods
+    -------
+    on_click()
+        Executes logic when button is clicked.
+
     """
     def on_click(self):
+        """
+
+        Closes the game (ends the running program).
+
+        """
         quit()
         
 class MenuView(arcade.View):
+    """
+
+    Class that defines the layout and logics of the main menu.
+
+    Methods
+    -------
+    on_draw()
+        Renders the window.
+    on_show()
+        Displays the window.
+    on_hide_view()
+        Ui manager button logic initialization.
+    start_game()
+        Method that starts the game.
+    setup()
+        Defines the location of the buttons.
+
+    """
     def __init__(self):
         super().__init__()
 
         self.ui_manager = UIManager()
 
     def on_draw(self):
+        """
+
+        Renders the window for the player.
+
+        """
         arcade.start_render()
         arcade.draw_text("Drill Dungeon Game", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.2,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
 
     def on_show(self):
+        """
+
+        Displays the window, sets up background color.
+
+        """
         self.setup()
         arcade.set_background_color(arcade.color.WHITE)
                          
     def on_hide_view(self):
+        """
+
+        Ui manager button logic initialization.
+
+        """
         self.ui_manager.unregister_handlers()
         
           
     def start_game():
+        """
+
+        Method that changes the window to the game window and start the game.
+
+        """
         game=DrillDungeonGame(window)
         game.setup()
         window.show_view(game)
 
     def setup(self):
-        """ Set up this view. """
+        """
+
+        Set up this view.
+
+        """
         self.ui_manager.purge_ui_elements()
 
         y_slot = self.window.height // 4
@@ -114,15 +216,41 @@ class MenuView(arcade.View):
 
        
 class InstructionView(arcade.View):
+    """
+
+    Class that defines the layout and logics of the instruction window.
+
+    Methods
+    -------
+    on_draw()
+        Renders the window.
+    on_show()
+        Displays the window.
+    on_hide_view()
+        Ui manager button logic initialization.
+    setup()
+        Defines the location of the buttons.
+
+    """
     def __init__(self):
         super().__init__()
         self.ui_manager = UIManager()
         
     def on_show(self):
+        """
+
+        Displays the window, sets up background color.
+
+        """
         self.setup()
         arcade.set_background_color(arcade.color.BLACK)
 
     def on_draw(self):
+        """
+
+        Renders the window for the player.
+
+        """
         arcade.start_render()
         arcade.draw_text("Instructions", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.2,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
@@ -132,10 +260,19 @@ class InstructionView(arcade.View):
         
                          
     def on_hide_view(self):
+        """
+
+        Ui manager button logic initialization.
+
+        """
         self.ui_manager.unregister_handlers()
      
     def setup(self):
-        """ Set up this view. """
+        """
+
+        Set up this view.
+
+        """
         self.ui_manager.purge_ui_elements()
 
         y_slot = self.window.height // 4
@@ -162,15 +299,41 @@ class InstructionView(arcade.View):
         self.ui_manager.add_ui_element(button_right)
         
 class ObjectivesView(arcade.View):
+    """
+
+    Class that defines the layout and logics of the objectives window.
+
+    Methods
+    -------
+    on_draw()
+        Renders the window.
+    on_show()
+        Displays the window.
+    on_hide_view()
+        Ui manager button logic initialization.
+    setup()
+        Defines the location of the buttons.
+
+    """
     def __init__(self):
         super().__init__()
         self.ui_manager = UIManager()
         
     def on_show(self):
+        """
+
+        Displays the window, sets up background color.
+
+        """
         self.setup()
         arcade.set_background_color(arcade.color.BLACK)
 
     def on_draw(self):
+        """
+
+        Renders the window for the player.
+
+        """
         arcade.start_render()
         arcade.draw_text("The Objective", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.2,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
@@ -180,10 +343,19 @@ class ObjectivesView(arcade.View):
         
                          
     def on_hide_view(self):
+        """
+
+        Ui manager button logic initialization.
+
+        """
         self.ui_manager.unregister_handlers()
      
     def setup(self):
-        """ Set up this view. """
+        """
+
+        Set up this view.
+
+        """
         self.ui_manager.purge_ui_elements()
 
         y_slot = self.window.height // 4
