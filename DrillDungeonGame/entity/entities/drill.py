@@ -76,7 +76,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         self.distance_moved = distance_moved
         self.shield_enabled = False
         self._total_shield_uptime = 0.0  # Store the time the shield has been on for coal consumption purposes.
-        self._shield_sprite = Shield("resources/images/shield/blue_aura.png", 0.9, parent=self)
+        self._shield_sprite = Shield("resources/images/shield/blue_aura.png", 0.9, parent=self, relative_x=4)
 
     def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
         """
@@ -150,7 +150,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         """
         self.shield_enabled = False
-        self.children.remove(self._shield_sprite)
+        if self._shield_sprite in self.children:
+            self.children.remove(self._shield_sprite)
 
     def hurt(self, damage: Union[float, int]) -> None:
         """
