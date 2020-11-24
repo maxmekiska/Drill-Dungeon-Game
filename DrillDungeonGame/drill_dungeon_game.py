@@ -20,6 +20,24 @@ VIEWPOINT_MARGIN = 120
 
 
 class View:
+    """
+
+    Class to display and refresh the game window.
+
+    Methods
+    -------
+    update(centre_sprite: arcade.Sprite)
+        Update any changes in the game by updating the view.
+    _check_for_scroll_left()
+        Scrolls window to the left if player moves to the left.
+    _check_for_scroll_right()
+        Scrolls window to the right if player moves to the right.
+    _check_for_scroll_up()
+        Scrolls window up if player moves up.
+    _check_for_scroll_down()
+        Scrolls window down if player moves down.
+
+    """
     def __init__(self) -> None:
         self.left_offset = 0
         self.bottom_offset = 0
@@ -27,6 +45,16 @@ class View:
         # TODO store the width/height of the screen. This can then be passed to the Entity.update() function
 
     def update(self, centre_sprite: arcade.Sprite) -> None:
+        """
+
+        Check if drill has reached an edge of the viewport.
+
+        Parameters
+        ----------
+        centre_sprite: arcade.Sprite
+            Center of the screen.
+
+        """
         # Check if the drill has reached the edge of the box
         self._centre_sprite = centre_sprite
         changed = any((self._check_for_scroll_left(), self._check_for_scroll_right(),
@@ -40,6 +68,16 @@ class View:
                                 self.bottom_offset, SCREEN_HEIGHT + self.bottom_offset)
 
     def _check_for_scroll_left(self) -> bool:
+        """
+
+        Checks if left scroll is necessary.
+
+        Returns
+        -------
+        boolean
+            True: recenter
+
+        """
         left_boundary = self.left_offset + VIEWPOINT_MARGIN
         if self._centre_sprite.left < left_boundary:
             self.left_offset -= left_boundary - self._centre_sprite.left
@@ -47,6 +85,16 @@ class View:
         return False
 
     def _check_for_scroll_right(self) -> bool:
+        """
+
+        Checks if right scroll is necessary.
+
+        Returns
+        -------
+        boolean
+            True: recenter
+
+        """
         right_boundary = self.left_offset + SCREEN_WIDTH - VIEWPOINT_MARGIN
         if self._centre_sprite.right > right_boundary:
             self.left_offset += self._centre_sprite.right - right_boundary
@@ -54,6 +102,16 @@ class View:
         return False
 
     def _check_for_scroll_up(self) -> bool:
+        """
+
+        Checks if up scroll is necessary.
+
+        Returns
+        -------
+        boolean
+            True: recenter
+
+        """
         top_boundary = self.bottom_offset + SCREEN_HEIGHT - VIEWPOINT_MARGIN
         if self._centre_sprite.top > top_boundary:
             self.bottom_offset += self._centre_sprite.top - top_boundary
@@ -61,6 +119,16 @@ class View:
         return False
 
     def _check_for_scroll_down(self) -> bool:
+        """
+
+        Checks if down scroll is necessary.
+
+        Returns
+        -------
+        boolean
+            True: recenter
+
+        """
         bottom_boundary = self.bottom_offset + VIEWPOINT_MARGIN
         if self._centre_sprite.bottom < bottom_boundary:
             self.bottom_offset -= bottom_boundary - self._centre_sprite.bottom
@@ -69,11 +137,54 @@ class View:
 
 
 class DrillDungeonGame(arcade.View):
+    """
+    Contains the game logic.
+
+    Methods
+    -------
+    setup(number_of_coal_patches: int, number_of_gold_patches: int, number_of_dungeons: int, center_x: int, center_y: int)
+        Set up game and initialize variables.
+    draw_next_map_layer()
+        Generates and loads the next layer of the map when drilling down.
+    draw_previous_layer()
+        Generates and loads previous layer before drill down action has been performed.
+    update_map_configuration()
+        Updates the map's configuration specs for the next layer, allowing for increased difficulty.
+    on_draw()
+        Draws map.
+    load_map_layer_from_matrix(map_layer_matrix: List)
+        Loads a map from a layer matrix.
+    fill_row_with_terrain(map_row: list, y_block_center: Union[float, int], block_width: Union[float, int], block_height: Union[float, int])
+        Fills a row with terrain.
+    on_key_press(key: int, modifiers: int)
+        If key is pressed, it sets that key in self.keys_pressed dict to True.
+    on_key_release(key: int, modifiers: int)
+        If key is released, sets that key in self.keys_pressed dict to False.
+    on_mouse_motion(x: float, y: float, dx: float, dy: float)
+        Handles mouse motion.
+    on_mouse_press(x: float, y: float, button: int, modifiers: int)
+        Executes logic when mouse key is pressed.
+    on_mouse_release(x: float, y: float, button: int, modifiers: int)
+        Executes logic when mouse key is released.
+    reload_chunks()
+        Loads fresh set of chunks.
+    on_update(delta_time: float)
+        Method is called by the arcade library every iteration. Provides basis for game running time.
+
+    """
     # This builds a dictionary of all possible keys that arcade can register as 'pressed'.
     # They unfortunately don't have another method to get this, and populating it before init is not taxing.
     possible_keys = {value: key for key, value in arcade.key.__dict__.items() if not key.startswith('_')}
 
     def __init__(self, window) -> None:
+        """
+
+        Parameters
+        ----------
+        window: entity
+            Window to be shown to the player.
+
+        """
         super().__init__()
         self.game_window = window
         self.keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
@@ -100,7 +211,24 @@ class DrillDungeonGame(arcade.View):
 
     def setup(self, number_of_coal_patches: int = 20, number_of_gold_patches: int = 20,
               number_of_dungeons: int = 3, center_x: int = 128, center_y: int = 128) -> None:
-        """Set up game and initialize variables"""
+        """
+
+        Set up game and initialize variables.
+
+        Parameters
+        ----------
+        number_of_coal_patches  : int
+            Number of coal patches to be created.
+        number_of_gold_patches  : int
+            Number of gold patches to be created.
+        number_of_dungeons      : int
+            Number of dungeon rooms to be created.
+        center_x                : int
+            x-coordinate of the center.
+        center_y                : int
+            y-coordinate of the center.
+
+        """
         dirt_list = arcade.SpriteList(use_spatial_hash=True)  # spatial hash, makes collision detection faster
         border_wall_list = arcade.SpriteList(use_spatial_hash=True)
         shop_list = arcade.SpriteList(use_spatial_hash=True)
@@ -159,7 +287,9 @@ class DrillDungeonGame(arcade.View):
 
     def draw_next_map_layer(self) -> None:
         """
+
         Generates and loads the next layer of the map when drilling down
+
         """
         self.upwards_layer = self.cmanager
         if self.downwards_layer == None:
@@ -188,6 +318,11 @@ class DrillDungeonGame(arcade.View):
         self.sprites.explosion_list.draw()
 
     def draw_previous_layer(self) -> None:
+        """
+
+        Generates and loads previous layer before drill down action has been performed.
+
+        """
         print(self.upwards_layer)
         self.current_layer -= 1
         self.downwards_layer = self.cmanager
@@ -206,8 +341,10 @@ class DrillDungeonGame(arcade.View):
 
     def update_map_configuration(self) -> None:
         """
+
         Updates the map's configuration specs for the next layer, allowing for
-        increased difficulty
+        increased difficulty.
+
         """
         self.coal_per_layer = generate_next_layer_resource_patch_amount(self.current_layer)
         self.gold_per_layer = generate_next_layer_resource_patch_amount(self.current_layer)
@@ -215,7 +352,9 @@ class DrillDungeonGame(arcade.View):
 
     def on_draw(self) -> None:
         """
-        Draws the map
+
+        Draws the map.
+
         """
         arcade.start_render()
         self.sprites.dirt_list.draw()
@@ -239,9 +378,14 @@ class DrillDungeonGame(arcade.View):
 
     def load_map_layer_from_matrix(self, map_layer_matrix: List) -> None:
         """
-        Loads a map from a layer matrix
-        list map_layer_matrix : A matrix containing the map configuration, as
-        generated by the MapLayer class
+
+        Loads a map from a layer matrix.
+
+        Parameters
+        ----------
+        map_layer_matrix: List[]
+             A matrix containing the map configuration, as generated by the MapLayer class.
+
         """
         map_layer_height = len(map_layer_matrix)
         map_layer_width = len(map_layer_matrix[0])
@@ -255,11 +399,20 @@ class DrillDungeonGame(arcade.View):
     def fill_row_with_terrain(self, map_row: list, y_block_center: Union[float, int], block_width: Union[float, int],
                               block_height: Union[float, int]) -> None:
         """
-        Fills a row with terrain
-        list map_row        : a row of the map matrix
-        int y_block_center   : the y of the center of the blocks for the row
-        int block_width     : width of the blocks to fill the terrain
-        int block_height    : height of the blocks to fill the terrain
+
+        Fills a row with terrain.
+
+        Parameters
+        ----------
+        map_row         : List[]
+            A row of the map matrix.
+        y_block_center  : Union[float, int]
+            The y of the center of the blocks for the row.
+        block_width     : Union[float, int]
+            Width of the blocks to fill the terrain.
+        block_height    : Union[float, int]
+            Height of the blocks to fill the terrain.
+
         """
         x_block_center = 0.5 * block_width
         for item in map_row:
@@ -303,9 +456,25 @@ class DrillDungeonGame(arcade.View):
             x_block_center += block_width
 
     def on_key_press(self, key: int, modifiers: int) -> None:
-        """If a key is pressed, it sets that key in self.keys_pressed dict to True, and passes the dict onto
-        every entity that requires this information. ie All that subclass ControllableMixin.
-        This will probably just be the drill... but maybe we wan't controllable minions?"""
+        """
+
+        If a key is pressed, it sets that key in self.keys_pressed dict to True, and passes the dict onto
+        every entity that requires this information.
+
+        Notes
+        -----
+        For example, all that subclass ControllableMixin.
+        This will probably just be the drill...
+        but maybe we want controllable minions?
+
+        Parameters
+        ----------
+        key         : int
+            Key of self.keys_pressed
+        modifiers   : int
+            Modifier value.
+
+        """
         key_stroke = self.possible_keys.get(key)
         if key_stroke is None:
             return
@@ -333,7 +502,19 @@ class DrillDungeonGame(arcade.View):
                 print("No saved upwards layer")
 
     def on_key_release(self, key: int, modifiers: int) -> None:
-        """Same as above function, but it sets the value to False"""
+        """
+
+        If a key is released, it sets that key in self.keys_pressed dict to False, and passes the dict onto
+        every entity that requires this information.
+
+        Parameters
+        ----------
+        key         : int
+            Key of self.keys_pressed
+        modifiers   : int
+            Modifier value.
+
+        """
         key_stroke = self.possible_keys.get(key)
         if key_stroke is None:
             return
@@ -350,10 +531,41 @@ class DrillDungeonGame(arcade.View):
             self.drill_up = False 
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float) -> None:
-        """ Handle Mouse Motion """
+        """
+
+        Handle Mouse Motion.
+
+        Parameters
+        ----------
+        x       : float
+            x-coordinate.
+        y       : float
+            y-coordinate.
+        dx      : float
+            Change in x-coordinate.
+        dy      : float
+            Change in y-coordinate.
+
+        """
         self.mouse_position = (x, y)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
+        """
+
+        Detects when button on mouse is pressed.
+
+        Parameters
+        ----------
+        x           : float
+            x-coordinate.
+        y           : float
+            y-coordinate.
+        button      : int
+            Button pressed.
+        modifiers   : int
+            Modifier value.
+
+        """
         for shop in self.sprites.shop_list:
             if shop.collides_with_point((self.view.left_offset+x,self.view.bottom_offset+y,)) and \
                (arcade.get_distance_between_sprites(shop, self.sprites.drill)<70):
@@ -367,13 +579,31 @@ class DrillDungeonGame(arcade.View):
                 entity.handle_mouse_click(button)
 
     def on_mouse_release(self, x: float, y: float, button: int, modifiers: int) -> None:
+        """
+
+        Detects when button on mouse is released.
+
+        Parameters
+        ----------
+        x           : float
+            x-coordinate.
+        y           : float
+            y-coordinate.
+        button      : int
+            Button pressed.
+        modifiers   : int
+            Modifier value.
+
+        """
         for entity in (*self.sprites.entity_list, self.sprites.drill):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.handle_mouse_release(button)
 
     def reload_chunks(self):
         """
-        Loads up the fresh set of chunks for interaction
+
+        Loads up the fresh set of chunks for interaction.
+
         """
         print("RELOADING CHUNKS")
         self.cmanager._update_chunks(self.sprites.drill.center_x, self.sprites.drill.center_y)
@@ -404,9 +634,21 @@ class DrillDungeonGame(arcade.View):
 
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
-        """This function is called by the arcade library every iteration (or frame).
-        Delta time is the time since the last iteration. We can add these up each time this function is called
-        to get the 'running time' of the game."""
+        """
+
+        This method is called by the arcade library every iteration (or frame).
+
+        Notes
+        -----
+        We can add these up each time this function is called
+        to get the 'running time' of the game.
+
+        Parameters
+        ----------
+        delta_time  : float
+            Time since last iteration
+            
+        """
         self.frame += 1
         self.time += delta_time
 
