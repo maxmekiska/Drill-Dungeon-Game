@@ -241,7 +241,8 @@ class DrillDungeonGame(arcade.View):
         bullet_list = arcade.SpriteList()
 
         #TODO fix this so that stats arent reset on drill down
-        drill = Drill(center_x=center_x, center_y=center_y, health=100, ammunition=400, coal=30, gold=0)
+        drill = Drill(center_x=center_x, center_y=center_y, current_health=100, max_health=100,
+                      ammunition=400, coal=30, gold=0)
         all_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         destructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         indestructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
@@ -372,7 +373,7 @@ class DrillDungeonGame(arcade.View):
                 arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
 
         hud = f"Ammunition: {self.sprites.drill.inventory.ammunition}\nCoal:{self.sprites.drill.inventory.coal}" \
-              f"\nGold:{self.sprites.drill.inventory.gold}\nHealth:{self.sprites.drill.health}"
+              f"\nGold:{self.sprites.drill.inventory.gold}\nHealth:{self.sprites.drill.current_health}"
         # update hud with screen scroll
         arcade.draw_text(hud, self.view.left_offset + 10, self.view.bottom_offset + 20, arcade.color.BLACK, 20)
 

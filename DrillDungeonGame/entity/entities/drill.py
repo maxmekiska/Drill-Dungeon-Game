@@ -38,8 +38,10 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
     """
     def __init__(self, center_x: Union[float, int], center_y: Union[float, int],
-                 speed: Union[float, int] = 1, angle: float = 0.0, ammunition: int = -1, coal: int = -1, gold: int = -1,
-                 distance_moved: Union[float, int] = 0, health: Union[float, int] = -1) -> None:
+                 speed: Union[float, int] = 1, angle: float = 0.0,
+                 ammunition: int = -1, coal: int = -1, gold: int = -1,
+                 distance_moved: Union[float, int] = 0,
+                 current_health: Union[float, int] = -1, max_health: Union[float, int] = -1) -> None:
         """
 
         Parameters
@@ -60,15 +62,18 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
             The amount of gold that the drill starts with in its inventory. -1 means unlimited.
         distance_moved  :   Union[float, int]
             The distance that the drill has moved. This is useful when drilling up/down and reloading the map.
-        health          :   float
+        current_health  :   float
             The starting health for this entity.  -1 means invincible.
+        max_health
+            The maximum amount of health that this entity can have. -1 means unlimited.
 
         """
         base_sprite: str = "resources/images/drills/drill_v2_2.png"
         turret_sprite: str = "resources/images/weapons/turret1.png"
         sprite_scale = 0.3
         turret_scale = 0.2
-        super().__init__(base_sprite, sprite_scale, center_x, center_y, speed=speed, angle=angle, health=health)
+        super().__init__(base_sprite, sprite_scale, center_x, center_y, speed=speed, angle=angle,
+                         current_health=current_health, max_health=max_health)
 
         self.inventory = Inventory(gold=gold, coal=coal, ammunition=ammunition)
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
@@ -114,7 +119,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         if button == 1:  # Left click
             self.children[0].pull_trigger()
         elif button == 4:  # Right click
-            self.enable_shield()
+            if self.inventory.coal >= 1:
+                self.enable_shield()
 
     def handle_mouse_release(self, button: int) -> None:
         """
@@ -199,7 +205,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         if self.shield_enabled:
             self._total_shield_uptime += delta_time
-            if self._total_shield_uptime > 3.0:  # Remove one coal every 3 seconds.
+            if self._total_shield_uptime > 1.5:  # Remove one coal every 3 seconds.
                 self._total_shield_uptime = 0.0
                 self.inventory.coal -= 1
 
