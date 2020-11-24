@@ -65,3 +65,16 @@ class ControllableMixin:
 
         """
         pass
+
+    def handle_mouse_release(self, button: int) -> None:
+        """Called when left or right mouse button are released.
+
+        Override this function in a subclass to provide functionality here.
+
+        Parameters
+        ----------
+        button: int
+            The button pressed. 1 = Left click, 4 = Right click.
+
+        """
+        pass

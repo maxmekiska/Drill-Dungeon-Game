@@ -33,10 +33,11 @@ class ShootingMixin:
     parent: Entity
     children: List[Entity]
     firing_mode: ShotType
+    firing_rate: Union[float, int]
 
     def __init__(self) -> None:
         self._last_shoot_time = 0
-        self._bullets_to_shoot = []  # type: List[ShotType]
+        self._trigger_pulled = False
 
     def aim(self, dest_x: float, dest_y: float) -> None:
         """Causes the entity to aim towards a certain position.
@@ -57,8 +58,37 @@ class ShootingMixin:
         angle = math.degrees(math.atan2(y_diff, x_diff))
         self.angle = angle
 
-    def shoot(self) -> None:
-        self._bullets_to_shoot.append(self.firing_mode)
+    def pull_trigger(self) -> None:
+        """
+
+        Pulls the trigger and sets the turret to start shooting at the firing rate.
+
+        Parameter
+        ---------
+        None
+
+        Returns
+        -------
+        None
+
+        """
+        self._trigger_pulled = True
+
+    def release_trigger(self) -> None:
+        """
+
+        Releases the trigger and the turret stops shooting.
+
+        Parameter
+        ---------
+        None
+
+        Returns
+        -------
+        None
+
+        """
+        self._trigger_pulled = False
 
     # noinspection PyArgumentList
     def _shoot(self, shot_type: ShotType, sprites) -> None:
@@ -135,6 +165,6 @@ class ShootingMixin:
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         """
-        if len(self._bullets_to_shoot) > 0:
-            shot_type = self._bullets_to_shoot.pop(0)
-            self._shoot(shot_type, sprites)
+        if self._trigger_pulled and (time - self._last_shoot_time) > self.firing_rate:
+            self._last_shoot_time = time
+            self._shoot(self.firing_mode, sprites)

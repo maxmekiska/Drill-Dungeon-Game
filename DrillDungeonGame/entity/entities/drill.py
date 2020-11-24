@@ -68,6 +68,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
                                     firing_mode=ShotType.SINGLE))
         self.distance_moved = distance_moved
+        self.shield_on = False
 
     def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
         """
@@ -97,7 +98,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
     def handle_mouse_click(self, button: int) -> None:
         """
 
-        Called when left or right mouse button are pressed.
+        Called when left or right mouse buttons are pressed. Left click shoots. Right click enables shield.
 
         Parameters
         ----------
@@ -111,10 +112,30 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         """
         ControllableMixin.handle_mouse_click(self, button)
         if button == 1:  # Left click
-            self.children[0].shoot()
+            self.children[0].pull_trigger()
         elif button == 4:  # Right click
-            pass
-            # TODO enable shield.
+            self.shield_on = True
+
+    def handle_mouse_release(self, button: int) -> None:
+        """
+
+        Called when left or right mouse buttons are released. Currently disables shield when right click is released.
+
+        Parameters
+        ----------
+        button  :   int
+            The button released. 1 = Left click, 4 = Right click.
+
+        Returns
+        -------
+        None
+
+        """
+        ControllableMixin.handle_mouse_release(self, button)
+        if button == 1:  # Left click
+            self.children[0].release_trigger()
+        elif button == 4:  # Right click release.
+            self.shield_on = False
 
     def update(self, time: float, sprites) -> None:
         """

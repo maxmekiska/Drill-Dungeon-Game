@@ -14,7 +14,7 @@ class Turret(ChildEntity, ShootingMixin):
     def __init__(self, base_sprite: str, sprite_scale: float, parent: Entity,
                  relative_x: Union[float, int] = 0.0, relative_y: [float, int] = 0.0,
                  angle: float = 0.0, speed: Union[float, int] = 1, bullet_type: Type[Bullet] = None,
-                 firing_mode: ShotType = ShotType.SINGLE) -> None:
+                 firing_mode: ShotType = ShotType.SINGLE, firing_rate: Union[float, int] = 0.2) -> None:
         """
 
         Parameters
@@ -37,6 +37,8 @@ class Turret(ChildEntity, ShootingMixin):
             The bullet that this turret shoots.
         firing_mode     :   ShotType
             The type of shot to fire the bullet in. Defaults to ShotType.SINGLE. ShotType.BUCKSHOT is another option.
+        firing_rate     :   Union[float, int]
+            The firing rate of the turret in seconds.
 
         Returns
         -------
@@ -52,3 +54,4 @@ class Turret(ChildEntity, ShootingMixin):
         self.bullet_type = bullet_type
         self.inventory = self.parent.inventory if hasattr(self.parent, 'inventory') else None
         self.firing_mode = firing_mode
+        self.firing_rate = firing_rate
