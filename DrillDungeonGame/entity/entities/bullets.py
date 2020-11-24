@@ -5,7 +5,7 @@ import arcade
 from ..bullet import Bullet
 from ..entity import Entity
 from ...utility.utility import make_explosion_particles
-from DrillDungeonGame.particles.explosion import ParticleGold, Smoke, ParticleCoal, ParticleDirt
+from DrillDungeonGame.particles.explosion import ParticleGold, Smoke, ParticleCoal, ParticleDirt, ParticleShield
 
 
 class BouncingBullet(Bullet):
@@ -151,7 +151,15 @@ class BlueNormalBullet(Bullet):
         # The second and statement here makes sure the bullet doesnt belong to the sprite that shot it.
         elif sprite in (*sprites.enemy_list, sprites.drill):
             # Little check to make sure the bullet isn't hitting the turret or any parent. Bullets spawn inside this.
-            if sprite not in self.get_all_parents:
+            if sprite in self.get_all_parents:
+                return
+
+            if hasattr(sprite, 'shield_enabled') and sprite.shield_enabled == True:
+                make_explosion_particles(ParticleShield, sprite.position, time, sprites)
+                self.remove_from_sprite_lists()
+
+            else:
+
                 make_explosion_particles(ParticleDirt, sprite.position, time, sprites)
                 smoke = Smoke(50)
                 smoke.position = sprite.position
