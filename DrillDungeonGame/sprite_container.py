@@ -6,14 +6,63 @@ from DrillDungeonGame.entity.entities.drill import *
 
 
 class SpriteContainer:
-    """This class is used as a storage class for all sprites in our game. Don't add them in DrillDungeonGame class.
-    Furthermore, it allows getting all sprites of a certain category through the property methods."""
+    """
+
+    This class is used as a storage class for all sprites in our game.
+
+    Notes
+    -----
+    Don't add them in DrillDungeonGame class.
+    Furthermore, it allows getting all sprites of a certain category through the property methods.
+
+    Methods
+    -------
+    extend(other)
+        Defines additional behaviour of the class.
+    all()
+        Returns a list containing all SpriteLists.
+
+    """
     def __init__(self, drill: Drill, dirt_list: arcade.SpriteList, border_wall_list: arcade.SpriteList,
                  shop_list: arcade.SpriteList, coal_list: arcade.SpriteList, gold_list: arcade.SpriteList,
                  explosion_list: arcade.SpriteList, entity_list: arcade.SpriteList, drill_list: arcade.SpriteList,
                  enemy_list: arcade.SpriteList, bullet_list: arcade.SpriteList,
                  all_blocks_list: arcade.SpriteList, destructible_blocks_list: arcade.SpriteList,
                  indestructible_blocks_list: arcade.SpriteList) -> None:
+        """
+
+        Parameters
+        ----------
+        drill                       : Entity
+            The drill (player).
+        dirt_list                   : arcade.SpriteList
+            List containing all dirt blocks.
+        border_wall_list            : arcade.SpriteList
+            List containing all border blocks.
+        shop_list                   : arcade.SpriteList
+            List containing all shops on the map.
+        coal_list                   : arcade.SpriteList
+            List containing all coal blocks.
+        gold_list                   : arcade.SpriteList
+            List containing all gold blocks.
+        explosion_list              : arcade.SpriteList
+            List containing all explosion elements.
+        entity_list                 : arcade.SpriteList
+            List containing all entities on map.
+        drill_list                  : arcade.SpriteList
+            List containing drill on map.
+        enemy_list                  : arcade.SpriteList
+            List containing all enemies on the map.
+        bullet_list                 : arcade.SpriteList
+            List containing all bullets on map.
+        all_blocks_list             : arcade.SpriteList
+            List containing all blocks on the map.
+        destructible_blocks_list    : arcade.SpriteList
+            List containing all objects that are destructible on the map.
+        indestructible_blocks_list  : arcade.SpriteList
+            List containing all objects that cannot be destructed on the map.
+
+        """
         self.dirt_list = dirt_list
         self.border_wall_list = border_wall_list
         self.shop_list = shop_list
@@ -37,8 +86,23 @@ class SpriteContainer:
 
     def extend(self, other):
         """
-        Defines addition behaviour of the class. Should return new instance fo SpriteContainer
+
+        Defines addition behaviour of the class.
+
+        Notes
+        -----
+        Should return new instance of SpriteContainer
         with the two sprite lists added up basically
+
+        Parameters
+        ----------
+        other: entity
+
+        Returns
+        -------
+        entity
+            New instance of sprite container.
+
         """
         self.dirt_list.extend(other.dirt_list)
         self.border_wall_list.extend(other.border_wall_list)
@@ -57,7 +121,20 @@ class SpriteContainer:
 
     @property
     def all(self) -> List[arcade.SpriteList]:
-        """Returns a list containing all SpriteLists. This doesn't include sprite_lists which contain duplicated
-        sprites from other sprite lists."""
+        """
+
+        Returns a list containing all SpriteLists.
+
+        Notes
+        -----
+        This doesn't include sprite_lists which contain duplicated
+        sprites from other sprite lists.
+
+        Returns
+        -------
+        List[arcade.SpriteList]
+            Returns all sprite lists.
+
+        """
         return [self.drill, self.dirt_list, self.border_wall_list, self.coal_list,
                 self.gold_list, self.explosion_list, self.entity_list, self.bullet_list]
