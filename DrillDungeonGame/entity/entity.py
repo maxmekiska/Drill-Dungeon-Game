@@ -426,6 +426,8 @@ class ChildEntity(Entity):
             angle = math.radians(self.parent.angle)
             point_x = self.parent.center_x + self.relative_x
             point_y = self.parent.center_y + self.relative_y
+            #  Transforms point to rotate about (parent center) to origin on the axis. Perform the rotation and then
+            #  translate back to the parents position.
             self.center_x = (math.cos(angle) * (point_x - self.parent.center_x)) + \
                             (math.sin(angle) * (point_y - self.parent.center_y) + self.parent.center_x)
             self.center_y = (math.sin(angle) * (point_x - self.parent.center_x)) + \

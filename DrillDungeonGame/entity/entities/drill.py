@@ -150,7 +150,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         """
         self.shield_enabled = False
-        self.children.remove(self._shield_sprite)
+        if self._shield_sprite in self.children:
+            self.children.remove(self._shield_sprite)
 
     def hurt(self, damage: Union[float, int]) -> None:
         """
