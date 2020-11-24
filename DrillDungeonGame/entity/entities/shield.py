@@ -8,7 +8,7 @@ from DrillDungeonGame.entity.mixins.shooting_mixin import ShootingMixin, ShotTyp
 class Shield(ChildEntity):
     """
 
-    Represents a turret entity. This is always a child to another entity.
+    Represents a shield entity. This is always a child to another entity.
 
     """
 
@@ -37,5 +37,4 @@ class Shield(ChildEntity):
         super().__init__(base_sprite, sprite_scale, parent=parent,
                          relative_x=relative_x, relative_y=relative_y, maintain_relative_position=True,
                          angle=angle, maintain_parent_angle=True)
-        self.alpha = 200
-        self.inventory = self.parent.inventory if hasattr(self.parent, 'inventory') else None
+        self.alpha = 200  # Set transparency to about 70%.
