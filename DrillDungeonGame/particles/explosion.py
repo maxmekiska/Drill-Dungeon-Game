@@ -28,6 +28,10 @@ PARTICLE_COLORS_GOLD = [arcade.color.GOLD,
                         arcade.color.LEMON,
                         arcade.color.MIKADO_YELLOW]
 
+PARTICLE_COLORS_SHIELD = [arcade.color.LAVENDER_BLUE,
+                          arcade.color.SAPPHIRE_BLUE,
+                          arcade.color.BONDI_BLUE]
+
 PARTICLE_COLORS_ENEMY = []  # for enemy hits
 
 PARTICLE_SPARKLE_CHANCE = 0.02
@@ -174,6 +178,42 @@ class ParticleGold(arcade.SpriteCircle):
             if random.random() <= PARTICLE_SPARKLE_CHANCE:
                 self.alpha = 255
                 self.texture = arcade.make_circle_texture(int(self.width), arcade.color.WHITE)
+            else:
+                self.texture = self.normal_texture
+
+    def draw(self) -> None:
+        for item in self.sprite_list:
+            item.draw()
+
+
+class ParticleShield(arcade.SpriteCircle):
+    """ Explosion particle for gold blocks """
+
+    def __init__(self, my_list) -> None:
+        color = random.choice(PARTICLE_COLORS_SHIELD)
+        super().__init__(PARTICLE_RADIUS, color)
+        self.normal_texture = self.texture
+        self.my_list = my_list
+        speed = random.random() * PARTICLE_SPEED_RANGE + PARTICLE_MIN_SPEED
+        direction = random.randrange(360)
+        self.change_x = math.sin(math.radians(direction)) * speed
+        self.change_y = math.cos(math.radians(direction)) * speed
+        self.my_alpha = 255
+        self.my_list = my_list
+
+    def update(self) -> None:
+        """ Update the particle """
+        if self.my_alpha <= PARTICLE_FADE_RATE:
+            self.remove_from_sprite_lists()
+        else:
+            self.my_alpha -= PARTICLE_FADE_RATE
+            self.alpha = self.my_alpha
+            self.center_x += self.change_x
+            self.center_y += self.change_y
+
+            if random.random() <= PARTICLE_SPARKLE_CHANCE:
+                self.alpha = 255
+                self.texture = arcade.make_circle_texture(int(self.width), arcade.color.SAPPHIRE_BLUE)
             else:
                 self.texture = self.normal_texture
 
