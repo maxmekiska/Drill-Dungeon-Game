@@ -11,6 +11,28 @@ class Bullet(ChildEntity):
     def __init__(self, base_sprite: str, sprite_scale: Union[float, int], parent: Entity,
                  relative_x: Union[float, int], relative_y: Union[float, int], speed: Union[float, int],
                  angle: float = 0.0, damage: Union[float, int] = 0):
+        """A base class for different bullet types to subclass.
+
+        Parameters
+        ----------
+        base_sprite: str
+            The path to the file containing the sprite for this entity.
+        sprite_scale: float
+            The scale to draw the sprite for this entity
+        parent: Entity
+            The entity that created fired this bullet.
+        relative_x: Union[float, int]
+            The x position, relative to the parent to spawn the bullet at.
+        relative_y: Union[float, int]
+            The y position, relative to the parent to spawn the bullet at.
+        speed: Union[float, int]
+            The speed that the bullet will travel at.
+        angle: float
+            The starting angle that the bullet should be facing when shot.
+        damage: Union[float, int]
+            The amount of that this bullet will inflict when hitting another entity with a health attribute.
+
+        """
         super().__init__(base_sprite, sprite_scale, parent, relative_x=relative_x, relative_y=relative_y,
                          speed=speed, angle=angle, maintain_parent_angle=False, maintain_relative_position=False)
         self.damage = damage

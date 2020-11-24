@@ -39,6 +39,16 @@ class ShootingMixin:
         self._bullets_to_shoot = []  # type: List[ShotType]
 
     def aim(self, dest_x: float, dest_y: float) -> None:
+        """Causes the entity to aim towards a certain position.
+
+        Parameters
+        ----------
+        dest_x: float
+            The x position to aim at.
+        dest_y: float
+            The y position to aim at.
+
+        """
         # Note that all of the trig functions convert between an angle and the ratio of two sides of a triangle.
         # cos, sin, and tan take an angle in radians as input and return the ratio; acos, asin, and atan take a ratio
         # as input and return an angle in radians. You only convert the angles, never the ratios.
@@ -52,8 +62,20 @@ class ShootingMixin:
 
     # noinspection PyArgumentList
     def _shoot(self, shot_type: ShotType, sprites) -> None:
-        """Shoots a bullet from the turret location. Returns the bullet that was creates so it can be appended
-        to the sprite list."""
+        """Shoots a bullet of a certain type.
+
+        Notes
+        -----
+        This should only be called from the update function. Use shoot in other cases instead.
+
+        Parameters
+        ----------
+        shot_type: ShotType
+            The type of shooting mode to shoot the bullets in. Ie Single or buckshot.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        """
         if self.inventory is not None:
             if shot_type == ShotType.SINGLE:
                 if self.inventory.ammunition > 0:
@@ -103,6 +125,16 @@ class ShootingMixin:
             sprites.bullet_list.append(bullet_right)
 
     def update(self, time: float, sprites) -> None:
+        """Called in each game loop iteration. Checks to see if there are any bullets pending to be shot and does so.
+
+        Parameters
+        ----------
+        time: float
+            The time that the game has been running for. We can store this to do something every x amount of time.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        """
         if len(self._bullets_to_shoot) > 0:
             shot_type = self._bullets_to_shoot.pop(0)
             self._shoot(shot_type, sprites)

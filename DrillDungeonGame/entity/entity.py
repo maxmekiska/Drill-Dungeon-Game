@@ -32,6 +32,7 @@ class Entity(arcade.Sprite):
             The starting angle for this entity.
         health: float:
             The starting health for this entity.
+
         """
         super().__init__(base_sprite, sprite_scale, center_x=center_x, center_y=center_y)
         self.angle = angle
