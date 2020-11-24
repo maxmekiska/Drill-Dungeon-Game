@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Union, Dict
 
 from .bullets import BlueNormalBullet
+from .shield import Shield
 from .turret import Turret
 from ..entity import Entity
 from ..mixins.digging_mixin import DiggingMixin
@@ -16,6 +17,11 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
     Represents the drill (the player) that the player can control.
     Has a turret entity as a child.
+
+    Attributes
+    ----------
+    shield_enabled  : bool
+        Whether or not the drill's shield is currently enabled or disabled.
 
     Methods
     -------
@@ -57,10 +63,6 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         health          :   float
             The starting health for this entity.  -1 means invincible.
 
-        Returns
-        -------
-        None
-
         """
         base_sprite: str = "resources/images/drills/drill_v2_2.png"
         turret_sprite: str = "resources/images/weapons/turret1.png"
@@ -72,8 +74,9 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
                                     firing_mode=ShotType.SINGLE))
         self.distance_moved = distance_moved
-        self._shield_enabled = False
+        self.shield_enabled = False
         self._total_shield_uptime = 0.0  # Store the time the shield has been on for coal consumption purposes.
+        self._shield_sprite = Shield("resources/images/shield/blue_aura.png", 0.9, parent=self)
 
     def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
         """
@@ -85,10 +88,6 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         ----------
         keys    :   Dict[str, bool]
             A dictionary of all keys and a bool corresponding to whether it is pressed or not.
-
-        Returns
-        -------
-        None
 
         """
         ControllableMixin.handle_key_press_release(self, keys)
@@ -110,10 +109,6 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         button  :   int
             The button pressed. 1 = Left click, 4 = Right click.
 
-        Returns
-        -------
-        None
-
         """
         ControllableMixin.handle_mouse_click(self, button)
         if button == 1:  # Left click
@@ -131,10 +126,6 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         button  :   int
             The button released. 1 = Left click, 4 = Right click.
 
-        Returns
-        -------
-        None
-
         """
         ControllableMixin.handle_mouse_release(self, button)
         if button == 1:  # Left click
@@ -147,16 +138,9 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         Enables the shield. Consumes coal at a steady rate and makes the drill untargetable while active.
 
-        Parameter
-        ---------
-        None
-
-        Returns
-        -------
-        None
-
         """
-        self._shield_enabled = True
+        self.shield_enabled = True
+        self.children.append(self._shield_sprite)
         self.inventory.coal -= 1  # Immediately remove one coal from the inventory when enabled.
 
     def disable_shield(self) -> None:
@@ -164,16 +148,27 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         Disables the shield which stops coal consumption and makes you once again targetable.
 
-        Parameter
-        ---------
-        None
+        """
+        self.shield_enabled = False
+        self.children.remove(self._shield_sprite)
 
-        Returns
-        -------
-        None
+    def hurt(self, damage: Union[float, int]) -> None:
+        """
+
+        Override the functionality of hurt function to not damage the drill if the shield is active.
+
+        See Also
+        --------
+        Entity.hurt
+
+        Parameters
+        ----------
+        damage : Union[float, int]
+            The amount of damage to deal to this entity.
 
         """
-        self._shield_enabled = False
+        if not self.shield_enabled:
+            super().hurt(damage)
 
     def update(self, time: float, delta_time: float, sprites) -> None:
         """
@@ -194,10 +189,6 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
-        Returns
-        -------
-        None
-
         """
         self.distance_moved += abs(self.change_x) + abs(self.change_y)
         if self.distance_moved > 200:
@@ -205,7 +196,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
             self.inventory.ammunition += 1
             self.inventory.coal -= 1
 
-        if self._shield_enabled:
+        if self.shield_enabled:
             self._total_shield_uptime += delta_time
             if self._total_shield_uptime > 3.0:  # Remove one coal every 3 seconds.
                 self._total_shield_uptime = 0.0

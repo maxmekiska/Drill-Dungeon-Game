@@ -265,10 +265,6 @@ class Entity(arcade.Sprite):
 
         Call this to change the velocity of the entity to 0. (Stops moving)
 
-        Parameter
-        ---------
-        None
-
         """
         self.set_velocity((0.0, 0.0))
 
@@ -282,10 +278,6 @@ class Entity(arcade.Sprite):
         ____
         If this function is overridden in a subclass, make sure to call super().draw() at the end so that
         all children classes are drawn too.
-
-        Parameters
-        ----------
-        None
 
         """
         super().draw()
@@ -399,10 +391,6 @@ class ChildEntity(Entity):
         Notes
         -----
         This is recursive and all indirect parents are also present in this list.
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------

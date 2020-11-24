@@ -125,10 +125,6 @@ class BlueNormalBullet(Bullet):
         sprites :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
-        Returns
-        -------
-        None
-
         """
         if sprite in sprites.gold_list:
             make_explosion_particles(ParticleGold, sprite.position, time, sprites)

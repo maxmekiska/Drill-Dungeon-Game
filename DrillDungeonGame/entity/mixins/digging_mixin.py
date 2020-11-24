@@ -30,8 +30,7 @@ class DiggingMixin:
         """
         blocks_to_remove = []
         destructible_blocks = sprites.destructible_blocks_list
-        for sprite in (self, *self.children):
-            blocks_to_remove.extend(arcade.check_for_collision_with_list(sprite, destructible_blocks))
+        blocks_to_remove.extend(arcade.check_for_collision_with_list(self, destructible_blocks))
 
         for block in blocks_to_remove:
             if hasattr(self, 'inventory'):

@@ -440,7 +440,8 @@ class DrillDungeonGame(arcade.View):
         # TODO don't use frame as measure of doing task every x loops. Store a variable in each entity class such
         # as last_updated. We can iterate over all entities and check when entity tasks were last updated.
         if self.frame % 300 == 0: #TODO Create better way of determining when to update
-            self.reload_chunks()
+            pass
+            # self.reload_chunks()
         if self.frame % 30 == 0:  # Do something every 30 frames.
             for entity in self.sprites.entity_list:
                 # When this gets moved to entity.update(), we won't need to do all this isinstance checks
