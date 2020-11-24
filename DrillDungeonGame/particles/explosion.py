@@ -101,6 +101,13 @@ class ParticleDirt(arcade.SpriteCircle):
 
     Explosion particle for dirt blocks.
 
+    Methods
+    -------
+    update()
+        Update dirt particles.
+    draw()
+        Draw effects onto the screen.
+
     """
     def __init__(self, my_list):
         """
@@ -159,6 +166,13 @@ class ParticleCoal(arcade.SpriteCircle):
 
     Explosion particle for coal blocks.
 
+    Methods
+    -------
+    update()
+        Update dirt particles.
+    draw()
+        Draw effects onto the screen.
+
     """
     def __init__(self, my_list):
         """
@@ -216,6 +230,13 @@ class ParticleGold(arcade.SpriteCircle):
 
     Explosion particle for gold blocks.
 
+    Methods
+    -------
+    update()
+        Update dirt particles.
+    draw()
+        Draw effects onto the screen.
+
     """
     def __init__(self, my_list) -> None:
         """
@@ -269,7 +290,18 @@ class ParticleGold(arcade.SpriteCircle):
 
 
 class ParticleShield(arcade.SpriteCircle):
-    """ Explosion particle for gold blocks """
+    """
+
+    Explosion particle for shield.
+
+    Methods
+    -------
+    update()
+        Update dirt particles.
+    draw()
+        Draw effects onto the screen.
+
+    """
 
     def __init__(self, my_list) -> None:
         color = random.choice(PARTICLE_COLORS_SHIELD)
@@ -284,7 +316,11 @@ class ParticleShield(arcade.SpriteCircle):
         self.my_list = my_list
 
     def update(self) -> None:
-        """ Update the particle """
+        """
+
+        Update the shield particles.
+
+        """
         if self.my_alpha <= PARTICLE_FADE_RATE:
             self.remove_from_sprite_lists()
         else:
@@ -300,5 +336,10 @@ class ParticleShield(arcade.SpriteCircle):
                 self.texture = self.normal_texture
 
     def draw(self) -> None:
+        """
+
+        Draw effects onto the screen.
+
+        """
         for item in self.sprite_list:
             item.draw()

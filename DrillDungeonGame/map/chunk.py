@@ -71,7 +71,7 @@ class Chunk:
                     self.chunk_sprites.destructible_blocks_list.append(wall_sprite)
                     self.chunk_sprites.all_blocks_list.append(wall_sprite)
                 if item[0] == 'O':  # Border block.
-                    wall_sprite = arcade.Sprite(":resources:images/tiles/grassMid.png", 0.18)
+                    wall_sprite = arcade.Sprite(":resources:images/tiles/Lava.png", 0.18)
                     wall_sprite.center_x = item[1] 
                     wall_sprite.center_y = item[2]
                     self.chunk_sprites.border_wall_list.append(wall_sprite)
