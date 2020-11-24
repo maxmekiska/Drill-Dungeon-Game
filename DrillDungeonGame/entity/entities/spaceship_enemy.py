@@ -42,8 +42,11 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
         sprite_scale: float = 0.3
         turret_sprite = "resources/images/weapons/turret1.png"
         turret_scale = 0.2
-        health = 50
-        super().__init__(base_sprite, sprite_scale, center_x, center_y, speed=speed, health=health)
+        current_health = 50
+        max_health = 50
+
+        super().__init__(base_sprite, sprite_scale, center_x, center_y, speed=speed,
+                         current_health=current_health, max_health=max_health)
         PathFindingMixin.__init__(self, vision)  # Init PathfindingMixin.
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
                                     firing_mode=ShotType.SINGLE))

@@ -42,8 +42,10 @@ class Entity(arcade.Sprite):
         Called every game loop iteration for each entity and updates all collision engines.
 
     """
-    def __init__(self, base_sprite: str, sprite_scale: float, center_x: Union[float, int], center_y: Union[float, int],
-                 speed: Union[float, int] = 1, angle: float = 0.0, health: float = -1) -> None:
+    def __init__(self, base_sprite: str, sprite_scale: float,
+                 center_x: Union[float, int], center_y: Union[float, int],
+                 speed: Union[float, int] = 1, angle: float = 0.0,
+                 current_health: float = -1, max_health: float = -1) -> None:
         """
 
         Parameters
@@ -60,8 +62,10 @@ class Entity(arcade.Sprite):
             The speed that entity can move at.
         angle           :   float
             The starting angle for this entity.
-        health          :   float
-            The starting health for this entity.
+        current_health  :   float
+            The starting health for this entity. -1 means invincibility.
+        max_health      :   float
+            The maximum amount of health this entity can have. -1 means unlimited.
 
         """
         super().__init__(base_sprite, sprite_scale, center_x=center_x, center_y=center_y)
@@ -76,7 +80,8 @@ class Entity(arcade.Sprite):
         self.path = []
         self.distance_moved = 0.0  # The distance moved
         self.collision_engine = []  # Any Physics engine. One for each sprite list in sprite container.
-        self.health = health  # The health of this entity. -1 means invincible.
+        self.current_health = current_health  # The health of this entity. -1 means invincible.
+        self.max_health = max_health
 
     def get_all_children(self) -> List[Entity]:
         """
@@ -117,12 +122,31 @@ class Entity(arcade.Sprite):
             The amount of damage to deal to this entity.
 
         """
-        if self.health != -1:
-            self.health -= damage
-            if self.health <= 0:
-                for child in self.get_all_children():
-                    child.remove_from_sprite_lists()
-                self.remove_from_sprite_lists()
+        if self.current_health == -1:  # invincible. Do nothing.
+            return
+
+        self.current_health -= damage
+        if self.current_health <= 0:
+            for child in self.get_all_children():
+                child.remove_from_sprite_lists()
+            self.remove_from_sprite_lists()
+
+    def heal(self, amount: Union[float, int]) -> None:
+        """
+
+        Heals the entity for the amount specified up to the max_health attribute.
+
+        Parameters
+        ----------
+        amount: Union[float, int]
+            The amount of health to heal this entity for.
+
+        """
+        if self.current_health == -1:  # Invincible. Do nothing.
+            return
+
+        if self.current_health < self.max_health:
+            self.current_health = min(self.max_health, self.current_health + amount)
 
     def has_line_of_sight_with(self, entity: Entity, blocking_sprites: arcade.SpriteList) -> bool:
         """
@@ -285,6 +309,22 @@ class Entity(arcade.Sprite):
         for child in self.children:
             child.draw()
 
+    def draw_health_bar(self, width, height):
+        """ Draw a status bar """
+        position_x = self.top + 10  # Slightly above the sprite.
+        position_y = self.center_y
+        arcade.draw_rectangle_filled(
+            position_x, position_y, width, height, arcade.color.WHITE
+        )
+        status_width = (self.current_health / self.max_health) * width
+        arcade.draw_rectangle_filled(
+            position_x - (width / 2 - status_width / 2),
+            position_y,
+            status_width,
+            height,
+            arcade.color.GREEN,
+        )
+
     # noinspection PyMethodOverriding
     def update(self, time: float, delta_time: float, sprites: SpriteContainer) -> None:
         """
@@ -341,7 +381,8 @@ class ChildEntity(Entity):
     def __init__(self, base_sprite: str, sprite_scale: float, parent: Entity,
                  relative_x: Union[float, int] = 0.0, relative_y: Union[float, int] = 0.0,
                  maintain_relative_position: bool = True, speed: float = 1.0,
-                 angle: float = 0.0, maintain_parent_angle: bool = True, health: Union[float, int] = -1) -> None:
+                 angle: float = 0.0, maintain_parent_angle: bool = True,
+                 current_health: Union[float, int] = -1, max_health: Union[float, int] = -1) -> None:
         """
 
         Parameters
@@ -363,12 +404,15 @@ class ChildEntity(Entity):
             The starting angle for this entity.
         maintain_parent_angle
             Angle of parent.
-        health: Union[float, int]:
-            The starting health for this entity.
+        current_health: Union[float, int]:
+            The starting health for this entity. -1 means invincible.
+        max_health: Union[float, int]
+            The maximum amount of health that this entity can have. -1 means unlimited.
 
         """
         super().__init__(base_sprite=base_sprite, sprite_scale=sprite_scale, center_x=parent.center_x + relative_x,
-                         center_y=parent.center_y + relative_y, angle=angle, speed=speed, health=health)
+                         center_y=parent.center_y + relative_y, angle=angle, speed=speed,
+                         current_health=current_health, max_health=max_health)
         self.parent = parent
         self.relative_x = relative_x
         self.relative_y = relative_y
