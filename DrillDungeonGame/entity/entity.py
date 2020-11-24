@@ -67,10 +67,6 @@ class Entity(arcade.Sprite):
         health          :   float
             The starting health for this entity.
 
-        Returns
-        -------
-        None
-
         """
         super().__init__(base_sprite, sprite_scale, center_x=center_x, center_y=center_y)
         self.angle = angle
@@ -124,10 +120,6 @@ class Entity(arcade.Sprite):
         damage: Union[float, int]
             The amount of damage to deal to this entity.
 
-        Returns
-        -------
-        None
-
         """
         if self.health != -1:
             self.health -= damage
@@ -176,10 +168,6 @@ class Entity(arcade.Sprite):
         y: float
             The y position to look at.
 
-        Returns
-        -------
-        None
-
         """
         x_diff, y_diff = x - self.center_x, y - self.center_y
         angle = math.degrees(math.atan2(y_diff, x_diff))
@@ -203,10 +191,6 @@ class Entity(arcade.Sprite):
         vector: Tuple[float, float]
             The corresponding x, y vector that this entity's velocity will be set to.
 
-        Returns
-        -------
-        None
-
         """
         self.change_x = vector[0]
         self.change_y = vector[1]
@@ -224,10 +208,6 @@ class Entity(arcade.Sprite):
             The time that the collision happened.
         sprites: SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
-        Returns
-        -------
-        None
 
         """
         pass
@@ -248,10 +228,6 @@ class Entity(arcade.Sprite):
             The time that the game has been running for. We can store this to do something every x amount of time.
         sprites: SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
-        Returns
-        -------
-        None
 
         """
         if len(self.collision_engine) == 0:
@@ -278,10 +254,6 @@ class Entity(arcade.Sprite):
         collidables: List[arcade.SpriteList]
             A list of different sprite lists to check for collisions for.
 
-        Returns
-        -------
-        None
-
         """
         for collidable_list in collidables:
             self.collision_engine.append(arcade.PhysicsEngineSimple(self, collidable_list))
@@ -295,10 +267,6 @@ class Entity(arcade.Sprite):
 
         Parameter
         ---------
-        None
-
-        Returns
-        -------
         None
 
         """
@@ -317,10 +285,6 @@ class Entity(arcade.Sprite):
 
         Parameters
         ----------
-        None
-
-        Returns
-        -------
         None
 
         """
@@ -356,10 +320,6 @@ class Entity(arcade.Sprite):
             The time in seconds since the last game loop iteration.
         sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
-        Returns
-        -------
-        None
 
         """
         self.update_collision_engine(time, sprites)
@@ -417,10 +377,6 @@ class ChildEntity(Entity):
             Angle of parent.
         health: Union[float, int]:
             The starting health for this entity.
-
-        Returns
-        -------
-        None
 
         """
         super().__init__(base_sprite=base_sprite, sprite_scale=sprite_scale, center_x=parent.center_x + relative_x,
@@ -480,10 +436,6 @@ class ChildEntity(Entity):
             The time in seconds since the last game loop iteration.
         sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
-        Returns
-        -------
-        None
 
         """
         if self._maintain_relative_position:

@@ -46,10 +46,6 @@ class Chunk:
         ----------
         None
 
-        Returns
-        -------
-        None
-
         """
         for row in self.chunk_matrix:
             for item in row:
@@ -90,10 +86,6 @@ class Chunk:
 
         Parameters
         ----------
-        None
-
-        Returns
-        -------
         None
 
         """

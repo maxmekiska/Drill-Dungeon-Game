@@ -40,10 +40,6 @@ class Turret(ChildEntity, ShootingMixin):
         firing_rate     :   Union[float, int]
             The firing rate of the turret in seconds.
 
-        Returns
-        -------
-        None
-
         """
 
         super().__init__(base_sprite, sprite_scale, parent=parent,

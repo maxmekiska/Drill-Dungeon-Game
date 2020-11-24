@@ -42,10 +42,6 @@ class Bullet(ChildEntity):
         damage          :   Union[float, int]
             The amount of that this bullet will inflict when hitting another entity with a health attribute.
 
-        Returns
-        -------
-        None
-
         """
         super().__init__(base_sprite, sprite_scale, parent, relative_x=relative_x, relative_y=relative_y,
                          speed=speed, angle=angle, maintain_parent_angle=False, maintain_relative_position=False)
@@ -72,10 +68,6 @@ class Bullet(ChildEntity):
             The time in seconds since the last game loop iteration.
         sprites    :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
-        Returns
-        -------
-        None
 
         """
         for sprite_list in (sprites.all_blocks_list, sprites.entity_list, sprites.drill_list):

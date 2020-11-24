@@ -32,10 +32,6 @@ class Enemy(Entity):
         health          :   float:
             The starting health for this entity.
 
-        Returns
-        -------
-        None
-
         """
         super().__init__(base_sprite=base_sprite, sprite_scale=sprite_scale, center_x=center_x, center_y=center_y,
                          speed=speed, angle=angle, health=health)

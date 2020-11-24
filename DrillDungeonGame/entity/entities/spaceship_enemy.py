@@ -36,10 +36,6 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
         speed       :   Union[float, int]
             The movement speed of the enemy.
 
-        Returns
-        -------
-        None
-
         """
 
         base_sprite: str = "resources/images/enemy/enemy.png"
@@ -73,10 +69,6 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
             The time in seconds since the last game loop iteration.
         sprites    :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
-        Returns
-        -------
-        None
 
         """
         if (time - self._last_shot_time) > 1.5:
