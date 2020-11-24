@@ -14,15 +14,17 @@ class DiggingMixin:
     sprite_list: arcade.SpriteList
     children: Dict[str, Entity]
 
-    def update(self, time: float, sprites: SpriteContainer) -> None:
+    def update(self, time: float, delta_time: float, sprites: SpriteContainer) -> None:
         """This function is called every game loop iteration for each entity which implements this Mixin. Checks if this
         entity collides with any destructible block, and if so destroys it, incrementing the inventory accordingly.
 
         Parameters
         ----------
-        time: float
+        time       : float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites: SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         """

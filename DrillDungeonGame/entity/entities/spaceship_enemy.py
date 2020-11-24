@@ -54,8 +54,7 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
         self._last_shot_time = 0
         self._last_pathfind_time = 0
 
-
-    def update(self, time: float, sprites) -> None:
+    def update(self, time: float, delta_time: float, sprites) -> None:
         """
 
         Handles update logic specific to this Enemy.
@@ -68,9 +67,11 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
 
         Parameters
         ----------
-        time    :   float
+        time       :   float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites :   SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         Returns
@@ -82,11 +83,11 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
             self._last_shot_time = time
             if self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list):
                 self.children[0].aim(*sprites.drill.position)
-                self.children[0].shoot()
+                self.children[0].shoot(self.children[0].firing_mode, sprites)
 
         if (time - self._last_pathfind_time) > 1:
             self._last_pathfind_time = time
             if self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list):
                 self.path_to_position(sprites.drill.center_x, sprites.drill.center_y, sprites.destructible_blocks_list)
 
-        super().update(time, sprites)
+        super().update(time, delta_time, sprites)

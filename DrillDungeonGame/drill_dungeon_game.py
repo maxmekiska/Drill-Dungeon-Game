@@ -419,7 +419,7 @@ class DrillDungeonGame(arcade.View):
 
         for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
             # pass the sprite Container so update function can interact with other sprites.
-            entity.update(self.time, self.sprites)
+            entity.update(self.time, delta_time, self.sprites)
 
         self.sprites.explosion_list.update()
 

@@ -334,7 +334,7 @@ class Entity(arcade.Sprite):
             child.draw()
 
     # noinspection PyMethodOverriding
-    def update(self, time: float, sprites: SpriteContainer) -> None:
+    def update(self, time: float, delta_time: float, sprites: SpriteContainer) -> None:
         """
 
         This function is called every game loop iteration for each entity so it can update all collision engines.
@@ -350,9 +350,11 @@ class Entity(arcade.Sprite):
 
         Parameters
         ----------
-        time: float
+        time       : float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites: SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         Returns
@@ -367,11 +369,11 @@ class Entity(arcade.Sprite):
             # to pass the sprite list to the update function of arcade.Sprite as this doesn't take args. We use
             # super().update() at the end instead and now do issubclass(mixin, arcade.Sprite)
             if hasattr(mixin, 'update') and not issubclass(mixin, arcade.Sprite):
-                mixin.update(self, time, sprites)
+                mixin.update(self, time, delta_time, sprites)
 
         for child in self.children:
             # noinspection PyArgumentList
-            child.update(time, sprites)
+            child.update(time, delta_time, sprites)
 
 
 class ChildEntity(Entity):
@@ -460,7 +462,7 @@ class ChildEntity(Entity):
             klass = klass.parent
         return parents
 
-    def update(self, time: float, sprites: SpriteContainer) -> None:
+    def update(self, time: float, delta_time: float, sprites: SpriteContainer) -> None:
         """
 
         Adds additional logic to the Entity.update function so that the child can maintain position/angle with
@@ -472,9 +474,11 @@ class ChildEntity(Entity):
 
         Parameters
         ----------
-        time: float
+        time       : float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites: SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         Returns
@@ -489,4 +493,4 @@ class ChildEntity(Entity):
         if self._maintain_parent_angle:
             self.angle = self.parent.angle
 
-        super().update(time, sprites)
+        super().update(time, delta_time, sprites)

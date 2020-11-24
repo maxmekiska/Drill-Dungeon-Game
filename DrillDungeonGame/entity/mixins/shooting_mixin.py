@@ -91,8 +91,8 @@ class ShootingMixin:
         self._trigger_pulled = False
 
     # noinspection PyArgumentList
-    def _shoot(self, shot_type: ShotType, sprites) -> None:
-        """Shoots a bullet of a certain type.
+    def shoot(self, shot_type: ShotType, sprites) -> None:
+        """Shoots a bullet of a certain type. This does not limit how fast the turret fires according to firing rate!
 
         Notes
         -----
@@ -154,17 +154,19 @@ class ShootingMixin:
             bullet_right.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_right)
 
-    def update(self, time: float, sprites) -> None:
+    def update(self, time: float, delta_time: float, sprites) -> None:
         """Called in each game loop iteration. Checks to see if there are any bullets pending to be shot and does so.
 
         Parameters
         ----------
-        time: float
+        time       : float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites: SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         """
         if self._trigger_pulled and (time - self._last_shoot_time) > self.firing_rate:
             self._last_shoot_time = time
-            self._shoot(self.firing_mode, sprites)
+            self.shoot(self.firing_mode, sprites)
