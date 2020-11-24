@@ -68,7 +68,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
                                     firing_mode=ShotType.SINGLE))
         self.distance_moved = distance_moved
-        self.shield_on = False
+        self._shield_enabled = False
+        self._total_shield_uptime = 0.0  # Store the time the shield has been on for coal consumption purposes.
 
     def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
         """
@@ -114,7 +115,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         if button == 1:  # Left click
             self.children[0].pull_trigger()
         elif button == 4:  # Right click
-            self.shield_on = True
+            self.enable_shield()
 
     def handle_mouse_release(self, button: int) -> None:
         """
@@ -135,9 +136,42 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         if button == 1:  # Left click
             self.children[0].release_trigger()
         elif button == 4:  # Right click release.
-            self.shield_on = False
+            self.disable_shield()
 
-    def update(self, time: float, sprites) -> None:
+    def enable_shield(self) -> None:
+        """
+
+        Enables the shield. Consumes coal at a steady rate and makes the drill untargetable while active.
+
+        Parameter
+        ---------
+        None
+
+        Returns
+        -------
+        None
+
+        """
+        self._shield_enabled = True
+        self.inventory.coal -= 1  # Immediately remove one coal from the inventory when enabled.
+
+    def disable_shield(self) -> None:
+        """
+
+        Disables the shield which stops coal consumption and makes you once again targetable.
+
+        Parameter
+        ---------
+        None
+
+        Returns
+        -------
+        None
+
+        """
+        self._shield_enabled = False
+
+    def update(self, time: float, delta_time: float, sprites) -> None:
         """
         Handles update logic specific to this Drill Entity. Currently increases the distance the drill has moved
         every game loop iteration so that we can decrease the amount of coal over time.
@@ -149,9 +183,11 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         Parameters
         ----------
-        time    :   float
+        time       : float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites :   SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         Returns
@@ -161,9 +197,19 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         """
         self.distance_moved += abs(self.change_x) + abs(self.change_y)
         if self.distance_moved > 200:
-            self.distance_moved = 0
+            self.distance_moved = 0.0
             self.inventory.ammunition += 1
             self.inventory.coal -= 1
 
+        if self._shield_enabled:
+            self._total_shield_uptime += delta_time
+            if self._total_shield_uptime > 3.0:  # Remove one coal every 3 seconds.
+                self._total_shield_uptime = 0.0
+                self.inventory.coal -= 1
+
+        if self.inventory.coal < 1:
+            self.disable_shield()
+            self.stop_moving()
+
         # If we do end up updating this in an entity subclass, we need to call super.update() so mixins get updated.
-        super().update(time, sprites)
+        super().update(time, delta_time, sprites)

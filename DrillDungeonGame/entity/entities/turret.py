@@ -12,9 +12,9 @@ class Turret(ChildEntity, ShootingMixin):
 
     """
     def __init__(self, base_sprite: str, sprite_scale: float, parent: Entity,
-                 relative_x: Union[float, int] = 0.0, relative_y: [float, int] = 0.0,
+                 relative_x: Union[float, int] = 0.0, relative_y: Union[float, int] = 0.0,
                  angle: float = 0.0, speed: Union[float, int] = 1, bullet_type: Type[Bullet] = None,
-                 firing_mode: ShotType = ShotType.SINGLE, firing_rate: Union[float, int] = 0.2) -> None:
+                 firing_mode: ShotType = ShotType.SINGLE, firing_rate: Union[float, int] = 0.25) -> None:
         """
 
         Parameters

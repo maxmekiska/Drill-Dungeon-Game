@@ -107,15 +107,17 @@ class PathFindingMixin:
         y_vector = self.speed * math.sin(component)
         self.set_velocity((x_vector, y_vector))
 
-    def update(self, time: float, sprites) -> None:
+    def update(self, time: float, delta_time: float, sprites) -> None:
         """This function is called every game loop iteration for each entity which implements this Mixin. Checks if
         there exists an element in the path, and if so works on moving towards it.
 
         Parameters
         ----------
-        time: float
+        time       : float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites: SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         """

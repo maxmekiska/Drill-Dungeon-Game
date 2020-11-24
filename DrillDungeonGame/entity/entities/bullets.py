@@ -79,7 +79,7 @@ class BouncingBullet(Bullet):
 
 class BlueNormalBullet(Bullet):
     def __init__(self, parent: Entity, relative_x: Union[float, int] = 0.0, relative_y: Union[float, int] = 0.0,
-                 angle: float = 0.0, speed: Union[float, int] = 7) -> None:
+                 angle: float = 0.0, speed: Union[float, int] = 3) -> None:
         """
 
         Represents a basic blue bullet.

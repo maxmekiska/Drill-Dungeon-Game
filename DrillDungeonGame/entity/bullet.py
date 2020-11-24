@@ -51,7 +51,7 @@ class Bullet(ChildEntity):
                          speed=speed, angle=angle, maintain_parent_angle=False, maintain_relative_position=False)
         self.damage = damage
 
-    def update(self, time: float, sprites) -> None:
+    def update(self, time: float, delta_time: float, sprites) -> None:
         """
 
         A subclass of Entity.update to implement logic specific to bullet classes.
@@ -66,9 +66,11 @@ class Bullet(ChildEntity):
 
         Parameters
         ----------
-        time    :   float
+        time       :   float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites :   SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
 
         Returns
@@ -85,4 +87,4 @@ class Bullet(ChildEntity):
             if len(collisions) > 0:
                 self.on_collision(collisions[0], time, sprites)
 
-        super().update(time, sprites)
+        super().update(time, delta_time, sprites)
