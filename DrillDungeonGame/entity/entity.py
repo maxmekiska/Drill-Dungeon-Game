@@ -41,10 +41,6 @@ class Entity(arcade.Sprite):
     update(time: float, sprites: SpriteContainer)
         Called every game loop iteration for each entity and updates all collision engines.
 
-
-
-
-
     """
     def __init__(self, base_sprite: str, sprite_scale: float, center_x: Union[float, int], center_y: Union[float, int],
                  speed: Union[float, int] = 1, angle: float = 0.0, health: float = -1) -> None:
