@@ -325,12 +325,7 @@ class DrillDungeonGame(arcade.View):
             self.sprites.drill.stop_moving()
             pause_menu = PauseMenu(self, self.window, self.view)
             self.window.show_view(pause_menu)
-        elif self.keys_pressed['B']:
-            # Change firing mode.
-            if self.firing_mode == ShotType.BUCKSHOT:
-                self.firing_mode = ShotType.SINGLE
-            elif self.firing_mode == ShotType.SINGLE:
-                self.firing_mode = ShotType.BUCKSHOT
+
         elif self.keys_pressed['U']:
             if not self.upwards_layer == None:
                 self.drill_up = True
@@ -360,16 +355,21 @@ class DrillDungeonGame(arcade.View):
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         for shop in self.sprites.shop_list:
-            if shop.collides_with_point((self.view.left_offset+x,self.view.bottom_offset+y,)) and (arcade.get_distance_between_sprites(shop, self.sprites.drill)<70):
-              self.sprites.drill.stop_moving()
-              self.keys_pressed = {key:False for key in self.keys_pressed}
-              shop = ShopMenu(self, self.window, self.view)
-              self.window.show_view(shop)
+            if shop.collides_with_point((self.view.left_offset+x,self.view.bottom_offset+y,)) and \
+               (arcade.get_distance_between_sprites(shop, self.sprites.drill)<70):
+                self.sprites.drill.stop_moving()
+                self.keys_pressed = {key: False for key in self.keys_pressed}
+                shop = ShopMenu(self, self.window, self.view)
+                self.window.show_view(shop)
 
         for entity in (*self.sprites.entity_list, self.sprites.drill):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.handle_mouse_click(button)
 
+    def on_mouse_release(self, x: float, y: float, button: int, modifiers: int) -> None:
+        for entity in (*self.sprites.entity_list, self.sprites.drill):
+            if issubclass(entity.__class__, ControllableMixin):
+                entity.handle_mouse_release(button)
 
     def reload_chunks(self):
         """
