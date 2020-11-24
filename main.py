@@ -10,6 +10,19 @@ MAP_HEIGHT = 2400
 SCREEN_TITLE = "Welcome to the Drill Dungeon"
 
 def main() -> None:
+    """
+
+    Main function to execute and start the game.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
    # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
     main_view = MenuView()

@@ -6,32 +6,42 @@ from DrillDungeonGame.entity.mixins.shooting_mixin import ShootingMixin, ShotTyp
 
 
 class Turret(ChildEntity, ShootingMixin):
+    """
+
+    Represents a turret entity. This is always a child to another entity.
+
+    """
     def __init__(self, base_sprite: str, sprite_scale: float, parent: Entity,
                  relative_x: Union[float, int] = 0.0, relative_y: [float, int] = 0.0,
                  angle: float = 0.0, speed: Union[float, int] = 1, bullet_type: Type[Bullet] = None,
                  firing_mode: ShotType = ShotType.SINGLE) -> None:
-        """Represents a turret entity. This is always a child to another entity.
+        """
 
         Parameters
         ----------
-        base_sprite: str
+        base_sprite     :   str
             The path to the file containing the sprite for this entity.
-        sprite_scale: float
+        sprite_scale    :   float
             The scale to draw the sprite for this entity
-        parent: Entity
-            The entity that created fired this bullet.
-        relative_x: Union[float, int]
+        parent          :   Entity
+            The entity that created/fired this bullet.
+        relative_x      :   Union[float, int]
             The x position, relative to the parent to spawn the bullet at.
-        relative_y: Union[float, int]
+        relative_y      :   Union[float, int]
             The y position, relative to the parent to spawn the bullet at.
-        angle: float
+        angle           :   float
             The starting angle that the bullet should be facing when shot.
-        speed: Union[float, int]
+        speed           :   Union[float, int]
             The speed that the bullet will travel at.
-        bullet_type: Type[Bullet]
+        bullet_type     :   Type[Bullet]
             The bullet that this turret shoots.
-        firing_mode: ShotType
+        firing_mode     :   ShotType
             The type of shot to fire the bullet in. Defaults to ShotType.SINGLE. ShotType.BUCKSHOT is another option.
+
+        Returns
+        -------
+        None
+
         """
 
         super().__init__(base_sprite, sprite_scale, parent=parent,

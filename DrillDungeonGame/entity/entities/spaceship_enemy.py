@@ -11,6 +11,16 @@ from ..mixins.digging_mixin import DiggingMixin
 
 
 class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
+    """
+
+    Represents the Spaceship (the enemy) attacking the player.
+
+    Methods
+    -------
+    update(time: float, sprites)
+        Handles specific update logic of the enemy.
+
+    """
     def __init__(self, center_x: int, center_y: int, vision: Union[float, int],
                  speed: Union[float, int] = 1) -> None:
 
@@ -25,11 +35,30 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
                                     firing_mode=ShotType.SINGLE))
         self._last_shot_time = 0
         self._last_pathfind_time = 0
+        """
+                
+        Parameters
+        ----------
+        center_x    :   int
+            The starting x position in the map for this entity.
+        center_y    :   int
+            The starting y position in the map for this entity.
+        vision      :   Union[float, int]
+            The vision/detection field of the enemy.
+        speed       :   Union[float, int]
+            The movement speed of the enemy.
+        
+        Returns
+        -------
+        None
+                         
+        """
 
     def update(self, time: float, sprites) -> None:
         """
-        Handles update logic specific to this Enemy. Currently attempts to shoot at and pathfind to the drill every
-        x seconds.
+
+        Handles update logic specific to this Enemy.
+        Attempts to shoot at and pathfind to the drill every x seconds.
 
         Note
         ----
@@ -38,10 +67,15 @@ class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
 
         Parameters
         ----------
-        time: float
+        time    :   float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites: SpriteContainer
+        sprites :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        Returns
+        -------
+        None
+
         """
         if (time - self._last_shot_time) > 1.5:
             self._last_shot_time = time

@@ -9,8 +9,41 @@ from DrillDungeonGame.particles.explosion import ParticleGold, Smoke, ParticleCo
 
 
 class BouncingBullet(Bullet):
+    """
+
+    Class to define the collision behaviour of a Bullet.
+
+    Methods
+    -------
+    on_collision(sprite: arcade.Sprite, time:float, sprites)
+        Counts the number of collisions.
+
+    """
     def __init__(self, parent: Entity, relative_x: Union[float, int] = 0.0, relative_y: Union[float, int] = 0.0,
                  angle: float = 0.0, speed: Union[float, int] = 7, max_collisions: int = 1) -> None:
+        """
+
+        Parameters
+        ----------
+        parent          :   Entity
+            The Bullet.
+        relative_x      :   Union[float, int]
+            The x position, relative to the parent.
+        relative_y      :   Union[float, int]
+            The y position, relative to the parent.
+        angle           :   float
+            Angle of bullet trajectory.
+        speed           :   Union[float, int]
+            Speed at what bullet is moving.
+        max_collisions  :   int
+            Number of maximum collisions until bullet is removed/destroyed.
+
+        Returns
+        -------
+        None
+
+        """
+
         base_sprite = ":resources:images/space_shooter/laserBlue01.png"
         sprite_scale = 0.4
         damage = 15
@@ -22,6 +55,24 @@ class BouncingBullet(Bullet):
         self._number_of_collisions = 0
 
     def on_collision(self, sprite: arcade.Sprite, time: float, sprites) -> None:
+        """
+
+        Method to count number of collisions.
+
+        Parameters
+        ----------
+        sprite  :   arcade.Sprite
+            The sprite that the Entity collided with.
+        time    :   float
+            The time that the collision happened.
+        sprites :   arcade.Sprite
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        Returns
+        -------
+        None
+
+        """
         self._number_of_collisions += 1
         # if self._number_of_collisions <
 
@@ -29,20 +80,29 @@ class BouncingBullet(Bullet):
 class BlueNormalBullet(Bullet):
     def __init__(self, parent: Entity, relative_x: Union[float, int] = 0.0, relative_y: Union[float, int] = 0.0,
                  angle: float = 0.0, speed: Union[float, int] = 7) -> None:
-        """Represents a basic blue bullet in the game. Removed upon collision. Damages and makes explosion particles.
+        """
+
+        Represents a basic blue bullet.
+        Removed upon collision.
+        Damages and makes explosion particles.
 
         Parameters
         ----------
-        parent: Entity
+        parent      :   Entity
             The entity that created fired this bullet.
-        relative_x: Union[float, int]
+        relative_x  :   Union[float, int]
             The x position, relative to the parent to spawn the bullet at.
-        relative_y: Union[float, int]
+        relative_y  :   Union[float, int]
             The y position, relative to the parent to spawn the bullet at.
-        angle: float
+        angle       :   float
             The starting angle that the bullet should be facing when shot.
-        speed: Union[float, int]
+        speed       :   Union[float, int]
             The speed that the bullet will travel at.
+
+        Methods
+        -------
+        on_collision(sprite:arcade.Sprite, time: float, sprites)
+            Bullet specific collision logic.
 
         """
         base_sprite = ":resources:images/space_shooter/laserBlue01.png"
@@ -52,17 +112,22 @@ class BlueNormalBullet(Bullet):
                          speed=speed, angle=angle, damage=damage)
 
     def on_collision(self, sprite: arcade.Sprite, time: float, sprites) -> None:
-        """Bullet specific logic to do when it collides with another object. This bullet creates explosion particles
-        as well as hurting the colliding sprite if it has a health attribute.
+        """
+        Bullet specific logic to do when it collides with another object.
+        This bullet creates explosion particles as well as hurting the colliding sprite if it has a health attribute.
 
         Parameters
         ----------
-        sprite: arcade.Sprite
+        sprite  :   arcade.Sprite
             The sprite that the Entity collided with.
-        time: float
+        time    :   float
             The time that the collision happened.
-        sprites: SpriteContainer
+        sprites :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
+        Returns
+        -------
+        None
 
         """
         if sprite in sprites.gold_list:
