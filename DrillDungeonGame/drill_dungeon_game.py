@@ -114,7 +114,7 @@ class DrillDungeonGame(arcade.View):
 
         #TODO fix this so that stats arent reset on drill down
         drill = Drill(center_x=center_x, center_y=center_y, current_health=100, max_health=100,
-                      ddammunition=400, coal=30, gold=0)
+                      ammunition=400, coal=30, gold=0)
         all_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         destructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
         indestructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)

@@ -309,22 +309,6 @@ class Entity(arcade.Sprite):
         for child in self.children:
             child.draw()
 
-    def draw_health_bar(self, width, height):
-        """ Draw a status bar """
-        position_x = self.top + 10  # Slightly above the sprite.
-        position_y = self.center_y
-        arcade.draw_rectangle_filled(
-            position_x, position_y, width, height, arcade.color.WHITE
-        )
-        status_width = (self.current_health / self.max_health) * width
-        arcade.draw_rectangle_filled(
-            position_x - (width / 2 - status_width / 2),
-            position_y,
-            status_width,
-            height,
-            arcade.color.GREEN,
-        )
-
     # noinspection PyMethodOverriding
     def update(self, time: float, delta_time: float, sprites: SpriteContainer) -> None:
         """

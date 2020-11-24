@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Union
 
+import arcade
+
 from .entity import Entity
 
 
@@ -40,3 +42,36 @@ class Enemy(Entity):
         """
         super().__init__(base_sprite=base_sprite, sprite_scale=sprite_scale, center_x=center_x, center_y=center_y,
                          speed=speed, angle=angle, current_health=current_health, max_health=max_health)
+
+    def draw_health_bar(self):
+        """Draws a simple health bar below the enemy."""
+        position_x = self.center_x  # Slightly above the sprite.
+        position_y = self.center_y - 20
+        width = self.width
+        height = 3
+        arcade.draw_rectangle_filled(
+            position_x, position_y, width, height, arcade.color.WHITE
+        )
+        status_width = (self.current_health / self.max_health) * width
+        arcade.draw_rectangle_filled(
+            position_x - (width / 2 - status_width / 2),
+            position_y,
+            status_width,
+            height,
+            arcade.color.GREEN,
+        )
+        arcade.draw_rectangle_outline(
+            position_x,
+            position_y,
+            width,
+            height,
+            arcade.color.BLACK
+        )
+
+    def draw(self) -> None:
+        """Draws a health bar if current and max health are not infinite.
+        """
+        if self.current_health != -1 and self.max_health != -1:
+            self.draw_health_bar()
+
+        super().draw()
