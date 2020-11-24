@@ -124,7 +124,8 @@ class ChunkManager:
 
         Returns
         -------
-        Chunk(List[chunk_piece])
+        entity
+            Containing list of chunk pieces generated.
 
         """
         chunk_piece = []

@@ -10,6 +10,7 @@ MAP_HEIGHT = 2400
 
 class MapLayer:
     """
+
     Class for generating and holding the configuration of map layers
 
     Methods
@@ -47,11 +48,13 @@ class MapLayer:
     update_dungeon_coords(x : int, y : int, walkDirection : int)
         Moves the.map_layer_matrix block coordinate in the direction dictated by the walkDirection
     get_walk_direction(x : int, y : int)
-        Generates the walk direction for the.map_layer_matrix's random walk. 
+        Generates the walk direction for the.map_layer_matrix's random walk.
+
     """
 
     def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=40, mean_coal_size: int=5, mean_gold_size: int=5) -> None:
         """
+
         Parameters
         ----------
         height              :   int
@@ -65,9 +68,6 @@ class MapLayer:
         mean_gold_size      :   int
             The mean size of gold patches in blocks
 
-        Returns
-        -------
-        None
         """
         self.map_layer_matrix = []
         self.height = height 
@@ -101,6 +101,7 @@ class MapLayer:
 
     def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int) -> list:
         """
+
         Generates a map layer configuration from scratch
 
         Notes
@@ -125,6 +126,7 @@ class MapLayer:
             1 - the block type, 
             2 - the block's X location
             3 - the block's Y location
+
         """
 
         self.generate_blank_map()
@@ -141,6 +143,7 @@ class MapLayer:
 
     def generate_map_layer_configuration(self):
         """
+
         Generates a map layer configuration from the pre-existing map layer matrix.
 
         Notes
@@ -151,9 +154,6 @@ class MapLayer:
         ----------
         None
 
-        Returns
-        -------
-        None
         """
         block_height = MAP_HEIGHT / self.height
         block_width = MAP_WIDTH / self.width
@@ -166,6 +166,7 @@ class MapLayer:
             
     def load_row_from_matrix(self, row: list, y_block_center: float, block_width: float, block_height: float) -> list:
         """
+
         Loads a single row from the map layer matrix to the configuration matrix
 
         Parameters
@@ -186,6 +187,7 @@ class MapLayer:
             1 - the block type, 
             2 - the block's X location and 
             3 - the block's Y location
+
         """
         x_block_center = 0.5 * block_width
         configuration_row = []
@@ -196,6 +198,7 @@ class MapLayer:
 
     def generate_dungeon(self, enemy_chance: float=0.1) -> None:
         """
+
         Generates a single dungeon on a map layer matrix
 
         Parameters
@@ -203,9 +206,6 @@ class MapLayer:
         enemy_chance   :   float
             The probability of there being an enemy in every dungeon tile
 
-        Returns
-        -------
-        None
         """
         x, y = self.generate_random_start_point()
         dungeonSize = self.generate_patch_size(self.mean_dungeon_size)
@@ -221,6 +221,7 @@ class MapLayer:
             
     def generate_coal(self) -> None:
         """
+
         Generates a single coal patch on a map layer matrix.
         Coal blocks are represented by the character 'C'
 
@@ -228,9 +229,6 @@ class MapLayer:
         ----------
         None
 
-        Returns
-        -------
-        None
         """
         x, y = self.generate_random_start_point()
         dungeonSize = self.generate_patch_size(self.mean_coal_size)
@@ -243,6 +241,7 @@ class MapLayer:
             
     def generate_gold(self) -> None: # gold
         """
+
         Generates a single gold patch on a map layer matrix
         Gold blocks are represented by the character 'G'
 
@@ -250,9 +249,6 @@ class MapLayer:
         ----------
         None
 
-        Returns
-        -------
-        None
         """
         x, y = self.generate_random_start_point()
         dungeonSize = self.generate_patch_size(self.mean_gold_size)
@@ -265,6 +261,7 @@ class MapLayer:
 
     def generate_shop(self) -> None:
         """
+
         Generates a shop on a map layer matrix
         Shop blocks are represented by the character 'S'
 
@@ -272,9 +269,6 @@ class MapLayer:
         ----------
         None
 
-        Returns
-        -------
-        None
         """
         x, y = self.generate_coal_start_point()
         # self.map_layer_matrix[y][x] = 'S'
@@ -282,6 +276,7 @@ class MapLayer:
 
     def generate_border_walls(self) -> None:
         """
+
         Generates a impassable border walls on a map layer matrix
         Impassable blocks are represented by the character 'O'
 
@@ -289,9 +284,6 @@ class MapLayer:
         ----------
         None
 
-        Returns
-        -------
-        None
         """
         for i, row in enumerate(self.map_layer_matrix):
             if i == 0 or i == len(self.map_layer_matrix) - 1:
@@ -303,6 +295,7 @@ class MapLayer:
     
     def generate_blank_map(self) -> None:
         """
+
         Generates a blank (dirt filled) map layer matrix.
         Blank blocks are represented by the character 'X'
 
@@ -310,15 +303,13 @@ class MapLayer:
         ----------
         None
 
-        Returns
-        -------
-        None
         """
         for i in range(self.height):
             self.generate_blank_row()
 
     def generate_blank_row(self) -> None:
         """
+
         Generates a blank (dirt filled) map layer row.
         Blank blocks are represented by the character 'X'
 
@@ -326,9 +317,6 @@ class MapLayer:
         ----------
         None
 
-        Returns
-        -------
-        None
         """
         row = []
         for i in range(self.width):
@@ -337,6 +325,7 @@ class MapLayer:
            
     def generate_random_start_point(self) -> tuple:
         """
+
         Generates a random location in the.map_layer_matrix
         
         Parameters
@@ -349,6 +338,7 @@ class MapLayer:
                 The x coordinate of the first block in the.map_layer_matrix
             startY   :   int
                 The y coordinate of the first block in the.map_layer_matrix
+
         """
         startX = random.randint(0, self.width - 1)
         startY = random.randint(0, self.height - 1)
@@ -356,6 +346,7 @@ class MapLayer:
 
     def generate_patch_size(self, mean_size: int) -> int:
         """
+
         Generates the size of the dungeon using a poisson distribution with mean
         self.mean_dungeon_size
 
@@ -368,6 +359,7 @@ class MapLayer:
         -------
         dungeon_size   :   int
             The size of the dungeon in number of blocks
+
         """
         rng = np.random.default_rng()
         patch_size = rng.poisson(mean_size)
@@ -375,19 +367,30 @@ class MapLayer:
 
     def update_dungeon_coords(self, x : int, y : int, walkDirection : int) -> tuple:
         """
+
         Moves the.map_layer_matrix block coordinate in the direction dictated by the 
-        walkDirection
-        int x             :   The x (horizontal) coordinate of the current block
-        int y             :   The y (vertical) coordinate of the current block
-        int walkDirection : The direction of the random walk where:
-        0 = Upwards (y + 1)
-        1 = Right (x + 1)
-        2 - Downwards (y - 1)
-        3 = Left (x - 1)
-        ----------------------------------------------------------
+        walkDirection.
+
+        Parameters
+        ----------
+        x               : int
+            The x (horizontal) coordinate of the current block
+        y               : int
+            The y (vertical) coordinate of the current block
+        walkDirection   : int
+            The direction of the random walk where:
+            0 = Upwards     (y + 1)
+            1 = Right       (x + 1)
+            2 = Downwards   (y - 1)
+            3 = Left        (x - 1)
+
         Returns
-        int x             : The updated x coordinate of the current block
-        int y             : The updated y coordinate of the current block
+        -------
+        x   : int
+            The updated x coordinate of the current block.
+        y   : int
+            The updated y coordinate of the current block.
+
         """
         if walkDirection == 0:
             y += 1
@@ -401,6 +404,7 @@ class MapLayer:
 
     def get_walk_direction(self, x : int, y : int) -> int:
         """
+
         Generates the walk direction for the.map_layer_matrix's random walk. 
 
         Parameters
@@ -414,10 +418,11 @@ class MapLayer:
         --------
         walkDirection   :   int
             The direction of the random walk where:
-                0 = Upwards (y + 1)
-                1 = Right (x + 1)
-                2 - Downwards (y - 1)
-                3 = Left (x - 1)
+            0 = Upwards     (y + 1)
+            1 = Right       (x + 1)
+            2 - Downwards   (y - 1)
+            3 = Left        (x - 1)
+
         """
         if x == 0:
             if y == 0:
