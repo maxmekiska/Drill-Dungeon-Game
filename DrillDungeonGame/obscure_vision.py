@@ -24,6 +24,11 @@ class ObscuredVision:
     far_sight(self)
         Makes the image completely transparent so that there is no limit to how far you can see.
 
+    Attributes
+    ----------
+    vision : int
+        The radius of how far you can see from the center of the image.
+
     """
     def __init__(self, vision: int = 200, max_vision: int = 500) -> None:
         """
@@ -37,16 +42,50 @@ class ObscuredVision:
             far_sight() from being called.
 
         """
-        if vision > max_vision:
-            raise ValueError(f"vision: {vision} cannot be greater than max_vision: {max_vision}")
-
-        self._vignette_radius = vision
         self._max_vision = max_vision
         self._center_alpha = 0
         self._outer_alpha = 255
         self._image_diagonal_diameter = int(math.sqrt(pow(SCREEN_HEIGHT + (VIEWPOINT_MARGIN * 2), 2) +
                                                       pow(SCREEN_WIDTH + (VIEWPOINT_MARGIN * 2), 2)))
         self._image = None
+        self.vision = vision
+
+    @property
+    def vision(self) -> int:
+        """
+        Gets the attribute set for vision. The radius of how far you can see from the center of the image.
+
+        Returns
+        -------
+        int
+            The radius of how far you can see from the center of the image.
+
+        """
+        return self._vision
+
+    @vision.setter
+    def vision(self, radius: int) -> None:
+        """
+        Sets the radius for the circle that you can see through.
+
+        Notes
+        -----
+        Setting this attribute reloads the image to the corresponding vision provided.
+
+        Parameters
+        ----------
+        radius : int
+            The radius that you can see from the center_x and center_y
+
+        Raises
+        ------
+        ValueError
+            If the amount provided is greater than the max_vision.
+
+        """
+        if radius > self._max_vision:
+            raise ValueError(f"vision: {radius} cannot be greater than max_vision: {self._max_vision}")
+        self._vision = radius
         self._reload_image()
 
     def draw(self, center_x: Union[float, int], center_y: Union[float, int]) -> None:
@@ -71,8 +110,8 @@ class ObscuredVision:
         """
         self._outer_alpha = 255
         self._center_alpha = 0
-        new_radius = self._vignette_radius + amount
-        self._vignette_radius = min(self._image_diagonal_diameter // 2, new_radius, self._max_vision)
+        new_radius = self.vision + amount
+        self.vision = min(self._image_diagonal_diameter // 2, new_radius, self._max_vision)
         self._reload_image()
 
     def decrease_vision(self, amount: int = 50) -> None:
@@ -86,8 +125,8 @@ class ObscuredVision:
         """
         self._outer_alpha = 255
         self._center_alpha = 0
-        new_radius = self._vignette_radius - amount
-        self._vignette_radius = max(0, new_radius)
+        new_radius = self.vision - amount
+        self.vision = max(0, new_radius)
         self._reload_image()
 
     def blind(self) -> None:
@@ -105,6 +144,6 @@ class ObscuredVision:
     def _reload_image(self) -> None:
         self._image = make_vignette(diameter=self._image_diagonal_diameter,
                                     color=arcade.color.BLACK,
-                                    vignette_radius=self._vignette_radius,
+                                    vignette_radius=self.vision,
                                     center_alpha=self._center_alpha,
                                     outer_alpha=self._outer_alpha)
