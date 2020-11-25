@@ -163,16 +163,14 @@ class MenuView(arcade.View):
 
         """
         self.ui_manager.unregister_handlers()
-        
-          
+
     def start_game():
         """
 
         Method that changes the window to the game window and start the game.
 
         """
-        game=DrillDungeonGame(window)
-        game.setup()
+        game = DrillDungeonGame(window)
         window.show_view(game)
 
     def setup(self):

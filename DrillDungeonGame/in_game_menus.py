@@ -585,7 +585,7 @@ class ShopMenu(InGameMenu):
         self.width = 500
         self.height = 400
         super().__init__(window, self.game_view, view, self.width, self.height)
-        self.gold = game_view.sprites.drill.inventory.gold
+        self.gold = game_view.drill.inventory.gold
 
         self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
         self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
@@ -593,13 +593,13 @@ class ShopMenu(InGameMenu):
         self.tab_position = 0
 
     def add_ammo(self, amount):
-        self.game_view.sprites.drill.inventory.ammunition += amount
+        self.game_view.drill.inventory.ammunition += amount
 
     def upgrade_to_buckshot(self):
-        self.game_view.sprites.drill.children[0].firing_mode = ShotType.BUCKSHOT
+        self.game_view.drill.children[0].firing_mode = ShotType.BUCKSHOT
 
     def upgrade_speed(self):
-        self.game_view.sprites.drill.speed = self.game_view.sprites.drill.speed*1.5
+        self.game_view.drill.speed = self.game_view.drill.speed * 1.5
 
     def on_show(self):
         close_button = MenuButton(self.screen_center_x-230, self.screen_center_y+180, 28, 28)
@@ -661,7 +661,7 @@ class ShopMenu(InGameMenu):
         self.tab_list[self.tab_position].draw()
 
     def on_update(self, delta_time):
-        self.game_view.sprites.drill.inventory.gold = self.gold
+        self.game_view.drill.inventory.gold = self.gold
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         for button in self.button_list:
