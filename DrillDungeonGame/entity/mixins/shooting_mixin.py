@@ -15,12 +15,31 @@ from typing import Callable
 
 
 class ShotType(Enum):
+    """
+    Class to change shot type.
+    """
     SINGLE = 1
     BUCKSHOT = 2
     # Idea. Maybe 2 or 3 round burst shot?
 
 
 class ShootingMixin:
+    """
+    Handles the logic related to aiming and shooting.
+
+    Methods
+    -------
+    aim(dest_x: float, dest_y: float)
+        Cause entity to aim at certain position.
+    pull_trigger()
+        Start shooting, set turret to fire at certain position.
+    release_trigger()
+        Stops shooting.
+    shoot(shot_type: ShotType, sprites)
+        Shoots bullet of certain type.
+    update(time: float, delta_time: float, sprites, block_grid)
+        Checks if there are bullets pending to be shot.
+    """
     sprite_list: arcade.SpriteList
     center_x: float
     center_y: float
@@ -40,7 +59,8 @@ class ShootingMixin:
         self._trigger_pulled = False
 
     def aim(self, dest_x: float, dest_y: float) -> None:
-        """Causes the entity to aim towards a certain position.
+        """
+        Causes the entity to aim towards a certain position.
 
         Parameters
         ----------
@@ -48,7 +68,6 @@ class ShootingMixin:
             The x position to aim at.
         dest_y: float
             The y position to aim at.
-
         """
         # Note that all of the trig functions convert between an angle and the ratio of two sides of a triangle.
         # cos, sin, and tan take an angle in radians as input and return the ratio; acos, asin, and atan take a ratio
@@ -60,39 +79,28 @@ class ShootingMixin:
 
     def pull_trigger(self) -> None:
         """
-
         Pulls the trigger and sets the turret to start shooting at the firing rate.
 
         Parameter
         ---------
         None
-
-        Returns
-        -------
-        None
-
         """
         self._trigger_pulled = True
 
     def release_trigger(self) -> None:
         """
-
         Releases the trigger and the turret stops shooting.
 
         Parameter
         ---------
         None
-
-        Returns
-        -------
-        None
-
         """
         self._trigger_pulled = False
 
     # noinspection PyArgumentList
     def shoot(self, shot_type: ShotType, sprites) -> None:
-        """Shoots a bullet of a certain type. This does not limit how fast the turret fires according to firing rate!
+        """
+        Shoots a bullet of a certain type. This does not limit how fast the turret fires according to firing rate!
 
         Notes
         -----
@@ -104,7 +112,6 @@ class ShootingMixin:
             The type of shooting mode to shoot the bullets in. Ie Single or buckshot.
         sprites: SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
         """
         if self.inventory is not None:
             if shot_type == ShotType.SINGLE:
@@ -155,8 +162,13 @@ class ShootingMixin:
             sprites.bullet_list.append(bullet_right)
 
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
-        """Called in each game loop iteration. Checks to see if there are any bullets pending to be shot and does so.
+        """
+        Checks to see if there are any bullets pending to be shot and does so.
 
+        Notes
+        -----
+        Called in each game loop iteration.
+         
         Parameters
         ----------
         time       : float
