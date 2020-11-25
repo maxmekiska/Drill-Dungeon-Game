@@ -57,6 +57,7 @@ class BorderBlock(Block):
     scale = 0.18
     char = 'O'
 
+
 class ShopBlock(Block):
     file = "resources/images/shop/shop.png"
     scale = 0.18
