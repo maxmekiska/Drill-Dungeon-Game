@@ -99,4 +99,4 @@ class Level:
         #         arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
 
     def update(self):
-        pass
+        pass  # TODO currently this is all done in class: DrillDungeonGame
