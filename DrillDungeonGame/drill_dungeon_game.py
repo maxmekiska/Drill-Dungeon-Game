@@ -207,6 +207,7 @@ class DrillDungeonGame(arcade.View):
         self.vignette = ObscuredVision()
 
     def setup(self, number_of_coal_patches: int = 20, number_of_gold_patches: int = 20,
+
               number_of_dungeons: int = 3, number_of_shops: int = 20,
               center_x: int = 128, center_y: int = 128) -> None:
         """

@@ -149,11 +149,11 @@ def make_vignette(diameter: int, color: arcade.Color, vignette_radius, center_al
         if point < vignette_radius:
             alpha = int(arcade.lerp(center_alpha, outer_alpha, point / vignette_radius))
             point_color = (color[0], color[1], color[2], alpha)
-            draw.ellipse((max_radius - point, max_radius - point, max_radius + point -1, max_radius + point - 1),
+            draw.ellipse((max_radius - point, max_radius - point, max_radius + point - 1, max_radius + point - 1),
                          fill=point_color)
         else:
             point_color = (color[0], color[1], color[2], outer_alpha)
-            draw.rectangle((max_radius - point, max_radius - point, max_radius + point -1, max_radius + point - 1),
+            draw.rectangle((max_radius - point, max_radius - point, max_radius + point - 1, max_radius + point - 1),
                            fill=point_color)
 
     name = f"vignette_circle_texture:{diameter}:{color}:{center_alpha}:{outer_alpha}"
