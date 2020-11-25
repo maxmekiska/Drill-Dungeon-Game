@@ -158,6 +158,7 @@ class DrillDungeonGame(arcade.View):
             self._level_index += 1
             self.drill.collision_engine = []  # Clear previous level collision engine first.
             self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
+            self.vignette.decrease_vision()
 
         elif self.keys_pressed['ESCAPE']:
             # pause game
@@ -171,6 +172,7 @@ class DrillDungeonGame(arcade.View):
                 self._level_index -= 1
             self.drill.collision_engine = []  # Clear previous level collision engine first.
             self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
+            self.vignette.increase_vision()
 
         # DEBUGGING CONTROLS
         elif self.keys_pressed['O']:
