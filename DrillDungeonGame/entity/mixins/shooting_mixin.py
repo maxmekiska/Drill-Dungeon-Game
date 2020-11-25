@@ -154,7 +154,7 @@ class ShootingMixin:
             bullet_right.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_right)
 
-    def update(self, time: float, delta_time: float, sprites) -> None:
+    def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """Called in each game loop iteration. Checks to see if there are any bullets pending to be shot and does so.
 
         Parameters
@@ -165,7 +165,8 @@ class ShootingMixin:
             The time in seconds since the last game loop iteration.
         sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
         """
         if self._trigger_pulled and (time - self._last_shoot_time) > self.firing_rate:
             self._last_shoot_time = time

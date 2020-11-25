@@ -47,7 +47,7 @@ class Bullet(ChildEntity):
                          speed=speed, angle=angle, maintain_parent_angle=False, maintain_relative_position=False)
         self.damage = damage
 
-    def update(self, time: float, delta_time: float, sprites) -> None:
+    def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
 
         A subclass of Entity.update to implement logic specific to bullet classes.
@@ -68,6 +68,8 @@ class Bullet(ChildEntity):
             The time in seconds since the last game loop iteration.
         sprites    :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
 
         """
         for sprite_list in (sprites.all_blocks_list, sprites.entity_list, sprites.drill_list):
@@ -77,6 +79,6 @@ class Bullet(ChildEntity):
             # first collision is because otherwise at the end of a gameloop, a bullet could be overlapping with up to
             # 4 (usually at most 3) blocks. One bullet could remove many blocks. We only want 1 bullet to remove 1 block
             if len(collisions) > 0:
-                self.on_collision(collisions[0], time, sprites)
+                self.on_collision(collisions[0], time, sprites, block_grid)
 
-        super().update(time, delta_time, sprites)
+        super().update(time, delta_time, sprites, block_grid)

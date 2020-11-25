@@ -111,7 +111,7 @@ class BlueNormalBullet(Bullet):
         super().__init__(base_sprite, sprite_scale, parent, relative_x=relative_x, relative_y=relative_y,
                          speed=speed, angle=angle, damage=damage)
 
-    def on_collision(self, sprite: arcade.Sprite, time: float, sprites) -> None:
+    def on_collision(self, sprite: arcade.Sprite, time: float, sprites, block_grid) -> None:
         """
         Bullet specific logic to do when it collides with another object.
         This bullet creates explosion particles as well as hurting the colliding sprite if it has a health attribute.
@@ -124,11 +124,13 @@ class BlueNormalBullet(Bullet):
             The time that the collision happened.
         sprites :   SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
 
         """
         if sprite in sprites.gold_list:
             make_explosion_particles(ParticleGold, sprite.position, time, sprites)
-            sprite.remove_from_sprite_lists()
+            block_grid.break_block(sprite, sprites)
             self.remove_from_sprite_lists()
 
         elif sprite in sprites.coal_list:
@@ -136,12 +138,12 @@ class BlueNormalBullet(Bullet):
             smoke = Smoke(50)
             smoke.position = sprite.position
             sprites.explosion_list.append(smoke)
-            sprite.remove_from_sprite_lists()
+            block_grid.break_block(sprite, sprites)
             self.remove_from_sprite_lists()
 
         elif sprite in sprites.dirt_list:
             make_explosion_particles(ParticleDirt, sprite.position, time, sprites)
-            sprite.remove_from_sprite_lists()
+            block_grid.break_block(sprite, sprites)
             self.remove_from_sprite_lists()
 
         elif sprite in sprites.indestructible_blocks_list:
@@ -154,7 +156,7 @@ class BlueNormalBullet(Bullet):
             if sprite in self.get_all_parents:
                 return
 
-            if hasattr(sprite, 'shield_enabled') and sprite.shield_enabled == True:
+            if hasattr(sprite, 'shield_enabled') and sprite.shield_enabled is True:
                 make_explosion_particles(ParticleShield, sprite.position, time, sprites)
                 self.remove_from_sprite_lists()
 

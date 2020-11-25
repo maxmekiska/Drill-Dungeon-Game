@@ -177,7 +177,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         if not self.shield_enabled:
             super().hurt(damage)
 
-    def update(self, time: float, delta_time: float, sprites) -> None:
+    def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
         Handles update logic specific to this Drill Entity. Currently increases the distance the drill has moved
         every game loop iteration so that we can decrease the amount of coal over time.
@@ -195,6 +195,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
             The time in seconds since the last game loop iteration.
         sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
 
         """
         self.distance_moved += abs(self.change_x) + abs(self.change_y)
@@ -214,4 +216,4 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
             self.stop_moving()
 
         # If we do end up updating this in an entity subclass, we need to call super.update() so mixins get updated.
-        super().update(time, delta_time, sprites)
+        super().update(time, delta_time, sprites, block_grid)

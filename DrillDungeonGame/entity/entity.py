@@ -7,6 +7,9 @@ import arcade
 import math
 
 from typing import TYPE_CHECKING
+
+from ..map.block import BlockGrid
+
 if TYPE_CHECKING:
     from ..sprite_container import SpriteContainer
 
@@ -30,7 +33,7 @@ class Entity(arcade.Sprite):
         Setting velocity of entity to vector provided.
     on_collision(sprite: arcade.Sprite, time: float, sprites)
         Logic when collision is detected.
-    update_collision_engine(time: float, sprites: SpriteContainer)
+    update_collision_engine(time: float, delta_time: float, sprites: SpriteContainer, block_grid: BlockGrid)
         Handles all collisions for this entity in each loop
     setup_collision_engine(collidables: List[arcade.SpriteList])
         Appends a list of collidable sprites to check for a collision.
@@ -215,7 +218,7 @@ class Entity(arcade.Sprite):
         self.change_x = vector[0]
         self.change_y = vector[1]
 
-    def on_collision(self, sprite: arcade.Sprite, time: float, sprites) -> None:
+    def on_collision(self, sprite: arcade.Sprite, time: float, sprites, block_grid) -> None:
         """
 
         Override this method in subclasses to handle what entities should do when colliding.
@@ -228,11 +231,13 @@ class Entity(arcade.Sprite):
             The time that the collision happened.
         sprites: SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
 
         """
         pass
 
-    def update_collision_engine(self, time: float, sprites: SpriteContainer) -> None:
+    def update_collision_engine(self, time: float, delta_time: float, sprites: SpriteContainer, block_grid) -> None:
         """
 
         This is called from the entity.update() function.
@@ -246,8 +251,12 @@ class Entity(arcade.Sprite):
         ----------
         time: float
             The time that the game has been running for. We can store this to do something every x amount of time.
-        sprites: SpriteContainer
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
 
         """
         if len(self.collision_engine) == 0:
@@ -257,11 +266,11 @@ class Entity(arcade.Sprite):
             collision_list = engine.update()  # Above line just iterates over parent physics engine and children.
 
             for sprite in collision_list:
-                self.on_collision(sprite, time, sprites)
+                self.on_collision(sprite, time, sprites, block_grid)
 
         for child in self.children:  # type: Entity
             # Recursively updates collision engines of all children sprites.
-            child.update_collision_engine(time, sprites)
+            child.update_collision_engine(time, delta_time, sprites, block_grid)
 
     def setup_collision_engine(self, collidables: List[arcade.SpriteList]) -> None:
         """
@@ -310,7 +319,7 @@ class Entity(arcade.Sprite):
             child.draw()
 
     # noinspection PyMethodOverriding
-    def update(self, time: float, delta_time: float, sprites: SpriteContainer) -> None:
+    def update(self, time: float, delta_time: float, sprites: SpriteContainer, block_grid: BlockGrid) -> None:
         """
 
         This function is called every game loop iteration for each entity so it can update all collision engines.
@@ -332,20 +341,21 @@ class Entity(arcade.Sprite):
             The time in seconds since the last game loop iteration.
         sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
-
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
         """
-        self.update_collision_engine(time, sprites)
+        self.update_collision_engine(time, delta_time, sprites, block_grid)
 
         for mixin in self.__class__.__mro__:
             # Used to be issubclass(mixin, Entity), but entity inherits from arcade.Sprite now. So we also don't want
             # to pass the sprite list to the update function of arcade.Sprite as this doesn't take args. We use
             # super().update() at the end instead and now do issubclass(mixin, arcade.Sprite)
             if hasattr(mixin, 'update') and not issubclass(mixin, arcade.Sprite):
-                mixin.update(self, time, delta_time, sprites)
+                mixin.update(self, time, delta_time, sprites, block_grid)
 
         for child in self.children:
             # noinspection PyArgumentList
-            child.update(time, delta_time, sprites)
+            child.update(time, delta_time, sprites, block_grid)
 
 
 class ChildEntity(Entity):
@@ -430,7 +440,7 @@ class ChildEntity(Entity):
             klass = klass.parent
         return parents
 
-    def update(self, time: float, delta_time: float, sprites: SpriteContainer) -> None:
+    def update(self, time: float, delta_time: float, sprites: SpriteContainer, block_grid: BlockGrid) -> None:
         """
 
         Adds additional logic to the Entity.update function so that the child can maintain position/angle with
@@ -448,6 +458,8 @@ class ChildEntity(Entity):
             The time in seconds since the last game loop iteration.
         sprites    : SpriteContainer
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
 
         """
         if self._maintain_relative_position:
@@ -464,4 +476,4 @@ class ChildEntity(Entity):
         if self._maintain_parent_angle:
             self.angle = self.parent.angle
 
-        super().update(time, delta_time, sprites)
+        super().update(time, delta_time, sprites, block_grid)

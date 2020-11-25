@@ -52,7 +52,7 @@ class MapLayer:
 
     """
 
-    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=40, mean_coal_size: int=5, mean_gold_size: int=5) -> None:
+    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=1000, mean_coal_size: int=5, mean_gold_size: int=5) -> None:
         """
 
         Parameters
@@ -163,7 +163,7 @@ class MapLayer:
             configuration_row = self.load_row_from_matrix(row, y_block_center, block_width, block_height)
             self.map_layer_configuration.append(configuration_row)
             y_block_center += block_height
-            
+
     def load_row_from_matrix(self, row: list, y_block_center: float, block_width: float, block_height: float) -> list:
         """
 

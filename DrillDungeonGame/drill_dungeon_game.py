@@ -7,6 +7,7 @@ from DrillDungeonGame.entity.mixins.path_finding_mixin import PathFindingMixin
 from DrillDungeonGame.entity.entities.drill import Drill
 from DrillDungeonGame.entity.entities.spaceship_enemy import SpaceshipEnemy
 from DrillDungeonGame.in_game_menus import *
+from DrillDungeonGame.map.block import BlockGrid
 from DrillDungeonGame.map.dungeon_generator import MapLayer
 from DrillDungeonGame.map.dungeon_generator import MapLayer, MAP_WIDTH, MAP_HEIGHT
 from DrillDungeonGame.sprite_container import SpriteContainer
@@ -205,7 +206,7 @@ class DrillDungeonGame(arcade.View):
 
         self.frame = 0
         self.time = 0
-        arcade.set_background_color(arcade.color.BROWN_NOSE)
+        arcade.set_background_color(arcade.color.BLACK)
         # self.firing_mode = ShotType.SINGLE
         self.mouse_position = (1, 1)
 
@@ -229,13 +230,13 @@ class DrillDungeonGame(arcade.View):
             y-coordinate of the center.
 
         """
-        dirt_list = arcade.SpriteList(use_spatial_hash=True)  # spatial hash, makes collision detection faster
-        border_wall_list = arcade.SpriteList(use_spatial_hash=True)
-        shop_list = arcade.SpriteList(use_spatial_hash=True)
-        coal_list = arcade.SpriteList(use_spatial_hash=True)  # coal/fuel
-        gold_list = arcade.SpriteList(use_spatial_hash=True)  # gold increment
-        explosion_list = arcade.SpriteList()  # explosion/smoke
-        entity_list = arcade.SpriteList()  # ALL enemies
+        dirt_list = arcade.SpriteList()
+        border_wall_list = arcade.SpriteList()
+        shop_list = arcade.SpriteList()
+        coal_list = arcade.SpriteList()
+        gold_list = arcade.SpriteList()
+        explosion_list = arcade.SpriteList()
+        entity_list = arcade.SpriteList()
         drill_list = arcade.SpriteList()
         enemy_list = arcade.SpriteList()
         bullet_list = arcade.SpriteList()
@@ -243,9 +244,9 @@ class DrillDungeonGame(arcade.View):
         #TODO fix this so that stats arent reset on drill down
         drill = Drill(center_x=center_x, center_y=center_y, current_health=100, max_health=100,
                       ammunition=400, coal=30, gold=0)
-        all_blocks_list = arcade.SpriteList(use_spatial_hash=True)
-        destructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
-        indestructible_blocks_list = arcade.SpriteList(use_spatial_hash=True)
+        all_blocks_list = arcade.SpriteList()
+        destructible_blocks_list = arcade.SpriteList()
+        indestructible_blocks_list = arcade.SpriteList()
         self.sprites = SpriteContainer(drill=drill, dirt_list=dirt_list, border_wall_list=border_wall_list,
                                        shop_list=shop_list, coal_list=coal_list, gold_list=gold_list,
                                        explosion_list=explosion_list, entity_list=entity_list,
@@ -273,11 +274,11 @@ class DrillDungeonGame(arcade.View):
 
         map_layer_configuration = map_layer.get_full_map_layer_configuration(number_of_dungeons, number_of_coal_patches, number_of_gold_patches)
         #Test out the chunk manager functionality
-        
-        self.cmanager = ChunkManager(map_layer_configuration)
-        self.cmanager._update_chunks(center_x, center_y)
-        for active_chunk in self.cmanager.active_chunks:
-            self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
+        self.block_grid = BlockGrid(map_layer_configuration, self.sprites)
+        # self.cmanager = ChunkManager(map_layer_configuration)
+        # self.cmanager._update_chunks(center_x, center_y)
+        # for active_chunk in self.cmanager.active_chunks:
+        #     self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
         for entity in (*self.sprites.entity_list, self.sprites.drill):
             entity.setup_collision_engine([self.sprites.indestructible_blocks_list])
 
@@ -308,7 +309,6 @@ class DrillDungeonGame(arcade.View):
             self.downwards_layer = None
 
         self.current_layer += 1
-        self.reload_chunks()
 
         arcade.start_render()
         self.sprites.dirt_list.draw()
@@ -328,7 +328,6 @@ class DrillDungeonGame(arcade.View):
         self.current_layer -= 1
         self.downwards_layer = self.cmanager
         self.cmanager = self.upwards_layer
-        self.reload_chunks()
         self.upwards_layer = None
 
         arcade.start_render()
@@ -358,6 +357,7 @@ class DrillDungeonGame(arcade.View):
 
         """
         arcade.start_render()
+        self.block_grid.air_blocks.draw()
         self.sprites.dirt_list.draw()
         self.sprites.coal_list.draw()
         self.sprites.gold_list.draw()
@@ -600,39 +600,6 @@ class DrillDungeonGame(arcade.View):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.handle_mouse_release(button)
 
-    def reload_chunks(self):
-        """
-
-        Loads up the fresh set of chunks for interaction.
-
-        """
-        print("RELOADING CHUNKS")
-        self.cmanager._update_chunks(self.sprites.drill.center_x, self.sprites.drill.center_y)
-        self.sprites = SpriteContainer(drill = self.sprites.drill, 
-                                        dirt_list = arcade.SpriteList(), 
-                                        border_wall_list = arcade.SpriteList(), 
-                                        shop_list = self.sprites.shop_list, 
-                                        coal_list = arcade.SpriteList(), 
-                                        gold_list = arcade.SpriteList(), 
-                                        explosion_list = self.sprites.explosion_list, 
-                                        entity_list = self.sprites.entity_list, 
-                                        drill_list = self.sprites.drill_list, 
-                                        enemy_list = self.sprites.enemy_list, 
-                                        bullet_list = arcade.SpriteList(), 
-                                        all_blocks_list = arcade.SpriteList(), 
-                                        destructible_blocks_list = arcade.SpriteList(), 
-                                        indestructible_blocks_list = arcade.SpriteList())
-        #The above line may cause issues down the road with combat, will need to change what goes into the all_blocks_list
-        self.sprites.all_blocks_list.extend(self.sprites.entity_list)
-        self.sprites.all_blocks_list.extend(self.sprites.enemy_list)
-        self.sprites.all_blocks_list.extend(self.sprites.explosion_list)
-        self.sprites.all_blocks_list.extend(self.sprites.shop_list)
-        self.sprites.all_blocks_list.extend(self.sprites.drill_list)
-        for active_chunk in self.cmanager.active_chunks:
-            self.sprites.extend(self.cmanager.chunks_dictionary[active_chunk].chunk_sprites)
-        for entity in self.sprites.entity_list:
-            entity.setup_collision_engine([self.sprites.border_wall_list])
-
     # moved on_update to the end of the main
     def on_update(self, delta_time: float) -> None:
         """
@@ -662,7 +629,7 @@ class DrillDungeonGame(arcade.View):
 
         for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
             # pass the sprite Container so update function can interact with other sprites.
-            entity.update(self.time, delta_time, self.sprites)
+            entity.update(self.time, delta_time, self.sprites, self.block_grid)
 
         self.sprites.explosion_list.update()
 
@@ -682,16 +649,13 @@ class DrillDungeonGame(arcade.View):
 
         # TODO don't use frame as measure of doing task every x loops. Store a variable in each entity class such
         # as last_updated. We can iterate over all entities and check when entity tasks were last updated.
-        if self.frame % 300 == 0: #TODO Create better way of determining when to update
-            pass
-            # self.reload_chunks()
-        if self.frame % 30 == 0:  # Do something every 30 frames.
-            for entity in self.sprites.entity_list:
-                # When this gets moved to entity.update(), we won't need to do all this isinstance checks
-                # We only have this code here now as it isn't abstracted yet.
-                if isinstance(entity, (PathFindingMixin, ShootingMixin)) and \
-                        entity.has_line_of_sight_with(self.sprites.drill, self.sprites.all_blocks_list):
-                    if isinstance(entity, PathFindingMixin):
-                        entity.path_to_position(*self.sprites.drill.position, self.sprites.destructible_blocks_list)
-                    if isinstance(entity, ShootingMixin):
-                        entity.shoot(ShotType.SINGLE)
+        # if self.frame % 30 == 0:  # Do something every 30 frames.
+        #     for entity in self.sprites.entity_list:
+        #         # When this gets moved to entity.update(), we won't need to do all this isinstance checks
+        #         # We only have this code here now as it isn't abstracted yet.
+        #         if isinstance(entity, (PathFindingMixin, ShootingMixin)) and \
+        #                 entity.has_line_of_sight_with(self.sprites.drill, self.sprites.all_blocks_list):
+        #             if isinstance(entity, PathFindingMixin):
+        #                 entity.path_to_position(*self.sprites.drill.position, self.sprites.destructible_blocks_list)
+        #             if isinstance(entity, ShootingMixin):
+        #                 entity.shoot(ShotType.SINGLE)
