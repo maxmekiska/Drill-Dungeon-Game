@@ -10,7 +10,12 @@ from DrillDungeonGame.utility import is_near
 
 class PathFindingMixin:
     """
+    A mixin for implementing primitive pathfinding to both an entity or position.
+
+    Notes
+    -----
     Class that enables enemies to find/attack the drill (player) if in sight.
+    This class can't be used independently. Must be mixed in to an Entity subclass.
 
     Methods
     -------
@@ -39,12 +44,6 @@ class PathFindingMixin:
 
     def __init__(self, vision: Union[float, int]) -> None:
         """
-        A mixin for implementing primitive pathfinding to both an entity or position.
-
-        Notes
-        -----
-        This class can't be used independently. Must be mixed in to an Entity subclass.
-
         Parameters
         ----------
         vision: Union[float, int]
