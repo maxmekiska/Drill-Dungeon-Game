@@ -1,10 +1,12 @@
 import math
 from typing import Union, Tuple
 
+import arcade
 import numpy as np
 import random
 from DrillDungeonGame.particles.explosion import PARTICLE_COUNT
-
+import PIL.Image
+import PIL.ImageDraw
 
 def generate_next_layer_resource_patch_amount(current_layer, base_amount=20, minimum_patches=5):
     upper_bound = int(base_amount * np.exp(-current_layer / 10))
@@ -33,3 +35,57 @@ def make_explosion_particles(particle, position: Tuple[float, float], time: floa
         p = particle(sprites.explosion_list)
         p.position = position
         sprites.explosion_list.append(p)
+
+
+def make_vignette(diameter: int, color: arcade.Color, vignette_radius, center_alpha: int = 255, outer_alpha: int = 255):
+    """Returns an arcade.Texture object of the vignette texture produced.
+
+    Notes
+    -----
+    This is an adaptation of arcade.make_soft_sircle_texture.
+    https://arcade.academy/_modules/arcade/texture.html#make_soft_circle_texture
+    In our implementation, we want the surrounding vignette to be filled, not empty. Otherwise we won't be blocking any
+    vision for the drill to see.
+
+    Parameters
+    ----------
+    diameter        : int
+        The diameter of the whole image.
+    color           : arcade.color
+        The color for the vignette.
+    vignette_radius
+        The radius of the vignette. Must be less than or equal to the diameter // 2. Points in the image beyond this
+        vignette_radius are filled with the color and alpha value specified in outer_alpha
+    center_alpha
+        Alpha color for the circle at its center point. Linearly interpolated between this and the outer_alpha.
+    outer_alpha
+        Alpha color for the circle at its outer point. Linearly interpolated between this and the inner_alpha.
+
+    Returns
+    -------
+    arcade.Texture
+        The texture with draw_scaled method.
+
+    """
+    max_radius = diameter // 2
+    assert vignette_radius <= max_radius
+
+    bg_colour = (0, 0, 0, 0)  # Make background transparent.
+    image = PIL.Image.new("RGBA", (diameter, diameter), bg_colour)
+    draw = PIL.ImageDraw.Draw(image)
+
+    for point in range(max_radius, 0, -1):
+        if point < vignette_radius:
+            alpha = int(arcade.lerp(center_alpha, outer_alpha, point / vignette_radius))
+            point_color = (color[0], color[1], color[2], alpha)
+            draw.ellipse((max_radius - point, max_radius - point, max_radius + point -1, max_radius + point - 1),
+                         fill=point_color)
+        else:
+            point_color = (color[0], color[1], color[2], outer_alpha)
+            draw.rectangle((max_radius - point, max_radius - point, max_radius + point -1, max_radius + point - 1),
+                           fill=point_color)
+
+    name = f"vignette_circle_texture:{diameter}:{color}:{center_alpha}:{outer_alpha}"
+    return arcade.Texture(name, image)
+
+

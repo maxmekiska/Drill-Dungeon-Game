@@ -1,13 +1,5 @@
-import arcade
-from DrillDungeonGame.drill_dungeon_game import DrillDungeonGame
 from DrillDungeonGame.views import *
 
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-MAP_WIDTH = 2400
-MAP_HEIGHT = 2400
-SCREEN_TITLE = "Welcome to the Drill Dungeon"
 
 def main() -> None:
     """
