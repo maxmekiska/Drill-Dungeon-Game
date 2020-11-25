@@ -27,9 +27,6 @@ class Block(arcade.Sprite):
     def char(self) -> str:
         pass
 
-    def __repr__(self):
-        return self.char
-
 
 class AirBlock(Block):
     file = "resources/images/material/brown.png"
@@ -98,7 +95,7 @@ class BlockGrid:
                 else:
                     raise ValueError(f'Unknown char, {char} for block type received.')
 
-        self.initialise_visible_blocks(sprites)
+        self.initialise_blocks_adjacent_to_air(sprites)
 
     @property
     def height(self) -> int:
@@ -135,9 +132,7 @@ class BlockGrid:
     def break_block(self, block: Block, sprites) -> None:
         for adjacent_block in self._get_adjacent_blocks_to(block):
             if type(adjacent_block) != BLOCK.AIR:
-                adjacent_block.is_visible = True
-                if type(block) != BLOCK.AIR:
-                    self._add_block_to_lists(adjacent_block, sprites)
+                self._add_block_to_lists(adjacent_block, sprites)
 
         block.remove_from_sprite_lists()
         x, y = block.x, block.y
@@ -146,19 +141,18 @@ class BlockGrid:
         self.blocks[x][y] = new_air_block
         self.air_blocks.append(new_air_block)
 
-    def initialise_visible_blocks(self, sprites):
+    def initialise_blocks_adjacent_to_air(self, sprites):
         for x in range(self.width):
             for y in range(self.height):
                 block = self.blocks[x][y]
-                if any(type(block) == BLOCK.AIR for block in self._get_adjacent_blocks_to(block)):
-                    block.is_visible = True
-                    if type(block) != BLOCK.AIR:
-                        self._add_block_to_lists(block, sprites)
-                    else:
+                if any(type(adjacent_block) == BLOCK.AIR for adjacent_block in self._get_adjacent_blocks_to(block)):
+                    if type(block) == BLOCK.AIR:
                         self.air_blocks.append(block)
+                    else:
+                        self._add_block_to_lists(block, sprites)
 
     def _get_adjacent_blocks_to(self, block: Block) -> List[Block]:
-        """Returns a list of blocks (total: 8) that are adjacent to a block. Includes diagonal blocks."""
+        """Returns a list of blocks (total: 4) that are adjacent to a block. Doesn't include diagonal blocks."""
         adjacent_blocks = []
         adjacent_positions = (
             (block.x, block.y + 1),
