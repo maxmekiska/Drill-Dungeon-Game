@@ -119,7 +119,7 @@ class DrillDungeonGame(arcade.View):
         hud = f"Ammunition: {self.drill.inventory.ammunition}\nCoal:{self.drill.inventory.coal}" \
               f"\nGold:{self.drill.inventory.gold}\nHealth:{self.drill.current_health}"
         # update hud with screen scroll
-        arcade.draw_text(hud, self.view.left_offset + 10, self.view.bottom_offset + 20, arcade.color.BLACK, 20)
+        arcade.draw_text(hud, self.view.left_offset + 10, self.view.bottom_offset + 20, arcade.color.WHITE, 20)
 
     def on_key_press(self, key: int, modifiers: int) -> None:
         """
