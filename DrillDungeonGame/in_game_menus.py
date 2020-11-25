@@ -694,7 +694,7 @@ class ShopMenu(InGameMenu):
         self.width = 500
         self.height = 400
         super().__init__(window, self.game_view, view, self.width, self.height)
-        self.gold = game_view.sprites.drill.inventory.gold
+        self.gold = game_view.drill.inventory.gold
 
         self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
         self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
@@ -710,19 +710,20 @@ class ShopMenu(InGameMenu):
         amount: int
             Amount of ammunition to be added to inventory.
         """
-        self.game_view.sprites.drill.inventory.ammunition += amount
+        self.game_view.drill.inventory.ammunition += amount
 
     def upgrade_to_buckshot(self):
         """
         Changes shot style from single shot to buck shot.
         """
-        self.game_view.sprites.drill.children[0].firing_mode = ShotType.BUCKSHOT
+        self.game_view.drill.children[0].firing_mode = ShotType.BUCKSHOT
 
     def upgrade_speed(self):
         """
         Increases the speed of drill movements.
         """
-        self.game_view.sprites.drill.speed = self.game_view.sprites.drill.speed*1.5
+        self.game_view.drill.speed = self.game_view.drill.speed * 1.5
+
 
     def on_show(self):
         """
@@ -807,7 +808,7 @@ class ShopMenu(InGameMenu):
         delta_time
             Call frequency of function.
         """
-        self.game_view.sprites.drill.inventory.gold = self.gold
+        self.game_view.drill.inventory.gold = self.gold
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         """
