@@ -1,13 +1,10 @@
 import math
 from typing import Union
 
+from .utility.constants import SCREEN_HEIGHT, SCREEN_WIDTH, VIEWPOINT_MARGIN
 import arcade
 
 from DrillDungeonGame.utility import make_vignette
-# from main import SCREEN_HEIGHT, SCREEN_WIDTH, V
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-from .utility.constants import SCREEN_HEIGHT, SCREEN_WIDTH, VIEWPOINT_MARGIN
 
 
 class ObscuredVision:
