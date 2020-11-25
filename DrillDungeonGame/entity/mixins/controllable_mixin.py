@@ -6,6 +6,19 @@ import math
 
 
 class ControllableMixin:
+    """
+    Class to handle all controls over the drill.
+
+    Methods
+    -------
+    handle_key_press_release(keys: Dict[str, bool])
+        Handles 8 way movement of drill.
+    handle_mouse_click(self, button: int)
+        Executes logic when mouse buttons are pressed.
+    handle_mouse_release(button: int)
+        Executes logic when mouse buttons are released.
+
+    """
     speed: Union[float, int]
     set_velocity: Callable[[Tuple[float, float]], None]
     look_at: Callable[[float, float], None]
@@ -16,7 +29,8 @@ class ControllableMixin:
     change_y: float
 
     def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
-        """Called when a key is pressed or released. Handles how the Entity should move/rotate. Uses 8-way directional
+        """
+        Called when a key is pressed or released. Handles how the Entity should move/rotate. Uses 8-way directional
         wasd movement.
 
         Notes
@@ -54,8 +68,11 @@ class ControllableMixin:
             self.look_at(self.center_x + x, self.center_y + y)
 
     def handle_mouse_click(self, button: int) -> None:
-        """Called when left or right mouse button are pressed.
+        """
+        Called when left or right mouse button are pressed.
 
+        Notes
+        -----
         Override this function in a subclass to provide functionality here.
 
         Parameters
@@ -67,14 +84,16 @@ class ControllableMixin:
         pass
 
     def handle_mouse_release(self, button: int) -> None:
-        """Called when left or right mouse button are released.
+        """
+        Called when left or right mouse button are released.
 
+        Notes
+        -----
         Override this function in a subclass to provide functionality here.
 
         Parameters
         ----------
         button: int
             The button pressed. 1 = Left click, 4 = Right click.
-
         """
         pass
