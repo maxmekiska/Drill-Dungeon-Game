@@ -3,21 +3,15 @@ from typing import List
 import arcade
 
 from DrillDungeonGame.entity.mixins.controllable_mixin import ControllableMixin
-from DrillDungeonGame.entity.mixins.path_finding_mixin import PathFindingMixin
 from DrillDungeonGame.entity.entities.drill import Drill
 from DrillDungeonGame.entity.entities.spaceship_enemy import SpaceshipEnemy
 from DrillDungeonGame.in_game_menus import *
 from DrillDungeonGame.map.block import BlockGrid
-from DrillDungeonGame.map.dungeon_generator import MapLayer
 from DrillDungeonGame.map.dungeon_generator import MapLayer, MAP_WIDTH, MAP_HEIGHT
+from DrillDungeonGame.obscure_vision import ObscuredVision
 from DrillDungeonGame.sprite_container import SpriteContainer
-from DrillDungeonGame.map.chunk_manager import Chunk, ChunkManager
 from DrillDungeonGame.utility import *
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Welcome to the Drill Dungeon"
-VIEWPOINT_MARGIN = 120
+from DrillDungeonGame.utility.constants import SCREEN_WIDTH, SCREEN_HEIGHT, VIEWPOINT_MARGIN
 
 
 class View:
@@ -210,6 +204,8 @@ class DrillDungeonGame(arcade.View):
         # self.firing_mode = ShotType.SINGLE
         self.mouse_position = (1, 1)
 
+        self.vignette = ObscuredVision()
+
     def setup(self, number_of_coal_patches: int = 20, number_of_gold_patches: int = 20,
               number_of_dungeons: int = 3, number_of_shops: int = 20,
               center_x: int = 128, center_y: int = 128) -> None:
@@ -369,9 +365,11 @@ class DrillDungeonGame(arcade.View):
         for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
             entity.draw()
 
-        for entity in self.sprites.entity_list:
-            if entity.path:
-                arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
+        # for entity in self.sprites.entity_list:
+        #     if entity.path:
+        #         arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
+
+        self.vignette.draw(self.sprites.drill.center_x, self.sprites.drill.center_y)
 
         hud = f"Ammunition: {self.sprites.drill.inventory.ammunition}\nCoal:{self.sprites.drill.inventory.coal}" \
               f"\nGold:{self.sprites.drill.inventory.gold}\nHealth:{self.sprites.drill.current_health}"
@@ -502,6 +500,19 @@ class DrillDungeonGame(arcade.View):
                 self.drill_up = True
             else:
                 print("No saved upwards layer")
+
+        # DEBUGGING CONTROLS
+        elif self.keys_pressed['O']:
+            self.vignette.increase_vision()
+
+        elif self.keys_pressed['L']:
+            self.vignette.decrease_vision()
+
+        elif self.keys_pressed['K']:
+            self.vignette.blind()
+
+        elif self.keys_pressed['SEMICOLON']:
+            self.vignette.far_sight()
 
     def on_key_release(self, key: int, modifiers: int) -> None:
         """
