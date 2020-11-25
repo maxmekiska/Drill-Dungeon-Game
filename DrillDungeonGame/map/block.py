@@ -57,12 +57,18 @@ class BorderBlock(Block):
     scale = 0.18
     char = 'O'
 
+class ShopBlock(Block):
+    file = "resources/images/shop/shop.png"
+    scale = 0.18
+    char = 'S'
+
 
 class _Block:
     AIR = AirBlock
     DIRT = DirtBlock
     COAL = CoalBlock
     GOLD = GoldBlock
+    SHOP = ShopBlock
     BORDER = BorderBlock
 
 
@@ -92,6 +98,8 @@ class BlockGrid:
                     self.blocks[x].append(BLOCK.AIR(x, y, block_x, block_y))
                 elif char == 'E':
                     self.blocks[x].append(BLOCK.AIR(x, y, block_x, block_y))  # TODO spawn enemies.
+                elif char == 'S':
+                    self.blocks[x].append(BLOCK.SHOP(x, y, block_x, block_y))
                 else:
                     raise ValueError(f'Unknown char, {char} for block type received.')
 
@@ -119,6 +127,11 @@ class BlockGrid:
         elif type(block) == BLOCK.GOLD:
             sprites.gold_list.append(block)
             sprites.destructible_blocks_list.append(block)
+            sprites.all_blocks_list.append(block)
+
+        elif type(block) == BLOCK.SHOP:
+            sprites.shop_list.append(block)
+            sprites.indestructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
 
         elif type(block) == BLOCK.BORDER:
