@@ -78,7 +78,7 @@ class Level:
         self.sprites.enemy_list.append(enemy_two)
         self.sprites.enemy_list.append(enemy_three)
 
-        for entity in (*self.sprites.entity_list, self.sprites.drill):
+        for entity in self.sprites.entity_list:
             entity.setup_collision_engine([self.sprites.indestructible_blocks_list])
 
     def draw(self) -> None:
