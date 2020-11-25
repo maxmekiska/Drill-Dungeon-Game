@@ -168,7 +168,7 @@ class ShootingMixin:
         Notes
         -----
         Called in each game loop iteration.
-         
+
         Parameters
         ----------
         time       : float
