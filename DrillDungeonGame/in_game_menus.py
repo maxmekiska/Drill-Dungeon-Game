@@ -3,6 +3,28 @@ from DrillDungeonGame.entity.mixins.shooting_mixin import ShootingMixin, ShotTyp
 
 def draw_3d_rectangle(center_x, center_y, width, height, face_color,
                       highlight_color, shadow_color, shadow_thickness):
+    """
+    Draws a rectangle with shadow and thickness
+
+    Parameters
+    ----------
+    center_x           :  int
+        center x coordinate position of rectangle
+    center_y           :  int
+        center y coordinate position of rectangle
+    width              :  int
+        width of rectangle
+    height             :  int
+        height of rectangle
+    face_color         :  arcade.color
+        colour of rectangle face
+    highlight_color    :  arcade.color
+        highlight colour of rectangle face
+    shadow_color       :  arcade.color
+        shadow colour of rectangle face
+    shadow_thickness   :  int
+        thickness of rectangle
+    """
     arcade.draw_rectangle_filled(center_x, center_y, width,
                                  height, face_color)
     # Bottom horizontal
@@ -24,9 +46,40 @@ def draw_3d_rectangle(center_x, center_y, width, height, face_color,
 
 
 class MenuButton:
-    """docstring for MenuWindow."""
+    """
+    Creates grey button used for in game menus.
+
+    Methods
+    -------
+    add_text(text, font_size)
+        Adds text to be displayed on button
+    add_image(image, scale=1, angle=0)
+        Adds image to be displayed on button
+    draw(active=True)
+        Displays button and when active is false bisplays button
+        that can't be used
+    assign_action(function_to_run)
+        Assigns the function to be called if button is pressed
+    mouse_press(x, y)
+        Checks if click is on button
+    mouse_release(x, y)
+        Checks if click release is on button
+    """
 
     def __init__(self, center_x, center_y, width, height):
+        """
+        Parameters
+        ----------
+        center_x    :   int
+            Center x position for the button
+        center_y    :   int
+            Center y position for the button
+        width       :   int
+            Width of button
+        height      :   int
+            Heigt of button
+        """
+
         self.center_x = center_x
         self.center_y = center_y
         self.width = width
@@ -45,16 +98,48 @@ class MenuButton:
         self.font_size = 1
 
     def add_text(self, text, font_size):
+        """
+        Adds text to be displayed on button
+        Either text or image can be displayed on button
+
+        Parameters
+        ----------
+        text         :   str
+            Text to be displayed
+        font_size    :   int
+            Font size of text
+        """
         self.text = text
         self.font_size = font_size
 
     def add_image(self, image, scale=1, angle=0):
+        """
+        Adds image to be displayed on button
+        Either text or image can be displayed on button
+
+        Parameters
+        ----------
+        image    :   str
+            directory of image
+        scale    :   int
+            scale of image
+        angle    :   int
+            angle of image
+        """
         self.button_image = arcade.load_texture(image)
         self.button_image_scale = scale
         self.button_image_angle = angle
 
 
     def draw(self, active=True):
+        """
+        Displays button on screen
+
+        Parameters
+        ----------
+        active   :  bool
+            Shows the button as inactive when false
+        """
         face_color = self.face_color
         if not active:
             self.pressed = True
@@ -89,9 +174,27 @@ class MenuButton:
                                  anchor_x="center", anchor_y="center")
 
     def assign_action(self, function_to_run):
+        """
+        Assigns the function to run when button is pressed
+
+        Parameters
+        ----------
+        function_to_run   :   function
+            Assigns the function
+        """
         self.action_function = function_to_run
 
     def mouse_press(self, x, y):
+        """
+        Checks if mouse click is on button
+
+        Parameters
+        ----------
+        x   :   int
+            x coordinate mouse input
+        y   :   int
+            y coordinate mouse input
+        """
         if x > self.center_x + self.width / 2:
             return
         if x < self.center_x - self.width / 2:
@@ -104,6 +207,16 @@ class MenuButton:
 
 
     def mouse_release(self, x, y):
+        """
+        Checks if mouse click release is on button
+
+        Parameters
+        ----------
+        x   :   int
+            x coordinate mouse input
+        y   :   int
+            y coordinate mouse input
+        """
         self.pressed = False
         if x > self.center_x + self.width / 2:
             return
@@ -118,9 +231,28 @@ class MenuButton:
 
 
 class MenuWindow:
-  """docstring for MenuWindow."""
+  """
+  Creates a blank grey window
+
+  Methods
+  -------
+  draw
+      displays window using draw_3d_rectangle to draw
+  """
 
   def __init__(self, center_x, center_y, width, height):
+      """
+      Parameters
+      ----------
+      center_x    :   int
+          Center x position for the window
+      center_y    :   int
+          Center y position for the window
+      width       :   int
+          Width of button
+      height      :   int
+          Heigt of button
+      """
       self.center_x = center_x
       self.center_y = center_y
       self.width = width
@@ -136,15 +268,42 @@ class MenuWindow:
                         self.shadow_thickness)
 
 class InGameMenu(arcade.View):
-    """"""
+    """
+    Creates a game view with a grey window in center of
+    the screen and the previous screen faded in the background
 
-    def __init__(self, window, game_view, view, width, height, color=arcade.color.GRAY):
+    Methods
+    -------
+    on_draw()
+        draws to screen
+    on_key_press(key: int, modifiers: int)
+        checks if esc key is pressed; to return to previous screen
+    on_mouse_press(x: float, y: float, button: int, modifiers: int)
+        checks if button is pressed
+    on_mouse_release(x: float, y: float, button: int, modifiers: int)
+        checks if button is pressed
+    """
+    def __init__(self, window, game_view, view, width, height):
+        """
+        Parameters
+        ----------
+        window      :   arcade.Window
+            arcade window being used; used to get screen dimensions
+        game_view   :   arcade.View
+            Previous screen arcade.view; used to get and update data from game
+            and to return to it after
+        view        :   drill_dungeon_game/View
+            used to get screen offsets to adjust x and y coordinates
+        width       :   int
+            width of in-game menu
+        height      :   int
+            height of in-game menu
+        """
         super().__init__()
         self.window_width = window
         self.game_view = game_view
         self.width = width
         self.height = height
-        self.color = color
         self.view = view
         self.screen_center_x = self.view.left_offset + self.window.width/2
         self.screen_center_y = self.view.bottom_offset + self.window.height/2
@@ -153,7 +312,6 @@ class InGameMenu(arcade.View):
 
 
     def on_draw(self):
-
         self.game_view.on_draw()
 
         arcade.draw_lrtb_rectangle_filled(self.view.left_offset, self.view.left_offset+self.window.width, self.view.bottom_offset+self.window.height, self.view.bottom_offset, arcade.color.GRAY + (100,))
@@ -162,11 +320,8 @@ class InGameMenu(arcade.View):
 
 
     def on_key_press(self, key, _modifiers):
-        if key == arcade.key.ESCAPE:   # resume game
+        if key == arcade.key.ESCAPE:   # return to previous view
             self.window.show_view(self.game_view)
-        elif key == arcade.key.ENTER:  # reset game
-            game = GameView()
-            self.window.show_view(game)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         for button in self.button_list:
@@ -178,9 +333,32 @@ class InGameMenu(arcade.View):
 
 
 class PauseMenu(InGameMenu):
-    """docstring for PauseMenu."""
+    """
+    Creates a pause menu game view
 
+    Methods
+    -------
+    on_show()
+        runs when view is loaded; creates buttons
+    on_draw()
+        draws to screen
+    return_to_game()
+        changes view back to game
+    return_to_main()
+        changes view back to main menu
+    """
     def __init__(self, game_view, window, view):
+        """
+        Parameters
+        ----------
+        game_view   :   arcade.View
+            Previous screen arcade.view; used to get and update data from game
+            and to return to it after
+        window      :   arcade.Window
+            arcade window being used; used to get screen dimensions
+        view        :   drill_dungeon_game/View
+            used to get screen offsets to adjust x and y coordinates
+        """
         self.game_view = game_view
         self.width = 300
         self.height = 400
@@ -214,9 +392,42 @@ class PauseMenu(InGameMenu):
 
 
 class ShopItem:
-    """docstring for ShopItem."""
+    """
+    Creates an item to be displayed in the shop
+
+    Methods
+    -------
+    setup_button(center_y)
+        sets up button used to buy and show cost
+    buy()
+        deducts gold and performs function
+    can_afford()
+        checks if player can afford item
+    draw(center_y)
+        displays item block on menu
+    """
 
     def __init__(self, shop_menu, center_x, item_name, cost, image, reusablility, button_function, function_inputs=None):
+        """
+        Parameters
+        ----------
+        shop_menu        :  ShopMenu
+            shop menu view
+        center_x         :  int
+            center x position of item
+        item_name        :  str
+            Name of item
+        cost             :  int
+            Cost of item
+        image            :  str
+            image directory
+        reusablility     :  bool
+            allows user to purchase multiple times if true
+        button_function  :  function
+            function to execute if bought
+        function_input   :  any
+            input for function to execute if any
+        """
         self.center_x = center_x
         self.item_name = item_name
         self.cost = cost
@@ -230,6 +441,12 @@ class ShopItem:
         self.available = True
 
     def setup_button(self, center_y):
+        """
+        Parameters
+        ----------
+        center_y        :  int
+            center y position of item
+        """
         self.buy_button = MenuButton(self.center_x+196, center_y, 55, 48)
         button_text = "Buy ("+str(self.cost)+")"
         self.buy_button.add_text(button_text, 10)
@@ -270,9 +487,32 @@ class ShopItem:
 
 
 class ShopTab:
-    """docstring for ShopTab."""
+    """
+    Creates an tab of ShopItem items
+
+    Methods
+    -------
+    add_item(item)
+        add ShopItem to tab
+    setup()
+        setup tab
+    draw()
+        draw to screen
+    check_mouse_press(x, y)
+        check if mouse pressed for button in tab
+    check_mouse_release(x, y)
+        check if mouse released for button in tab
+    """
 
     def __init__(self, tab_name, start_center_y):
+        """
+        Parameters
+        ----------
+        tab_name        :  str
+            Name of tab
+        start_center_y  :  int
+            center y position of first item in tab; rest added sequentially
+        """
         self.tab_name = tab_name
         self.item_list = []
         self.start_center_y = start_center_y
@@ -300,9 +540,47 @@ class ShopTab:
 
 
 class ShopMenu(InGameMenu):
-    """docstring for ShopMenu."""
+    """
+    Creates the shop menu view
+
+    Methods
+    -------
+    add_ammo(amount)
+        adds ammo
+    upgrade_to_buckshot()
+        buckshot upgrade
+    upgrade_speed()
+        upgrades vehicle speed
+    on_show()
+        runs when view loads
+    change_to_left_tab()
+        change to left shop tab
+    change_to_right_tab()
+        change to right shop tab
+    return_to_game()
+        return to game window
+    on_draw()
+        draws to screen
+    on_update(delta_time)
+        Method is called by the arcade library every iteration.
+    on_mouse_press(x: float, y: float, button: int, modifiers: int)
+        checks if button is pressed
+    on_mouse_release(x: float, y: float, button: int, modifiers: int)
+        checks if button is pressed
+    """
 
     def __init__(self, game_view, window, view):
+        """
+        Parameters
+        ----------
+        game_view   :   arcade.View
+            Previous screen arcade.view; used to get and update data from game
+            and to return to it after
+        window      :   arcade.Window
+            arcade window being used; used to get screen dimensions
+        view        :   drill_dungeon_game/View
+            used to get screen offsets to adjust x and y coordinates
+        """
         self.game_view = game_view
         self.width = 500
         self.height = 400
