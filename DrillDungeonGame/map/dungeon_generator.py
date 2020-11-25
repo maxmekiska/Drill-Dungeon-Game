@@ -99,7 +99,7 @@ class MapLayer:
             map_layer_matrixString += "\n"
         return map_layer_matrixString
 
-    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int) -> list:
+    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int, number_of_shops: int) -> list:
         """
 
         Generates a map layer configuration from scratch
@@ -136,8 +136,9 @@ class MapLayer:
             self.generate_coal()
         for i in range(number_of_gold_patches):
             self.generate_gold()
+        for i in range(number_of_shops):
+            self.generate_shop()
 
-        self.generate_shop()
         self.generate_border_walls()
         self.generate_map_layer_configuration()
         return self.map_layer_configuration
@@ -271,7 +272,8 @@ class MapLayer:
         None
 
         """
-        self.map_layer_matrix[5][5] = 'S'
+        x, y = self.generate_random_start_point()
+        self.map_layer_matrix[x][y] = 'S'
 
     def generate_border_walls(self) -> None:
         """

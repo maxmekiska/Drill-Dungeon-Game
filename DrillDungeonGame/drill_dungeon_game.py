@@ -211,7 +211,8 @@ class DrillDungeonGame(arcade.View):
         self.mouse_position = (1, 1)
 
     def setup(self, number_of_coal_patches: int = 20, number_of_gold_patches: int = 20,
-              number_of_dungeons: int = 3, center_x: int = 128, center_y: int = 128) -> None:
+              number_of_dungeons: int = 3, number_of_shops: int = 20,
+              center_x: int = 128, center_y: int = 128) -> None:
         """
 
         Set up game and initialize variables.
@@ -268,11 +269,11 @@ class DrillDungeonGame(arcade.View):
         self.sprites.enemy_list.append(enemy_one)
         self.sprites.enemy_list.append(enemy_two)
         self.sprites.enemy_list.append(enemy_three)
-        
+
         # Initialize the map layer with some dungeon
         map_layer = MapLayer()
 
-        map_layer_configuration = map_layer.get_full_map_layer_configuration(number_of_dungeons, number_of_coal_patches, number_of_gold_patches)
+        map_layer_configuration = map_layer.get_full_map_layer_configuration(number_of_dungeons, number_of_coal_patches, number_of_gold_patches, number_of_shops)
         #Test out the chunk manager functionality
         self.block_grid = BlockGrid(map_layer_configuration, self.sprites)
         # self.cmanager = ChunkManager(map_layer_configuration)
@@ -529,7 +530,7 @@ class DrillDungeonGame(arcade.View):
             self.drill_down = False
 
         elif self.keys_pressed['U']:
-            self.drill_up = False 
+            self.drill_up = False
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float) -> None:
         """
@@ -615,7 +616,7 @@ class DrillDungeonGame(arcade.View):
         ----------
         delta_time  : float
             Time since last iteration
-            
+
         """
         self.frame += 1
         self.time += delta_time
