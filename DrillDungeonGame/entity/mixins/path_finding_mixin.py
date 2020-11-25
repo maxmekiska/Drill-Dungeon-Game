@@ -9,6 +9,20 @@ from DrillDungeonGame.utility import is_near
 
 
 class PathFindingMixin:
+    """
+    Class that enables enemies to find/attack the drill (player) if in sight.
+
+    Methods
+    -------
+    path_to_entity(entity: Entity, blocking_sprites: arcade.SpriteList, diagonal_movement: bool = True)
+        Automatically unpacks entity coordinates.
+    path_to_position(x: float, y: float, blocking_sprites: arcade.SpriteList, diagonal_movement: bool = True)
+        Stores a list of tuples[float, float] in the path attribute.
+    move_towards(x: Union[float, int], y: Union[float, int], use_angle: bool = False)
+        Moves towards the position specified.
+    update(self, time: float, delta_time: float, sprites, block_grid)
+        Checks if there exists an element in the path.
+    """
     position: Tuple[float, float]
     center_x: float
     center_y: float
@@ -24,7 +38,8 @@ class PathFindingMixin:
     stop_moving: Callable[[None], None]
 
     def __init__(self, vision: Union[float, int]) -> None:
-        """A mixin for implementing primitive pathfinding to both an entity or position.
+        """
+        A mixin for implementing primitive pathfinding to both an entity or position.
 
         Notes
         -----
@@ -39,11 +54,12 @@ class PathFindingMixin:
 
     def path_to_entity(self, entity: Entity, blocking_sprites: arcade.SpriteList,
                        diagonal_movement: bool = True) -> None:
-        """Used as a shortcut to path_to_position. Automatically unpacks entity coordinates.
+        """
+        Used as a shortcut to path_to_position. Automatically unpacks entity coordinates.
 
-        See Also
+        Notes
         --------
-        path_to_position
+        See also: path_to_position
 
         Parameters
         ----------
@@ -59,7 +75,8 @@ class PathFindingMixin:
 
     def path_to_position(self, x: float, y: float, blocking_sprites: arcade.SpriteList,
                          diagonal_movement: bool = True) -> None:
-        """Stores a list of tuples[float, float] in the path attribute, consisting of x, y coordinates of the path
+        """
+        Stores a list of tuples[float, float] in the path attribute, consisting of x, y coordinates of the path
         required to pathfind to the position specified.
 
         Parameters
@@ -72,7 +89,6 @@ class PathFindingMixin:
             A list of sprites to avoid colliding with when calculating the path.
         diagonal_movement: bool
             Whether or not the path can include diagonal movement. Defaults to True.
-
         """
         sprite_size_estimate = int((self.height + self.width) / 2)
         barrier_list = arcade.AStarBarrierList(self, blocking_sprites, sprite_size_estimate,
@@ -85,7 +101,8 @@ class PathFindingMixin:
         self.path_index = 0
 
     def move_towards(self, x: Union[float, int], y: Union[float, int], use_angle: bool = False) -> None:
-        """Moves towards the position specified. If use_angle is true, it saves some computation of having to
+        """
+        Moves towards the position specified. If use_angle is true, it saves some computation of having to
         recalculate the vector component.
 
         Parameters
@@ -108,7 +125,8 @@ class PathFindingMixin:
         self.set_velocity((x_vector, y_vector))
 
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
-        """This function is called every game loop iteration for each entity which implements this Mixin. Checks if
+        """
+        This function is called every game loop iteration for each entity which implements this Mixin. Checks if
         there exists an element in the path, and if so works on moving towards it.
 
         Parameters
@@ -121,7 +139,6 @@ class PathFindingMixin:
             The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
         block_grid : BlockGrid
             Reference to all blocks in the game.
-
         """
         while len(self.path) > self.path_index and \
                 (is_near(self.center_x, self.center_y, self.path[self.path_index][0],
