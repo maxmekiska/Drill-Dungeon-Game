@@ -82,8 +82,8 @@ class DrillDungeonGame(arcade.View):
 
         self.drill = Drill(center_x=150,
                            center_y=150,
-                           current_health=100,
-                           max_health=100,
+                           current_health=100000,
+                           max_health=100000,
                            ammunition=400,
                            coal=30,
                            gold=0)
