@@ -1,7 +1,7 @@
 import arcade
 
 from DrillDungeonGame.entity.entities.drill import Drill
-from DrillDungeonGame.entity.entities.spaceship_enemy import SpaceshipEnemy
+from DrillDungeonGame.entity.entities.necromancer_enemy import NecromancerEnemy
 from DrillDungeonGame.map.block import BlockGrid
 from DrillDungeonGame.map.dungeon_generator import MapLayer
 from DrillDungeonGame.sprite_container import SpriteContainer
@@ -65,9 +65,9 @@ class Level:
         # Set viewpoint boundaries - where the drill currently has scrolled to
 
     def _populate_level_with_enemies(self) -> None:
-        enemy_one = SpaceshipEnemy(300, 300, vision=200, speed=0.7)
-        enemy_two = SpaceshipEnemy(500, 400, vision=200, speed=0.7)
-        enemy_three = SpaceshipEnemy(300, 50, vision=200, speed=0.7)
+        enemy_one = NecromancerEnemy(300, 300, vision=200, speed=0.7)
+        enemy_two = NecromancerEnemy(500, 400, vision=200, speed=0.7)
+        enemy_three = NecromancerEnemy(300, 50, vision=200, speed=0.7)
 
         self.sprites.entity_list.append(enemy_one)
         self.sprites.entity_list.append(enemy_two)
