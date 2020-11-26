@@ -159,4 +159,10 @@ def make_vignette(diameter: int, color: arcade.Color, vignette_radius, center_al
     name = f"vignette_circle_texture:{diameter}:{color}:{center_alpha}:{outer_alpha}"
     return arcade.Texture(name, image)
 
-
+def load_mirrored_textures(filename):
+    """
+    Loads a file and its flipped equivalent
+    """
+    initial_sprite = arcade.load_texture(filename)
+    flipped_sprite = arcade.load_texture(filename, flipped_horizontally=True)
+    return [initial_sprite, flipped_sprite]

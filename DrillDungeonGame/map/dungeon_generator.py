@@ -100,7 +100,7 @@ class MapLayer:
             map_layer_matrixString += "\n"
         return map_layer_matrixString
 
-    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int, number_of_shops: int) -> list:
+    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int, number_of_shops: int, drillX, drillY) -> list:
         """
 
         Generates a map layer configuration from scratch
@@ -143,6 +143,7 @@ class MapLayer:
         self.generate_border_walls()
         self.generate_advanced_dungeon()
         self.generate_map_layer_configuration()
+        self.create_space_for_drill(drillX, drillY)
         return self.map_layer_configuration
 
     def generate_map_layer_configuration(self):
@@ -200,6 +201,16 @@ class MapLayer:
             x_block_center += block_width
         return configuration_row
 
+
+    def create_space_for_drill(self, drillX, drillY) -> None:
+        #TODO need to make it so the drill cannot drill down over dungeons i.e. only on 
+        #edges of map or so
+        for i, row in enumerate(self.map_layer_configuration):
+            for j, item in enumerate(row):
+                distance_from_drill = np.sqrt((drillX - item[1])**2 + (drillY - item[2])**2)
+                if distance_from_drill < 50:
+                    new_item = (" ", item[1], item[2])
+                    self.map_layer_configuration[i][j] = new_item
 
     def generate_advanced_dungeon(self, wing_chance=0) -> None:
         """

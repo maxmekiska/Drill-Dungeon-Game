@@ -9,22 +9,13 @@ from ..enemy import Enemy
 from ..mixins.path_finding_mixin import PathFindingMixin
 from ..mixins.shooting_mixin import ShootingMixin, ShotType
 from ..mixins.digging_mixin import DiggingMixin
+from ...utility.utility import *
 
 
 RIGHT_FACING = 0
 LEFT_FACING = 1
 
 UPDATES_PER_FRAME = 5
-
-def load_texture_pair(filename):
-    """
-    Load a texture pair, with the second being a mirror image.
-    """
-    return [
-        arcade.load_texture(filename),
-        arcade.load_texture(filename, flipped_horizontally=True)
-    ]
-
 
 class NecromancerEnemy(Enemy, PathFindingMixin, DiggingMixin):
     """
@@ -55,9 +46,9 @@ class NecromancerEnemy(Enemy, PathFindingMixin, DiggingMixin):
         """
 
         base_sprite: str = "resources/images/enemy/necromancer_idle_anim_f0.png"
-        sprite_scale: float = 3.9
+        sprite_scale: float = 1.6
         turret_sprite = "resources/images/weapons/weapon_red_magic_staff.png"
-        turret_scale = 3.2
+        turret_scale = 1.2
         current_health = 50
         max_health = 50
 
@@ -78,11 +69,11 @@ class NecromancerEnemy(Enemy, PathFindingMixin, DiggingMixin):
         self.idle_textures = []
 
         for i in range(4):
-            texture = load_texture_pair(f"resources/images/enemy/necromancer_idle_anim_f{i}.png")
+            texture = load_mirrored_textures(f"resources/images/enemy/necromancer_idle_anim_f{i}.png")
             self.idle_textures.append(texture)
 
         for i in range(4):
-            texture = load_texture_pair(f"resources/images/enemy/necromancer_run_anim_f{i}.png")
+            texture = load_mirrored_textures(f"resources/images/enemy/necromancer_run_anim_f{i}.png")
             self.walk_textures.append(texture)
 
 

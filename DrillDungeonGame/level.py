@@ -58,7 +58,8 @@ class Level:
         map_layer_configuration = map_layer.get_full_map_layer_configuration(number_of_dungeons,
                                                                              number_of_coal_patches,
                                                                              number_of_gold_patches,
-                                                                             number_of_shops)
+                                                                             number_of_shops,
+                                                                             drill.center_x, drill.center_y)
         self.block_grid = BlockGrid(map_layer_configuration, self.sprites)
 
         self._populate_level_with_enemies()
