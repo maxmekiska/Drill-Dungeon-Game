@@ -151,6 +151,28 @@ class Entity(arcade.Sprite):
         if self.current_health < self.max_health:
             self.current_health = min(self.max_health, self.current_health + amount)
 
+    def draw_health_bar(self, position_x, position_y, width, height):
+        """Draws a simple health bar below the enemy."""
+        arcade.draw_rectangle_filled(
+            position_x, position_y, width, height, arcade.color.WHITE
+        )
+        status_width = (self.current_health / self.max_health) * width
+        arcade.draw_rectangle_filled(
+            position_x - (width / 2 - status_width / 2),
+            position_y,
+            status_width,
+            height,
+            arcade.color.GREEN,
+        )
+        arcade.draw_rectangle_outline(
+            position_x,
+            position_y,
+            width,
+            height,
+            arcade.color.BLACK,
+            border_width=1.5
+        )
+
     def has_line_of_sight_with(self, entity: Entity, blocking_sprites: arcade.SpriteList) -> bool:
         """
 
