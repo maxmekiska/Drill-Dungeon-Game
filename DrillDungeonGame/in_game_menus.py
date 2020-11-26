@@ -77,7 +77,7 @@ class MenuButton:
         width       :   int
             Width of button
         height      :   int
-            Height of button
+            Heigt of button
         """
 
         self.center_x = center_x
@@ -99,7 +99,7 @@ class MenuButton:
 
     def add_text(self, text, font_size):
         """
-        Adds text to be displayed on button.
+        Adds text to be displayed on button
         Either text or image can be displayed on button
 
         Parameters
@@ -114,7 +114,7 @@ class MenuButton:
 
     def add_image(self, image, scale=1, angle=0):
         """
-        Adds image to be displayed on button.
+        Adds image to be displayed on button
         Either text or image can be displayed on button
 
         Parameters
@@ -138,7 +138,7 @@ class MenuButton:
         Parameters
         ----------
         active   :  bool
-            Shows the button as inactive when false.
+            Shows the button as inactive when false
         """
         face_color = self.face_color
         if not active:
@@ -236,7 +236,7 @@ class MenuWindow:
 
   Methods
   -------
-  draw()
+  draw
       displays window using draw_3d_rectangle to draw
   """
 
@@ -263,9 +263,6 @@ class MenuWindow:
       self.shadow_thickness = 2
 
   def draw(self):
-      """
-      Prints element on the screen.
-      """
       draw_3d_rectangle(self.center_x, self.center_y, self.width, self.height,
                         self.face_color, self.highlight_color, self.shadow_color,
                         self.shadow_thickness)
@@ -315,9 +312,6 @@ class InGameMenu(arcade.View):
 
 
     def on_draw(self):
-        """
-        Displays element on screen.
-        """
         self.game_view.on_draw()
 
         arcade.draw_lrtb_rectangle_filled(self.view.left_offset, self.view.left_offset+self.window.width, self.view.bottom_offset+self.window.height, self.view.bottom_offset, arcade.color.GRAY + (100,))
@@ -326,54 +320,14 @@ class InGameMenu(arcade.View):
 
 
     def on_key_press(self, key, _modifiers):
-        """
-        Executes logic when specific key is pressed.
-
-        Note
-        ----
-        In this case, the escape key.
-
-        Parameters
-        ----------
-        key
-            Key on keyboard pressed.
-        _modifiers
-
-        """
         if key == arcade.key.ESCAPE:   # return to previous view
             self.window.show_view(self.game_view)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
-        """
-        Executes logic when mouse button is pressed.
-
-        Parameters
-        ----------
-        x           : float
-            x-coordinate of mouse.
-        y           : float
-            y-coordinate of mouse.
-        button      : int
-            button pressed.
-        modifiers   : int
-        """
         for button in self.button_list:
             button.mouse_press(x+self.view.left_offset, y+self.view.bottom_offset)
 
     def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Executes logic when mouse button is released.
-
-        Parameters
-        ----------
-        x           : float
-            x-coordinate of mouse.
-        y           : float
-            y-coordinate of mouse.
-        button      : int
-            button pressed.
-        key_modifiers
-        """
         for button in self.button_list:
             button.mouse_release(x+self.view.left_offset, y+self.view.bottom_offset)
 
@@ -411,9 +365,6 @@ class PauseMenu(InGameMenu):
         super().__init__(window, self.game_view, view, self.width, self.height)
 
     def on_show(self):
-        """
-        Set-up to be printed on the screen.
-        """
         resume_button = MenuButton(self.screen_center_x, self.screen_center_y+110, 200, 60)
         resume_button.add_text("Resume", 16)
         resume_button.assign_action(self.return_to_game)
@@ -425,9 +376,6 @@ class PauseMenu(InGameMenu):
         self.button_list.append(main_menu_button)
 
     def on_draw(self):
-        """
-        On screen printed.
-        """
         super().on_draw()
         arcade.draw_text("PAUSED", self.screen_center_x, self.screen_center_y+160, arcade.color.BLACK, font_size=20, anchor_x="center")
 
@@ -435,15 +383,9 @@ class PauseMenu(InGameMenu):
           button.draw()
 
     def return_to_game(self):
-        """
-        Change back to game window view.
-        """
         self.window.show_view(self.game_view)
 
     def return_to_main(self):
-        """
-        Return to main window view.
-        """
         main_view = MenuView()
         window.show_view(main_view)
 
@@ -514,13 +456,6 @@ class ShopItem:
 
 
     def buy(self):
-        """
-        Logic to be executed when something is bought.
-
-        Notes
-        -----
-        Gain new skill by reducing gold amount in the inventory of the player.
-        """
         if (self.shop_menu.gold >= self.cost) and self.available:
             if not self.reusable:
                 self.available = False
@@ -531,9 +466,6 @@ class ShopItem:
                 self.button_function()
 
     def can_afford(self):
-        """
-        Tests if player has enough resources to complete the chosen transaction.
-        """
         if self.shop_menu.gold >= self.cost:
             return True
         else:
@@ -541,24 +473,16 @@ class ShopItem:
 
 
     def draw(self, center_y):
-        """
-        Prints to the screen.
-
-        Parameters
-        ----------
-        center_y
-            y-coordinate of the center.
-        """
         draw_3d_rectangle(self.center_x, center_y, 450, 50, arcade.color.LIGHT_GRAY, arcade.color.WHITE, arcade.color.GRAY, 2)
         if self.can_afford() and self.available:
           self.buy_button.draw()
         else:
           self.buy_button.draw(False)
 
-        self.item_image.draw_scaled(self.center_x-204, center_y, 0.6,90)
-        arcade.draw_text(self.item_name, self.center_x-130, center_y,
+        self.item_image.draw_scaled(self.center_x-204, center_y, 0.6)
+        arcade.draw_text(self.item_name, self.center_x-70, center_y,
                          arcade.color.BLACK, font_size=13,
-                         width=100, align="center",
+                         width=200, align="left",
                          anchor_x="center", anchor_y="center")
 
 
@@ -595,55 +519,22 @@ class ShopTab:
         self.button_list = []
 
     def add_item(self, item):
-        """
-        Appends item to list.
-
-        Parameters
-        ----------
-        item
-        """
         self.item_list.append(item)
 
     def setup(self):
-        """
-        Set-up elements to be printed on screen.
-        """
         for i in range(len(self.item_list)):
             self.item_list[i].setup_button(self.start_center_y-(55*i))
             self.button_list.append(self.item_list[i].buy_button)
 
     def draw(self):
-        """
-        Draw on screen.
-        """
         for i in range(len(self.item_list)):
             self.item_list[i].draw(self.start_center_y-(55*i))
 
     def check_mouse_press(self, x, y):
-        """
-        Executes logic when mouse button is pressed.
-
-        Parameters
-        ----------
-        x
-            x-coordinate.
-        y
-            y-coordinate.
-        """
         for button in self.button_list:
             button.mouse_press(x, y)
 
     def check_mouse_release(self, x, y):
-        """
-        Executes logic when mouse button is released.
-
-        Parameters
-        ----------
-        x
-            x-coordinate.
-        y
-            y-coordinate.
-        """
         for button in self.button_list:
             button.mouse_release(x, y)
 
@@ -698,37 +589,25 @@ class ShopMenu(InGameMenu):
 
         self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
         self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
+        self.repair_tab = ShopTab("Repair", self.screen_center_y+40)
+
         self.tab_list = []
         self.tab_position = 0
 
     def add_ammo(self, amount):
-        """
-        Adds ammunition to inventory of player.
-
-        Parameters
-        ----------
-        amount: int
-            Amount of ammunition to be added to inventory.
-        """
         self.game_view.drill.inventory.ammunition += amount
 
     def upgrade_to_buckshot(self):
-        """
-        Changes shot style from single shot to buck shot.
-        """
         self.game_view.drill.children[0].firing_mode = ShotType.BUCKSHOT
 
     def upgrade_speed(self):
-        """
-        Increases the speed of drill movements.
-        """
-        self.game_view.drill.speed = self.game_view.drill.speed * 1.5
+        self.game_view.drill.speed = self.game_view.drill.speed*1.5
+
+    def refill_health(self):
+        self.game_view.drill.current_health = self.game_view.drill.max_health
 
 
     def on_show(self):
-        """
-        Set-up to be printed on the screen.
-        """
         close_button = MenuButton(self.screen_center_x-230, self.screen_center_y+180, 28, 28)
         close_button.add_image("resources/images/gui/cross.png", 0.2, 180)
         close_button.assign_action(self.return_to_game)
@@ -751,41 +630,35 @@ class ShopMenu(InGameMenu):
                           "resources/images/shop/buckshot.png", False, self.upgrade_to_buckshot)
         speed1 = ShopItem(self, self.screen_center_x, "+50% Speed", 2,
                           "resources/images/shop/speed.png", False, self.upgrade_speed)
+        health = ShopItem(self, self.screen_center_x, "Full Repair", 1,
+                          "resources/images/shop/repair.png", False, self.refill_health)
+        light = ShopItem(self, self.screen_center_x, "Increase Visibility", 1,
+                          "resources/images/shop/light.png", False, self.game_view.vignette.increase_vision)
         self.upgrades_tab.add_item(buckshot)
         self.upgrades_tab.add_item(speed1)
+        self.upgrades_tab.add_item(light)
         self.ammo_tab.add_item(ammo_10)
         self.ammo_tab.add_item(ammo_20)
+        self.repair_tab.add_item(health)
 
-        self.tab_list.extend([self.upgrades_tab, self.ammo_tab])
+        self.tab_list.extend([self.upgrades_tab, self.ammo_tab, self.repair_tab])
         for tab in self.tab_list:
             tab.setup()
 
     def change_to_left_tab(self):
-        """
-        Changes to left tab.
-        """
         if self.tab_position > 0:
             self.tab_position -= 1
         else:
             self.tab_position = len(self.tab_list)-1
     def change_to_right_tab(self):
-        """
-        Changes to right tab.
-        """
         if self.tab_position < len(self.tab_list)-1:
             self.tab_position += 1
         else:
             self.tab_position = 0
     def return_to_game(self):
-        """
-        Displays game window.
-        """
         self.window.show_view(self.game_view)
 
     def on_draw(self):
-        """
-        Draws to screen
-        """
         super().on_draw()
 
         arcade.draw_text("Shop", self.screen_center_x, self.screen_center_y+160, arcade.color.BLACK, font_size=20, anchor_x="center")
@@ -800,49 +673,15 @@ class ShopMenu(InGameMenu):
         self.tab_list[self.tab_position].draw()
 
     def on_update(self, delta_time):
-        """
-        Method is called by the arcade library every iteration.
-
-        Parameters
-        ----------
-        delta_time
-            Call frequency of function.
-        """
         self.game_view.drill.inventory.gold = self.gold
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
-        """
-        Execution of logic when mouse button is pressed.
-
-        Parameters
-        ----------
-        x           : float
-            x-coordinate.
-        y           : float
-            y-coordinate.
-        button      : int
-            The button pressed.
-        modifiers   : int
-        """
         for button in self.button_list:
             button.mouse_press(x+self.view.left_offset, y+self.view.bottom_offset)
 
         self.tab_list[self.tab_position].check_mouse_press(x+self.view.left_offset, y+self.view.bottom_offset)
 
     def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Execution of logic when mouse button is released.
-
-        Parameters
-        ----------
-        x               : float
-            x-coordinate.
-        y               : float
-            y-coordinate.
-        button          : int
-            The button pressed.
-        key_modifiers   : int
-        """
         for button in self.button_list:
             button.mouse_release(x+self.view.left_offset, y+self.view.bottom_offset)
 
