@@ -5,24 +5,41 @@ import arcade
 
 from enum import Enum
 
-from typing import Union, List
+from typing import Union, List, Type
 
-from ..entities.bullet import Bullet
+from ..bullet import Bullet
 from ..entity import Entity
 from ...inventory import Inventory
 
-from typing import TYPE_CHECKING, Callable
-if TYPE_CHECKING:
-    from ...sprite_container import SpriteContainer
+from typing import Callable
 
 
 class ShotType(Enum):
+    """
+    Class to change shot type.
+    """
     SINGLE = 1
     BUCKSHOT = 2
     # Idea. Maybe 2 or 3 round burst shot?
 
 
 class ShootingMixin:
+    """
+    Handles the logic related to aiming and shooting.
+
+    Methods
+    -------
+    aim(dest_x: float, dest_y: float)
+        Cause entity to aim at certain position.
+    pull_trigger()
+        Start shooting, set turret to fire at certain position.
+    release_trigger()
+        Stops shooting.
+    shoot(shot_type: ShotType, sprites)
+        Shoots bullet of certain type.
+    update(time: float, delta_time: float, sprites, block_grid)
+        Checks if there are bullets pending to be shot.
+    """
     sprite_list: arcade.SpriteList
     center_x: float
     center_y: float
@@ -30,31 +47,73 @@ class ShootingMixin:
     has_line_of_sight_with: Callable[[Entity, arcade.SpriteList], bool]
     remove_from_sprite_lists: Callable[[None], None]
     inventory: Inventory
+    angle: float
+    bullet_type: Type[Bullet]
+    parent: Entity
+    children: List[Entity]
+    firing_mode: ShotType
+    firing_rate: Union[float, int]
 
-    def __init__(self, turret_sprite: str, turret_sprite_scale: Union[float, int],
-                 center_x: int, center_y: int, ammunition: int = -1) -> None:
-        self.turret = arcade.Sprite(turret_sprite, turret_sprite_scale, center_x=center_x, center_y=center_y)
-        self.ammunition = ammunition
-
+    def __init__(self) -> None:
         self._last_shoot_time = 0
-        self._bullets_to_shoot = []  # type: List[ShotType]
+        self._trigger_pulled = False
 
     def aim(self, dest_x: float, dest_y: float) -> None:
+        """
+        Causes the entity to aim towards a certain position.
+
+        Parameters
+        ----------
+        dest_x: float
+            The x position to aim at.
+        dest_y: float
+            The y position to aim at.
+        """
         # Note that all of the trig functions convert between an angle and the ratio of two sides of a triangle.
         # cos, sin, and tan take an angle in radians as input and return the ratio; acos, asin, and atan take a ratio
         # as input and return an angle in radians. You only convert the angles, never the ratios.
-        start_x, start_y = self.turret.center_x, self.turret.center_y
+        start_x, start_y = self.center_x, self.center_y
         x_diff, y_diff = dest_x - start_x, dest_y - start_y
         angle = math.degrees(math.atan2(y_diff, x_diff))
-        self.turret.angle = angle
+        self.angle = angle
 
-    def shoot(self, shot_type: ShotType) -> None:
-        self._bullets_to_shoot.append(shot_type)
+    def pull_trigger(self) -> None:
+        """
+        Pulls the trigger and sets the turret to start shooting at the firing rate.
 
-    def _shoot(self, shot_type: ShotType, sprites: SpriteContainer) -> None:
-        """Shoots a bullet from the turret location. Returns the bullet that was creates so it can be appended
-        to the sprite list."""
-        if hasattr(self, 'inventory'):
+        Parameter
+        ---------
+        None
+        """
+        self._trigger_pulled = True
+
+    def release_trigger(self) -> None:
+        """
+        Releases the trigger and the turret stops shooting.
+
+        Parameter
+        ---------
+        None
+        """
+        self._trigger_pulled = False
+
+    # noinspection PyArgumentList
+    def shoot(self, shot_type: ShotType, sprites) -> None:
+        """
+        Shoots a bullet of a certain type. This does not limit how fast the turret fires according to firing rate!
+
+        Notes
+        -----
+        This should only be called from the update function. Use shoot in other cases instead.
+
+        Parameters
+        ----------
+        shot_type: ShotType
+            The type of shooting mode to shoot the bullets in. Ie Single or buckshot.
+        sprites: SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        """
+        if self.inventory is not None:
             if shot_type == ShotType.SINGLE:
                 if self.inventory.ammunition > 0:
                     self.inventory.ammunition -= 1
@@ -72,44 +131,55 @@ class ShootingMixin:
                     return
 
         if shot_type == ShotType.SINGLE:
-            bullet = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle)
-            x_component = math.cos(math.radians(self.turret.angle)) * bullet.speed
-            y_component = math.sin(math.radians(self.turret.angle)) * bullet.speed
+            bullet = self.bullet_type(self, angle=self.angle)
+            self.children.append(bullet)
+            x_component = math.cos(math.radians(self.angle)) * bullet.speed
+            y_component = math.sin(math.radians(self.angle)) * bullet.speed
             bullet.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet)
-            bullet.physics_engine_setup([sprites.all_blocks_list])
 
         elif shot_type == ShotType.BUCKSHOT:
-            bullet_middle = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle)
-            bullet_left = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle - 10)
-            bullet_right = Bullet(self.turret.center_x, self.turret.center_y, self.turret.angle + 10)
+            bullet_middle = self.bullet_type(self, angle=self.angle)
+            bullet_left = self.bullet_type(self, angle=self.angle - 10)
+            bullet_right = self.bullet_type(self, angle=self.angle + 10)
+            self.children.append(bullet_middle)
+            self.children.append(bullet_left)
+            self.children.append(bullet_right)
             # Middle
-            x_component = math.cos(math.radians(self.turret.angle)) * bullet_middle.speed
-            y_component = math.sin(math.radians(self.turret.angle)) * bullet_middle.speed
+            x_component = math.cos(math.radians(self.angle)) * bullet_middle.speed
+            y_component = math.sin(math.radians(self.angle)) * bullet_middle.speed
             bullet_middle.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_middle)
             # Left
-            x_component = math.cos(math.radians(self.turret.angle - 10)) * bullet_left.speed
-            y_component = math.sin(math.radians(self.turret.angle - 10)) * bullet_left.speed
+            x_component = math.cos(math.radians(self.angle - 10)) * bullet_left.speed
+            y_component = math.sin(math.radians(self.angle - 10)) * bullet_left.speed
             bullet_left.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_left)
             # Right
-            x_component = math.cos(math.radians(self.turret.angle + 10)) * bullet_right.speed
-            y_component = math.sin(math.radians(self.turret.angle + 10)) * bullet_right.speed
+            x_component = math.cos(math.radians(self.angle + 10)) * bullet_right.speed
+            y_component = math.sin(math.radians(self.angle + 10)) * bullet_right.speed
             bullet_right.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_right)
-            for bullet in [bullet_left, bullet_middle, bullet_right]:
-                bullet.physics_engine_setup([sprites.all_blocks_list])
 
-    def draw(self) -> None:
-        self.turret.draw()
+    def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
+        """
+        Checks to see if there are any bullets pending to be shot and does so.
 
-    def update(self, time: float, sprites: SpriteContainer) -> None:
-        self.turret.center_x, self.turret.center_y = self.center_x, self.center_y
+        Notes
+        -----
+        Called in each game loop iteration.
 
-        if self != sprites.drill and self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list):
-            self.aim(*sprites.drill.position)
-
-        if len(self._bullets_to_shoot) > 0:
-            shot_type = self._bullets_to_shoot.pop(0)
-            self._shoot(shot_type, sprites)
+        Parameters
+        ----------
+        time       : float
+            The time that the game has been running for. We can store this to do something every x amount of time.
+        delta_time : float
+            The time in seconds since the last game loop iteration.
+        sprites    : SpriteContainer
+            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+        block_grid : BlockGrid
+            Reference to all blocks in the game.
+        """
+        if self._trigger_pulled and (time - self._last_shoot_time) > self.firing_rate:
+            self._last_shoot_time = time
+            self.shoot(self.firing_mode, sprites)
