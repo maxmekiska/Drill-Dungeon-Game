@@ -53,7 +53,7 @@ class GoldBlock(Block):
 
 
 class BorderBlock(Block):
-    file = ":resources:images/tiles/Lava.png"
+    file = "resources/images/material/dungeon_wall.png"
     scale = 0.18
     char = 'O'
 
@@ -64,6 +64,28 @@ class ShopBlock(Block):
     char = 'S'
 
 
+class DungeonWallBlock(Block):
+    file = "resources/images/material/dungeon_wall.png"
+    scale = 1.2
+    char = 'W'
+
+
+class DungeonWallTopper(Block):
+    file = "resources/images/material/wall_topper.png"
+    scale = 1.2
+    char = 'W'
+
+
+class DungeonWallRight(Block):
+    file = "resources/images/material/right_wall.png"
+    scale = 1.2
+    char = 'RW'
+
+class DungeonWallLeft(Block):
+    file = "resources/images/material/left_wall.png"
+    scale = 1.2
+    char = 'LW'
+
 class _Block:
     AIR = AirBlock
     DIRT = DirtBlock
@@ -71,6 +93,10 @@ class _Block:
     GOLD = GoldBlock
     SHOP = ShopBlock
     BORDER = BorderBlock
+    WALL = DungeonWallBlock
+    WALLTOPPER = DungeonWallTopper
+    RIGHTWALL = DungeonWallRight
+    LEFTWALL = DungeonWallLeft
 
 
 BLOCK = _Block
@@ -101,6 +127,21 @@ class BlockGrid:
                     self.blocks[x].append(BLOCK.AIR(x, y, block_x, block_y))  # TODO spawn enemies.
                 elif char == 'S':
                     self.blocks[x].append(BLOCK.SHOP(x, y, block_x, block_y))
+                elif char == 'W':
+                    self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
+                    self.blocks[x].append(BLOCK.WALLTOPPER(x, y, block_x, block_y))
+                elif char == 'LW':
+                    self.blocks[x].append(BLOCK.LEFTWALL(x, y, block_x, block_y))
+                elif char == 'RW':
+                    self.blocks[x].append(BLOCK.RIGHTWALL(x, y, block_x, block_y))
+                elif char == 'ULW':
+                    self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
+                    self.blocks[x].append(BLOCK.WALLTOPPER(x, y, block_x, block_y))
+                    self.blocks[x].append(BLOCK.LEFTWALL(x, y, block_x, block_y))
+                elif char == 'URW':
+                    self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
+                    self.blocks[x].append(BLOCK.WALLTOPPER(x, y, block_x, block_y))
+                    self.blocks[x].append(BLOCK.RIGHTWALL(x, y, block_x, block_y))
                 else:
                     raise ValueError(f'Unknown char, {char} for block type received.')
 
@@ -139,6 +180,23 @@ class BlockGrid:
             sprites.indestructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
             sprites.border_wall_list.append(block)
+        elif type(block) == BLOCK.WALL:
+            sprites.indestructible_blocks_list.append(block)
+            sprites.all_blocks_list.append(block)
+            sprites.border_wall_list.append(block)
+        elif type(block) == BLOCK.WALLTOPPER:
+            sprites.indestructible_blocks_list.append(block)
+            sprites.all_blocks_list.append(block)
+            sprites.border_wall_list.append(block)
+        elif type(block) == BLOCK.RIGHTWALL:
+            sprites.indestructible_blocks_list.append(block)
+            sprites.all_blocks_list.append(block)
+            sprites.border_wall_list.append(block)
+        elif type(block) == BLOCK.LEFTWALL:
+            sprites.indestructible_blocks_list.append(block)
+            sprites.all_blocks_list.append(block)
+            sprites.border_wall_list.append(block)
+
 
         else:
             raise ValueError(f'Incorrect block type: {type(block)}!')
