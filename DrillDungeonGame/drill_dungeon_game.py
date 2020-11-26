@@ -116,13 +116,14 @@ class DrillDungeonGame(arcade.View):
 
         self.vignette.draw(self.drill.center_x, self.drill.center_y)
 
-        draw_3d_rectangle(self.view.left_offset+110, self.view.bottom_offset+60, 220, 120, arcade.color.LIGHT_GRAY+(150,),
+        draw_3d_rectangle(self.view.left_offset+110, self.view.bottom_offset+70, 220, 140, arcade.color.LIGHT_GRAY+(150,),
                           arcade.color.WHITE+(150,), arcade.color.GRAY+(150,), 2)
-        self.drill.draw_health_bar(self.view.left_offset+80, self.view.bottom_offset+30, 130, 20)
+        self.drill.draw_health_bar(self.view.left_offset+80, self.view.bottom_offset+50, 130, 20)
+        self.drill.draw_shield_bar(self.view.left_offset+80, self.view.bottom_offset+20, 130, 20)
         hud = f"Ammunition: {self.drill.inventory.ammunition}\nCoal:{self.drill.inventory.coal}" \
               f"\nGold:{self.drill.inventory.gold}"
         # update hud with screen scroll
-        arcade.draw_text(hud, self.view.left_offset + 10, self.view.bottom_offset + 40, arcade.color.BLACK, 20)
+        arcade.draw_text(hud, self.view.left_offset + 10, self.view.bottom_offset + 60, arcade.color.BLACK, 20)
 
     def on_key_press(self, key: int, modifiers: int) -> None:
         """

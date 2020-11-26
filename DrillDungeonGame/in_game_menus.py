@@ -606,6 +606,8 @@ class ShopMenu(InGameMenu):
     def refill_health(self):
         self.game_view.drill.current_health = self.game_view.drill.max_health
 
+    def shield_upgrade(self):
+        self.game_view.drill._shield_duration = 12.0
 
     def on_show(self):
         close_button = MenuButton(self.screen_center_x-230, self.screen_center_y+180, 28, 28)
@@ -634,9 +636,12 @@ class ShopMenu(InGameMenu):
                           "resources/images/shop/repair.png", False, self.refill_health)
         light = ShopItem(self, self.screen_center_x, "Increase Visibility", 1,
                           "resources/images/shop/light.png", False, self.game_view.vignette.increase_vision)
+        shield = ShopItem(self, self.screen_center_x, "Shield Level Up", 1,
+                          "resources/images/shop/shield.png", False, self.shield_upgrade)
         self.upgrades_tab.add_item(buckshot)
         self.upgrades_tab.add_item(speed1)
         self.upgrades_tab.add_item(light)
+        self.upgrades_tab.add_item(shield)
         self.ammo_tab.add_item(ammo_10)
         self.ammo_tab.add_item(ammo_20)
         self.repair_tab.add_item(health)
