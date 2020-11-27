@@ -60,6 +60,7 @@ class Level:
                                                                              number_of_gold_patches,
                                                                              number_of_shops,
                                                                              drill.center_x, drill.center_y)
+        print(map_layer)
         self.block_grid = BlockGrid(map_layer_configuration, self.sprites)
 
         self._populate_level_with_enemies()
