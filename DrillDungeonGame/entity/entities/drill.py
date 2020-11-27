@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Union, Dict
 
+import arcade
+
 from .bullets import BlueNormalBullet
 from .shield import Shield
 from .turret import Turret
@@ -81,7 +83,36 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         self.distance_moved = distance_moved
         self.shield_enabled = False
         self._total_shield_uptime = 0.0  # Store the time the shield has been on for coal consumption purposes.
+        self._shield_duration = 6.0
+        self._max_shield_duration = 12.0
+        self.shield_cooldown_enabled = False
+        self._shield_cooldown_duration = 2.0
+        self._shield_cooldown_uptime = 0.0
         self._shield_sprite = Shield("resources/images/shield/blue_aura.png", 0.9, parent=self, relative_x=4)
+
+    def draw_shield_bar(self, position_x, position_y, width, height):
+        """Draws a shield health below the drill when shield activated."""
+        level_width = (self._shield_duration/self._max_shield_duration)*width
+        position_x = position_x - width/2 + level_width/2
+        arcade.draw_rectangle_filled(
+            position_x, position_y, level_width, height, arcade.color.WHITE
+        )
+        status_width = ((self._shield_duration-self._total_shield_uptime) / self._shield_duration) * level_width
+        arcade.draw_rectangle_filled(
+            position_x - (level_width / 2 - status_width / 2),
+            position_y,
+            status_width,
+            height,
+            arcade.color.BLUE,
+        )
+        arcade.draw_rectangle_outline(
+            position_x,
+            position_y,
+            level_width,
+            height,
+            arcade.color.BLACK,
+            border_width=1.5
+        )
 
     def handle_key_press_release(self, keys: Dict[str, bool]) -> None:
         """
@@ -206,10 +237,20 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
             self.inventory.coal -= 1
 
         if self.shield_enabled:
+            self.shield_cooldown_enabled = True
+            self._shield_cooldown_uptime = 0.0
             self._total_shield_uptime += delta_time
-            if self._total_shield_uptime > 1.5:  # Remove one coal every 3 seconds.
-                self._total_shield_uptime = 0.0
-                self.inventory.coal -= 1
+            if self._total_shield_uptime > self._shield_duration:
+                self.disable_shield()
+        elif not self.shield_enabled and self._total_shield_uptime>0 and not self.shield_cooldown_enabled:
+            self._total_shield_uptime -= delta_time
+
+        if self.shield_cooldown_enabled:
+            if self._shield_cooldown_uptime < self._shield_cooldown_duration:
+                self._shield_cooldown_uptime += delta_time
+            else:
+                self._shield_cooldown_uptime = 0.0
+                self.shield_cooldown_enabled = False
 
         if self.inventory.coal < 1:
             self.disable_shield()
