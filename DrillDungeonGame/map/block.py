@@ -54,7 +54,7 @@ class GoldBlock(Block):
 
 class BorderBlock(Block):
     file = "resources/images/material/dungeon_wall.png"
-    scale = 0.18
+    scale = 1.2
     char = 'O'
 
 
@@ -107,8 +107,8 @@ class BlockGrid:
         self.blocks = [[] for _ in range(len(matrix[0]))]
         self.air_blocks = arcade.SpriteList()
 
-        for x in range(len(matrix)):
-            for y in range(len(matrix[0])):
+        for y in range(len(matrix)):
+            for x in range(len(matrix[0])):
                 b = matrix[x][y]
                 char = b[0]
                 block_x = b[1]
