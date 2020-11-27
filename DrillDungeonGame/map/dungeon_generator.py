@@ -53,7 +53,7 @@ class MapLayer:
 
     """
 
-    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=1000, mean_coal_size: int=5, mean_gold_size: int=5) -> None:
+    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=500, mean_coal_size: int=5, mean_gold_size: int=5) -> None:
         """
 
         Parameters

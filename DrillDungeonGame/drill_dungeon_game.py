@@ -85,7 +85,7 @@ class DrillDungeonGame(arcade.View):
                            current_health=700,
                            max_health=700,
                            ammunition=400,
-                           coal=30,
+                           coal=200,
                            gold=0)
 
         self._levels = []

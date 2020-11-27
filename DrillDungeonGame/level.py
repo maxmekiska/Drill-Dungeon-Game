@@ -2,7 +2,7 @@ import arcade
 
 from DrillDungeonGame.entity.entities.drill import Drill
 from DrillDungeonGame.entity.entities.necromancer_enemy import NecromancerEnemy
-from DrillDungeonGame.map.block import BlockGrid
+from DrillDungeonGame.map.block_grid import BlockGrid
 from DrillDungeonGame.map.dungeon_generator import MapLayer
 from DrillDungeonGame.sprite_container import SpriteContainer
 

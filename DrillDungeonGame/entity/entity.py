@@ -8,7 +8,7 @@ import math
 
 from typing import TYPE_CHECKING
 
-from ..map.block import BlockGrid
+from ..map.block_grid import BlockGrid
 
 if TYPE_CHECKING:
     from ..sprite_container import SpriteContainer
