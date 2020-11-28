@@ -124,14 +124,7 @@ class BlockGrid:
     def _get_adjacent_blocks_to(self, block: Block) -> List[Block]:
         """Returns a list of blocks (total: 4) that are adjacent to a block. Doesn't include diagonal blocks."""
         adjacent_blocks = []
-        adjacent_positions = (
-            (block.x, block.y + 1),
-            (block.x, block.y - 1),
-            (block.x + 1, block.y),
-            (block.x - 1, block.y),
-        )
-        for adjacent_position in adjacent_positions:
-            x, y = adjacent_position
+        for x, y in block.adjacent_positions:
             try:
                 adjacent_blocks.append(self.blocks[x][y])
             except IndexError:

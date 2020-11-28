@@ -12,6 +12,13 @@ class Block(arcade.Sprite):
         self.x, self.y = x, y
         self.is_visible = False
 
+        self.adjacent_positions = (
+            (self.x, self.y + 1),
+            (self.x, self.y - 1),
+            (self.x + 1, self.y),
+            (self.x - 1, self.y),
+        )
+
     @property
     @abc.abstractmethod
     def file(self) -> str:
