@@ -6,6 +6,7 @@ import arcade
 
 from ..entity import Entity
 from DrillDungeonGame.utility import is_near
+from ...utility.constants import BLOCK_PIXEL_SIZE
 
 
 class PathFindingMixin:
@@ -89,8 +90,7 @@ class PathFindingMixin:
         diagonal_movement: bool
             Whether or not the path can include diagonal movement. Defaults to True.
         """
-        sprite_size_estimate = int((self.height + self.width) / 2)
-        barrier_list = arcade.AStarBarrierList(self, blocking_sprites, sprite_size_estimate,
+        barrier_list = arcade.AStarBarrierList(self, blocking_sprites, BLOCK_PIXEL_SIZE,
                                                int(self.center_x - self.vision), int(self.center_x + self.vision),
                                                int(self.center_y - self.vision), int(self.center_y + self.vision))
         path = arcade.astar_calculate_path((self.center_x, self.center_y), (x, y), barrier_list,
@@ -147,7 +147,6 @@ class PathFindingMixin:
         if len(self.path) > self.path_index:
             destination_x, destination_y = self.path[self.path_index][0], self.path[self.path_index][1]
             self.move_towards(destination_x, destination_y)
-            self.look_at(destination_x, destination_y)
         else:
             self.stop_moving()
         # else do nothing. Don't move
