@@ -86,9 +86,9 @@ class Level:
         for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
             entity.draw()
 
-        # for entity in self.sprites.entity_list:
-        #     if entity.path:
-        #         arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
+        for entity in self.sprites.entity_list:
+            if entity.path:
+                arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
 
     def update(self):
         pass  # TODO currently this is all done in class: DrillDungeonGame

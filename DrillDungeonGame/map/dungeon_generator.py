@@ -160,8 +160,8 @@ class MapLayer:
         None
 
         """
-        block_height = MAP_HEIGHT / self.height
-        block_width = MAP_WIDTH / self.width
+        block_height = 20
+        block_width = 20
 
         y_block_center = 0.5 * block_height
         for row in self.map_layer_matrix:
