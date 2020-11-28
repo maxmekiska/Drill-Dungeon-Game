@@ -1,10 +1,12 @@
+import arcade
+
 from .entity.entities import Drill
 from .entity.mixins import ControllableMixin
-from .in_game_menus import *
 from .level import Level
 from .obscure_vision import ObscuredVision
-from .utility import *
 from .view_margins import View
+from .in_game_menus import draw_3d_rectangle, PauseMenu, ShopMenu
+from .utility import generate_next_layer_resource_patch_amount, generate_next_layer_dungeon_amount
 
 
 class DrillDungeonGame(arcade.View):
