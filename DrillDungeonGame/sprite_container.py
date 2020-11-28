@@ -23,8 +23,7 @@ class SpriteContainer:
         Returns a list containing all SpriteLists.
 
     """
-    def __init__(self, drill: Drill, dirt_list: arcade.SpriteList, border_wall_list: arcade.SpriteList,
-                 shop_list: arcade.SpriteList, coal_list: arcade.SpriteList, gold_list: arcade.SpriteList,
+    def __init__(self, drill: Drill, border_wall_list: arcade.SpriteList, shop_list: arcade.SpriteList,
                  explosion_list: arcade.SpriteList, entity_list: arcade.SpriteList, drill_list: arcade.SpriteList,
                  enemy_list: arcade.SpriteList, bullet_list: arcade.SpriteList,
                  all_blocks_list: arcade.SpriteList, destructible_blocks_list: arcade.SpriteList,
@@ -35,16 +34,10 @@ class SpriteContainer:
         ----------
         drill                       : Entity
             The drill (player).
-        dirt_list                   : arcade.SpriteList
-            List containing all dirt blocks.
         border_wall_list            : arcade.SpriteList
             List containing all border blocks.
         shop_list                   : arcade.SpriteList
             List containing all shops on the map.
-        coal_list                   : arcade.SpriteList
-            List containing all coal blocks.
-        gold_list                   : arcade.SpriteList
-            List containing all gold blocks.
         explosion_list              : arcade.SpriteList
             List containing all explosion elements.
         entity_list                 : arcade.SpriteList
@@ -63,11 +56,8 @@ class SpriteContainer:
             List containing all objects that cannot be destructed on the map.
 
         """
-        self.dirt_list = dirt_list
         self.border_wall_list = border_wall_list
         self.shop_list = shop_list
-        self.coal_list = coal_list
-        self.gold_list = gold_list
         self.explosion_list = explosion_list
         self.entity_list = entity_list
 
@@ -104,20 +94,14 @@ class SpriteContainer:
             New instance of sprite container.
 
         """
-        self.dirt_list.extend(other.dirt_list)
         self.border_wall_list.extend(other.border_wall_list)
-        self.coal_list.extend(other.coal_list)
-        self.gold_list.extend(other.gold_list)
         self.explosion_list.extend(other.explosion_list)
         self.entity_list.extend(other.entity_list)
         self.bullet_list.extend(other.bullet_list)
 
-
         self.all_blocks_list.extend(other.all_blocks_list)
         self.destructible_blocks_list.extend(other.destructible_blocks_list)
         self.indestructible_blocks_list.extend(other.indestructible_blocks_list)
-        
-
 
     @property
     def all(self) -> List[arcade.SpriteList]:
@@ -136,5 +120,4 @@ class SpriteContainer:
             Returns all sprite lists.
 
         """
-        return [self.drill, self.dirt_list, self.border_wall_list, self.coal_list,
-                self.gold_list, self.explosion_list, self.entity_list, self.bullet_list]
+        return [self.drill, self.all_blocks_list, self.explosion_list, self.entity_list, self.bullet_list]

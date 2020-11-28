@@ -29,11 +29,8 @@ class Level:
             Number of dungeon rooms to be created.
 
         """
-        dirt_list = arcade.SpriteList()
         border_wall_list = arcade.SpriteList()
         shop_list = arcade.SpriteList()
-        coal_list = arcade.SpriteList()
-        gold_list = arcade.SpriteList()
         explosion_list = arcade.SpriteList()
         entity_list = arcade.SpriteList()
         drill_list = arcade.SpriteList()
@@ -43,8 +40,7 @@ class Level:
         all_blocks_list = arcade.SpriteList()
         destructible_blocks_list = arcade.SpriteList()
         indestructible_blocks_list = arcade.SpriteList()
-        self.sprites = SpriteContainer(drill=drill, dirt_list=dirt_list, border_wall_list=border_wall_list,
-                                       shop_list=shop_list, coal_list=coal_list, gold_list=gold_list,
+        self.sprites = SpriteContainer(drill=drill, border_wall_list=border_wall_list, shop_list=shop_list,
                                        explosion_list=explosion_list, entity_list=entity_list,
                                        drill_list=drill_list,
                                        enemy_list=enemy_list,
@@ -86,11 +82,7 @@ class Level:
     def draw(self) -> None:
         arcade.start_render()
         self.block_grid.air_blocks.draw()
-        self.sprites.dirt_list.draw()
-        self.sprites.coal_list.draw()
-        self.sprites.gold_list.draw()
-        self.sprites.border_wall_list.draw()
-        self.sprites.shop_list.draw()
+        self.sprites.all_blocks_list.draw()
         self.sprites.explosion_list.draw()
 
         for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):

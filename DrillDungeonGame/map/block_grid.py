@@ -55,17 +55,14 @@ class BlockGrid:
 
     def _add_block_to_lists(self, block: Block, sprites) -> None:
         if type(block) == BLOCK.DIRT:
-            sprites.dirt_list.append(block)
             sprites.destructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
 
         elif type(block) == BLOCK.COAL:
-            sprites.coal_list.append(block)
             sprites.destructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
 
         elif type(block) == BLOCK.GOLD:
-            sprites.gold_list.append(block)
             sprites.destructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
 
@@ -78,23 +75,11 @@ class BlockGrid:
             sprites.indestructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
             sprites.border_wall_list.append(block)
+
         elif type(block) == BLOCK.WALL:
             sprites.indestructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
             sprites.border_wall_list.append(block)
-        elif type(block) == BLOCK.WALLTOPPER:
-            sprites.indestructible_blocks_list.append(block)
-            sprites.all_blocks_list.append(block)
-            sprites.border_wall_list.append(block)
-        elif type(block) == BLOCK.RIGHTWALL:
-            sprites.indestructible_blocks_list.append(block)
-            sprites.all_blocks_list.append(block)
-            sprites.border_wall_list.append(block)
-        elif type(block) == BLOCK.LEFTWALL:
-            sprites.indestructible_blocks_list.append(block)
-            sprites.all_blocks_list.append(block)
-            sprites.border_wall_list.append(block)
-
 
         else:
             raise ValueError(f'Incorrect block type: {type(block)}!')

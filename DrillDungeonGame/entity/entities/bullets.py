@@ -4,6 +4,7 @@ import arcade
 
 from ..bullet import Bullet
 from ..entity import Entity
+from ...map.block import BLOCK
 from ...utility.utility import make_explosion_particles
 from DrillDungeonGame.particles.explosion import ParticleGold, Smoke, ParticleCoal, ParticleDirt, ParticleShield
 
@@ -128,12 +129,12 @@ class BlueNormalBullet(Bullet):
             Reference to all blocks in the game.
 
         """
-        if sprite in sprites.gold_list:
+        if type(sprite) == BLOCK.GOLD:
             make_explosion_particles(ParticleGold, sprite.position, time, sprites)
             block_grid.break_block(sprite, sprites)
             self.remove_from_sprite_lists()
 
-        elif sprite in sprites.coal_list:
+        elif type(sprite) == BLOCK.COAL:
             make_explosion_particles(ParticleCoal, sprite.position, time, sprites)
             smoke = Smoke(50)
             smoke.position = sprite.position
@@ -141,7 +142,7 @@ class BlueNormalBullet(Bullet):
             block_grid.break_block(sprite, sprites)
             self.remove_from_sprite_lists()
 
-        elif sprite in sprites.dirt_list:
+        elif type(sprite) == BLOCK.DIRT:
             make_explosion_particles(ParticleDirt, sprite.position, time, sprites)
             block_grid.break_block(sprite, sprites)
             self.remove_from_sprite_lists()
