@@ -1,5 +1,7 @@
 import arcade
-from DrillDungeonGame.entity.mixins.shooting_mixin import ShootingMixin, ShotType
+
+from .entity.mixins import ShotType
+
 
 def draw_3d_rectangle(center_x, center_y, width, height, face_color,
                       highlight_color, shadow_color, shadow_thickness):

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Union
 
 from ..enemy import Enemy
-from ..mixins import PathFindingMixin, ShootingMixin
+from ..mixins import PathFindingMixin
 
 
 class GreenAlienEnemy(Enemy, PathFindingMixin):

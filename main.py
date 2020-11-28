@@ -1,4 +1,6 @@
-from DrillDungeonGame.views import *
+import arcade
+
+from DrillDungeonGame.views import window, MenuView
 
 
 def main() -> None:

@@ -1,9 +1,8 @@
 import arcade
-
-from DrillDungeonGame.drill_dungeon_game import DrillDungeonGame
-
 import arcade.gui
 from arcade.gui import UIManager
+
+from .drill_dungeon_game import DrillDungeonGame
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -11,8 +10,6 @@ SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Welcome to the Drill Dungeon"
 
 window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-
-
 
 
 class MyFlatButtonStartGame(arcade.gui.UIFlatButton):

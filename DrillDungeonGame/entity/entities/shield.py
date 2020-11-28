@@ -1,8 +1,6 @@
-from typing import Union, Type
+from typing import Union
 
-from DrillDungeonGame.entity.bullet import Bullet
-from DrillDungeonGame.entity.entity import ChildEntity, Entity
-from DrillDungeonGame.entity.mixins.shooting_mixin import ShootingMixin, ShotType
+from ..entity import ChildEntity, Entity
 
 
 class Shield(ChildEntity):

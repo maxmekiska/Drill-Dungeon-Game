@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Tuple, Union, List, Type, Iterator
-
-from itertools import chain
-import arcade
 import math
+from typing import Tuple, Union, List
 
-from ..map.block_grid import BlockGrid
-from ..utility import load_mirrored_textures
-from ..utility.constants import FaceDirection
+import arcade
+
+from ..map import BlockGrid
+from ..utility import load_mirrored_textures, FaceDirection
 
 
 class Entity(arcade.Sprite):

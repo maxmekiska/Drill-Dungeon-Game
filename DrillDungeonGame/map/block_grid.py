@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import arcade
 
-from DrillDungeonGame.map.block import BLOCK, Block
+from ..map.block import BLOCK, Block
 
 
 class BlockGrid:

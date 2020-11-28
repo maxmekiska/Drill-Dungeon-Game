@@ -1,8 +1,8 @@
 from typing import Union, Type
 
-from DrillDungeonGame.entity.bullet import Bullet
-from DrillDungeonGame.entity.entity import ChildEntity, Entity
-from DrillDungeonGame.entity.mixins.shooting_mixin import ShootingMixin, ShotType
+from ..bullet import Bullet
+from ..entity import ChildEntity, Entity
+from ..mixins import ShootingMixin, ShotType
 
 
 class Turret(ChildEntity, ShootingMixin):

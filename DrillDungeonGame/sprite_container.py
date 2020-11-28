@@ -1,8 +1,8 @@
-from typing import List, TYPE_CHECKING
+from typing import List
 
 import arcade
 
-from DrillDungeonGame.entity.entities.drill import * 
+from .entity.entities import Drill
 
 
 class SpriteContainer:

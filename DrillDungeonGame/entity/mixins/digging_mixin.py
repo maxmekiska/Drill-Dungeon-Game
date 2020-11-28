@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-import arcade
+from typing import Dict
 
-from typing import TYPE_CHECKING, Dict
+import arcade
 
 from ..entity import Entity
 from ...map.block import BLOCK
-
-if TYPE_CHECKING:
-    from ...sprite_container import SpriteContainer
 
 
 class DiggingMixin:
@@ -23,7 +20,7 @@ class DiggingMixin:
     sprite_list: arcade.SpriteList
     children: Dict[str, Entity]
 
-    def update(self, time: float, delta_time: float, sprites: SpriteContainer, block_grid) -> None:
+    def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
         Checks if this entity collides with any destructible block, and if so destroys it,
         incrementing the inventory accordingly.

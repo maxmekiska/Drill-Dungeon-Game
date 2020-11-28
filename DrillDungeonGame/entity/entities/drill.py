@@ -8,9 +8,7 @@ from .bullets import BlueNormalBullet
 from .shield import Shield
 from .turret import Turret
 from ..entity import Entity
-from ..mixins.digging_mixin import DiggingMixin
-from ..mixins.controllable_mixin import ControllableMixin
-from ..mixins.shooting_mixin import ShotType
+from ..mixins import DiggingMixin, ControllableMixin, ShotType
 from ...inventory import Inventory
 
 

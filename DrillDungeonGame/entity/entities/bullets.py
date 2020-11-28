@@ -1,12 +1,12 @@
-from typing import Union, Tuple
+from typing import Union
 
 import arcade
 
 from ..bullet import Bullet
 from ..entity import Entity
-from ...map.block import BLOCK
-from ...utility.utility import make_explosion_particles
-from DrillDungeonGame.particles.explosion import ParticleGold, Smoke, ParticleCoal, ParticleDirt, ParticleShield
+from ...map import BLOCK
+from ...particles.explosion import ParticleGold, Smoke, ParticleCoal, ParticleDirt, ParticleShield
+from ...utility import make_explosion_particles
 
 
 class BouncingBullet(Bullet):

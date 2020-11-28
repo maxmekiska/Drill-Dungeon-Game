@@ -4,7 +4,7 @@ from typing import Union
 
 import arcade
 
-from DrillDungeonGame.entity.entity import ChildEntity, Entity
+from ..entity.entity import ChildEntity, Entity
 
 
 class Bullet(ChildEntity):

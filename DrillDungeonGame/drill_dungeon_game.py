@@ -1,13 +1,10 @@
-from typing import List
-
-from DrillDungeonGame.entity.mixins.controllable_mixin import ControllableMixin
-from DrillDungeonGame.entity.entities.drill import Drill
-from DrillDungeonGame.in_game_menus import *
-from DrillDungeonGame.level import Level
-from DrillDungeonGame.map.dungeon_generator import MAP_WIDTH, MAP_HEIGHT
-from DrillDungeonGame.obscure_vision import ObscuredVision
-from DrillDungeonGame.utility import *
-from DrillDungeonGame.view_margins import View
+from .entity.entities import Drill
+from .entity.mixins import ControllableMixin
+from .in_game_menus import *
+from .level import Level
+from .obscure_vision import ObscuredVision
+from .utility import *
+from .view_margins import View
 
 
 class DrillDungeonGame(arcade.View):

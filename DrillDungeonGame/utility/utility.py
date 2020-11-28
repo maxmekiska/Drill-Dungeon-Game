@@ -1,12 +1,14 @@
 import math
+import random
 from typing import Union, Tuple
 
-import arcade
-import numpy as np
-import random
-from DrillDungeonGame.particles.explosion import PARTICLE_COUNT
 import PIL.Image
 import PIL.ImageDraw
+import arcade
+import numpy as np
+
+from ..particles.explosion import PARTICLE_COUNT
+
 
 def generate_next_layer_resource_patch_amount(current_layer, base_amount=20, minimum_patches=5):
     """

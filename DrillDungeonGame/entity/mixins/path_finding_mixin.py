@@ -1,12 +1,12 @@
 from __future__ import annotations
+
 import math
 from typing import Tuple, List, Union, Callable
 
 import arcade
 
 from ..entity import Entity
-from DrillDungeonGame.utility import is_near
-from ...utility.constants import BLOCK_PIXEL_SIZE
+from ...utility import BLOCK_PIXEL_SIZE, is_near
 
 
 class PathFindingMixin:

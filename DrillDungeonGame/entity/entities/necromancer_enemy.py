@@ -1,15 +1,11 @@
 from __future__ import annotations
-import arcade
 
 from typing import Union
 
 from .bullets import BlueNormalBullet
 from .turret import Turret
 from ..enemy import Enemy
-from ..mixins.path_finding_mixin import PathFindingMixin
-from ..mixins.shooting_mixin import ShootingMixin, ShotType
-from ..mixins.digging_mixin import DiggingMixin
-from ...utility.utility import *
+from ..mixins import DiggingMixin, PathFindingMixin, ShotType
 
 
 class NecromancerEnemy(Enemy, DiggingMixin, PathFindingMixin):
@@ -64,7 +60,7 @@ class NecromancerEnemy(Enemy, DiggingMixin, PathFindingMixin):
                          current_health=current_health, max_health=max_health,
                          idle_textures=idle_textures, moving_textures=moving_textures,
                          time_between_animation_texture_updates=time_between_animation_texture_updates)
-        PathFindingMixin.__init__(self, vision)  # Init PathfindingMixin.
+        PathFindingMixin.__init__(self, vision)
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
                                     firing_mode=ShotType.SINGLE))
         self._last_shot_time = 0

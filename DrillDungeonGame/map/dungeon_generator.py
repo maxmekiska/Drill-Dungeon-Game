@@ -1,8 +1,8 @@
 import random
+
 import numpy as np
 
-from DrillDungeonGame.map.prefab_dungeon_rooms import *
-
+from ..map.prefab_dungeon_rooms import *
 
 MAP_WIDTH = 2400
 MAP_HEIGHT = 2400

@@ -1,8 +1,7 @@
-import random
 import math
+import random
+
 import arcade
-
-
 
 PARTICLE_FADE_RATE = 12
 

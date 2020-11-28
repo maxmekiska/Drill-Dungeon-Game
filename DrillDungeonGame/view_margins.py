@@ -1,6 +1,6 @@
 import arcade
 
-from DrillDungeonGame.utility.constants import SCREEN_WIDTH, SCREEN_HEIGHT, VIEWPOINT_MARGIN
+from .utility import SCREEN_WIDTH, SCREEN_HEIGHT, VIEWPOINT_MARGIN
 
 
 class View:
