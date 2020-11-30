@@ -39,6 +39,7 @@ class Level:
         all_blocks_list = arcade.SpriteList()
         destructible_blocks_list = arcade.SpriteList()
         indestructible_blocks_list = arcade.SpriteList()
+        drill_down_list = arcade.SpriteList()
         self.sprites = SpriteContainer(drill=drill, border_wall_list=border_wall_list, shop_list=shop_list,
                                        explosion_list=explosion_list, entity_list=entity_list,
                                        drill_list=drill_list,
@@ -46,7 +47,8 @@ class Level:
                                        bullet_list=bullet_list,
                                        all_blocks_list=all_blocks_list,
                                        destructible_blocks_list=destructible_blocks_list,
-                                       indestructible_blocks_list=indestructible_blocks_list)
+                                       indestructible_blocks_list=indestructible_blocks_list,
+                                       drill_down_list = drill_down_list)
 
         # Initialize the map layer with some dungeon
         map_layer = MapLayer()
@@ -60,7 +62,7 @@ class Level:
         self._populate_level_with_enemies(map_layer_configuration)
         # Set viewpoint boundaries - where the drill currently has scrolled to
 
-    def _populate_level_with_enemies(self, map_layer_configuration, enemy_chance_cave=0.03, enemy_chance_dungeon=0.01) -> None:
+    def _populate_level_with_enemies(self, map_layer_configuration, enemy_chance_cave=0.003, enemy_chance_dungeon=0.001) -> None:
         """
         Spawns enemies into caves and dungeons.
 

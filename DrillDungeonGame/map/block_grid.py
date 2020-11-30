@@ -80,6 +80,7 @@ class BlockGrid:
 
         elif type(block) == BLOCK.DRILLDOWN:
             sprites.all_blocks_list.append(block)
+            sprites.drill_down_list.append(block)
 
         else:
             raise ValueError(f'Incorrect block type: {type(block)}!')

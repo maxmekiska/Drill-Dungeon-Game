@@ -27,7 +27,7 @@ class SpriteContainer:
                  explosion_list: arcade.SpriteList, entity_list: arcade.SpriteList, drill_list: arcade.SpriteList,
                  enemy_list: arcade.SpriteList, bullet_list: arcade.SpriteList,
                  all_blocks_list: arcade.SpriteList, destructible_blocks_list: arcade.SpriteList,
-                 indestructible_blocks_list: arcade.SpriteList) -> None:
+                 indestructible_blocks_list: arcade.SpriteList, drill_down_list: arcade.SpriteList) -> None:
         """
 
         Parameters
@@ -73,6 +73,7 @@ class SpriteContainer:
         self.all_blocks_list = all_blocks_list
         self.destructible_blocks_list = destructible_blocks_list
         self.indestructible_blocks_list = indestructible_blocks_list
+        self.drill_down_list = drill_down_list
 
     def extend(self, other):
         """

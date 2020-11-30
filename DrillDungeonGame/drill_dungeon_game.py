@@ -155,13 +155,16 @@ class DrillDungeonGame(arcade.View):
 
         if self.keys_pressed['T']:
             # Drill down to the next layer.
-            if (len(self._levels) - self._level_index) == 1:
-                next_level = Level(self.drill)
-                self._levels.append(next_level)
-            self._level_index += 1
-            self.drill.collision_engine = []  # Clear previous level collision engine first.
-            self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
-            self.vignette.decrease_vision()
+            if self.drill.check_ground_for_drilling(self.current_level.sprites):
+                if (len(self._levels) - self._level_index) == 1:
+                    next_level = Level(self.drill)
+                    self._levels.append(next_level)
+                self._level_index += 1
+                self.drill.collision_engine = []  # Clear previous level collision engine first.
+                self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
+                self.vignette.decrease_vision()
+            else:
+                print("Cannot drill here")
 
         elif self.keys_pressed['ESCAPE']:
             # pause game
@@ -171,11 +174,14 @@ class DrillDungeonGame(arcade.View):
             self.window.show_view(pause_menu)
 
         elif self.keys_pressed['U']:
-            if self._level_index > 0:
-                self._level_index -= 1
-            self.drill.collision_engine = []  # Clear previous level collision engine first.
-            self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
-            self.vignette.increase_vision()
+            if self.drill.check_ground_for_drilling(self.current_level.sprites):
+                if self._level_index > 0:
+                    self._level_index -= 1
+                self.drill.collision_engine = []  # Clear previous level collision engine first.
+                self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
+                self.vignette.increase_vision()
+            else:
+                print('Cannot drill here')
 
         # DEBUGGING CONTROLS
         elif self.keys_pressed['O']:
