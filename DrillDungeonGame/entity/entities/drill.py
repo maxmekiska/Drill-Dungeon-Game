@@ -206,6 +206,11 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         if not self.shield_enabled:
             super().hurt(damage)
 
+    def check_ground_for_drilling(self, sprites) -> bool:
+        """
+        Checks to see if the drill is above drillable dirt
+        """
+
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
         Handles update logic specific to this Drill Entity. Currently increases the distance the drill has moved

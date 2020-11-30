@@ -32,6 +32,8 @@ class BlockGrid:
                     self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
                 elif char == 'F':
                     self.blocks[x].append(BLOCK.FLOOR(x, y, block_x, block_y))
+                elif char == 'D':
+                    self.blocks[x].append(BLOCK.DRILLDOWN(x, y, block_x, block_y))
                 else:
                     raise ValueError(f'Unknown char, {char} for block type received.')
 
@@ -76,6 +78,9 @@ class BlockGrid:
         elif type(block) == BLOCK.FLOOR:
             sprites.all_blocks_list.append(block)
 
+        elif type(block) == BLOCK.DRILLDOWN:
+            sprites.all_blocks_list.append(block)
+
         else:
             raise ValueError(f'Incorrect block type: {type(block)}!')
 
@@ -99,6 +104,8 @@ class BlockGrid:
                     if type(block) == BLOCK.AIR:
                         self.air_blocks.append(block)
                     elif type(block) == BLOCK.FLOOR:
+                        self.air_blocks.append(block)
+                    elif type(block) == BLOCK.DRILLDOWN:
                         self.air_blocks.append(block)
                     else:
                         self._add_block_to_lists(block, sprites)

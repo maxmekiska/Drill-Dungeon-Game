@@ -53,7 +53,7 @@ class MapLayer:
 
     """
 
-    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=500, mean_coal_size: int=5, mean_gold_size: int=5) -> None:
+    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=500, mean_coal_size: int=5, mean_gold_size: int=5, mean_drillable_size: int=8) -> None:
         """
 
         Parameters
@@ -76,6 +76,7 @@ class MapLayer:
         self.mean_dungeon_size = mean_dungeon_size
         self.mean_coal_size = mean_coal_size # coal
         self.mean_gold_size = mean_gold_size # gold
+        self.mean_drillable_size = mean_drillable_size #Size of drillable patches
         self.map_layer_configuration = []
 
     def __repr__(self) -> str:
@@ -100,7 +101,7 @@ class MapLayer:
             map_layer_matrixString += "\n"
         return map_layer_matrixString
 
-    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int, number_of_shops: int, drillX, drillY) -> list:
+    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int, number_of_shops: int, drillX, drillY, number_of_drillable_patches: int=8) -> list:
         """
 
         Generates a map layer configuration from scratch
@@ -139,10 +140,13 @@ class MapLayer:
             self.generate_gold()
         for i in range(number_of_shops):
             self.generate_shop()
+        for i in range(number_of_drillable_patches):
+            self.generate_drillable_zones()
 
         self.generate_border_walls()
         self.generate_advanced_dungeon()
         self.generate_map_layer_configuration()
+        self.generate_drillable_zones()
         self.create_space_for_drill(drillX, drillY)
         return self.map_layer_configuration
 
@@ -168,6 +172,21 @@ class MapLayer:
             configuration_row = self.load_row_from_matrix(row, y_block_center, block_width, block_height)
             self.map_layer_configuration.append(configuration_row)
             y_block_center += block_height
+
+
+    def generate_drillable_zones(self):
+        """
+        Generates drillable patches. The start point only spawns within 10 blocks of the side
+        """
+        x = np.random.choice([np.random.randint(0, 10), np.random.randint(self.width-11, self.width-1)])
+        y = np.random.choice([np.random.randint(0, 10), np.random.randint(self.height-11, self.height-1)])
+        drillable_size = self.generate_patch_size(self.mean_drillable_size)
+        while drillable_size > 0:
+            if self.map_layer_matrix[y][x] != 'D':
+                self.map_layer_matrix[y][x] = 'D'
+                drillable_size -= 1
+            walkDirection = self.get_walk_direction(x, y)
+            x, y = self.update_dungeon_coords(x, y, walkDirection)
 
     def load_row_from_matrix(self, row: list, y_block_center: float, block_width: float, block_height: float) -> list:
         """
@@ -228,14 +247,7 @@ class MapLayer:
 
     def generate_dungeon(self) -> None:
         """
-
         Generates a single dungeon on a map layer matrix
-
-        Parameters
-        ----------
-        enemy_chance   :   float
-            The probability of there being an enemy in every dungeon tile
-
         """
         x, y = self.generate_random_start_point()
         dungeonSize = self.generate_patch_size(self.mean_dungeon_size)

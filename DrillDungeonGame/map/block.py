@@ -81,6 +81,11 @@ class FloorBlock(Block):
     scale = 1.25
     char = 'F'
 
+class DrillDownBlock(Block):
+    file = "resources/images/material/drill_down.png"
+    scale = 1.25
+    char = 'D'
+
 class _Block:
     AIR = AirBlock
     DIRT = DirtBlock
@@ -90,6 +95,7 @@ class _Block:
     BORDER = BorderBlock
     WALL = DungeonWallBlock
     FLOOR = FloorBlock
+    DRILLDOWN = DrillDownBlock
 
 
 BLOCK = _Block
