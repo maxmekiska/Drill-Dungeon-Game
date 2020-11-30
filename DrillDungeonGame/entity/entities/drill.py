@@ -209,7 +209,23 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
     def check_ground_for_drilling(self, sprites) -> bool:
         """
         Checks to see if the drill is above drillable dirt
+
+        Parameters
+        ----------
+        sprites   :   SpriteContainer
+            The sprite container for the map the drill is currently on
+
+        Returns
+        -------
+        return    :   boolean
+            True if the ground can be drilled, false otherwise
         """
+        drillable_blocks_list = sprites.drill_down_list
+        print(len(drillable_blocks_list))
+        if len(arcade.check_for_collision_with_list(self, drillable_blocks_list)):
+            return True
+        else:
+            return False
 
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """

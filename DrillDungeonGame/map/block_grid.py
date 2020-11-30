@@ -75,11 +75,7 @@ class BlockGrid:
             sprites.all_blocks_list.append(block)
             sprites.border_wall_list.append(block)
 
-        elif type(block) == BLOCK.FLOOR:
-            sprites.all_blocks_list.append(block)
-
         elif type(block) == BLOCK.DRILLDOWN:
-            sprites.all_blocks_list.append(block)
             sprites.drill_down_list.append(block)
 
         else:
@@ -87,7 +83,7 @@ class BlockGrid:
 
     def break_block(self, block: Block, sprites) -> None:
         for adjacent_block in self._get_adjacent_blocks_to(block):
-            if type(adjacent_block) != BLOCK.AIR:
+            if type(adjacent_block) != BLOCK.AIR and type(adjacent_block) != BLOCK.FLOOR and type(adjacent_block) != BLOCK.DRILLDOWN:
                 self._add_block_to_lists(adjacent_block, sprites)
 
         block.remove_from_sprite_lists()
@@ -101,12 +97,8 @@ class BlockGrid:
         for x in range(self.width):
             for y in range(self.height):
                 block = self.blocks[x][y]
-                if any(type(adjacent_block) == BLOCK.AIR or type(adjacent_block) == BLOCK.FLOOR for adjacent_block in self._get_adjacent_blocks_to(block)):
-                    if type(block) == BLOCK.AIR:
-                        self.air_blocks.append(block)
-                    elif type(block) == BLOCK.FLOOR:
-                        self.air_blocks.append(block)
-                    elif type(block) == BLOCK.DRILLDOWN:
+                if any(type(adjacent_block) in (BLOCK.AIR, BLOCK.DRILLDOWN, BLOCK.FLOOR) for adjacent_block in self._get_adjacent_blocks_to(block)):
+                    if type(block) in (BLOCK.DRILLDOWN, BLOCK.FLOOR, BLOCK.AIR):
                         self.air_blocks.append(block)
                     else:
                         self._add_block_to_lists(block, sprites)
