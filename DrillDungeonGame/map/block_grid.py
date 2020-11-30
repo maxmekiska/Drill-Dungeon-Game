@@ -73,6 +73,9 @@ class BlockGrid:
             sprites.all_blocks_list.append(block)
             sprites.border_wall_list.append(block)
 
+        elif type(block) == BLOCK.FLOOR:
+            sprites.all_blocks_list.append(block)
+
         else:
             raise ValueError(f'Incorrect block type: {type(block)}!')
 
@@ -92,8 +95,10 @@ class BlockGrid:
         for x in range(self.width):
             for y in range(self.height):
                 block = self.blocks[x][y]
-                if any(type(adjacent_block) == BLOCK.AIR for adjacent_block in self._get_adjacent_blocks_to(block)):
+                if any(type(adjacent_block) == BLOCK.AIR or type(adjacent_block) == BLOCK.FLOOR for adjacent_block in self._get_adjacent_blocks_to(block)):
                     if type(block) == BLOCK.AIR:
+                        self.air_blocks.append(block)
+                    elif type(block) == BLOCK.FLOOR:
                         self.air_blocks.append(block)
                     else:
                         self._add_block_to_lists(block, sprites)
