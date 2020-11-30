@@ -26,8 +26,6 @@ class BlockGrid:
                     self.blocks[x].append(BLOCK.BORDER(x, y, block_x, block_y))
                 elif char == ' ':
                     self.blocks[x].append(BLOCK.AIR(x, y, block_x, block_y))
-                elif char == 'E':
-                    self.blocks[x].append(BLOCK.AIR(x, y, block_x, block_y))  # TODO spawn enemies.
                 elif char == 'S':
                     self.blocks[x].append(BLOCK.SHOP(x, y, block_x, block_y))
                 elif char == 'W':
