@@ -32,14 +32,8 @@ class BlockGrid:
                     self.blocks[x].append(BLOCK.SHOP(x, y, block_x, block_y))
                 elif char == 'W':
                     self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
-                elif char == 'LW':
-                    self.blocks[x].append(BLOCK.LEFTWALL(x, y, block_x, block_y))
-                elif char == 'RW':
-                    self.blocks[x].append(BLOCK.RIGHTWALL(x, y, block_x, block_y))
-                elif char == 'ULW':
-                    self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
-                elif char == 'URW':
-                    self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
+                elif char == 'F':
+                    self.blocks[x].append(BLOCK.FLOOR(x, y, block_x, block_y))
                 else:
                     raise ValueError(f'Unknown char, {char} for block type received.')
 

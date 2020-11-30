@@ -212,7 +212,7 @@ class MapLayer:
                     new_item = (" ", item[1], item[2])
                     self.map_layer_configuration[i][j] = new_item
 
-    def generate_advanced_dungeon(self, wing_chance=0) -> None:
+    def generate_advanced_dungeon(self) -> None:
         """
         Generates an advanced dungeon from several preconfigured 
         rooms
@@ -221,32 +221,12 @@ class MapLayer:
         startY = 20
         entrance_room = entrance_room_one #Add method to choose random
         wing_room = wing_room_one #Add method to choose random
-        west_wing = True if np.random.rand() > wing_chance else False
-        east_wing = True if np.random.rand() > wing_chance else False
-        north_wing = True if np.random.rand() > wing_chance else False
         for i in  range(len(entrance_room)):
             for j in range(len(entrance_room[0])):
                     self.map_layer_matrix[i+startY][j+startX] = entrance_room[i][j]
-        #Shelved in favour of nice prefab dungeons. This method produces pretty 
-        #lame dungeons so for now I think prefab is the best way to go, can make ~10-15 dungeons
-        """
-        if west_wing:
-            for i in  range(len(wing_room)):
-                for j in range(len(wing_room[0])):
-                    self.map_layer_matrix[i+startY][j+startX+len(entrance_room) + 5] = wing_room[i][j]
-            wing_startX = startX + len(entrance_room[0]) - 1
-            wing_startY = startY + int(len(entrance_room) / 2)
-            for i in  range(len(corridor_one)):
-                for j in range(len(corridor_one[0])):
-                    self.map_layer_matrix[i+startY][j+startX] = corridor_one[i][j]
-        """
 
 
-
-                
-
-
-    def generate_dungeon(self, enemy_chance: float=0.1) -> None:
+    def generate_dungeon(self) -> None:
         """
 
         Generates a single dungeon on a map layer matrix
@@ -261,10 +241,7 @@ class MapLayer:
         dungeonSize = self.generate_patch_size(self.mean_dungeon_size)
         while dungeonSize > 0:
             if self.map_layer_matrix[y][x] != ' ':
-                if np.random.randint(0, 100) * 0.01 < enemy_chance:
-                    self.map_layer_matrix[y][x] = 'E'
-                else:
-                    self.map_layer_matrix[y][x] = ' '
+                self.map_layer_matrix[y][x] = ' '
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
