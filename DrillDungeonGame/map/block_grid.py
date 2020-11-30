@@ -77,6 +77,7 @@ class BlockGrid:
 
         elif type(block) == BLOCK.DRILLDOWN:
             sprites.drill_down_list.append(block)
+            sprites.all_blocks_list.append(block)
 
         else:
             raise ValueError(f'Incorrect block type: {type(block)}!')
@@ -98,8 +99,11 @@ class BlockGrid:
             for y in range(self.height):
                 block = self.blocks[x][y]
                 if any(type(adjacent_block) in (BLOCK.AIR, BLOCK.DRILLDOWN, BLOCK.FLOOR) for adjacent_block in self._get_adjacent_blocks_to(block)):
-                    if type(block) in (BLOCK.DRILLDOWN, BLOCK.FLOOR, BLOCK.AIR):
+                    if type(block) in (BLOCK.FLOOR, BLOCK.AIR):
                         self.air_blocks.append(block)
+                    elif type(block) == BLOCK.DRILLDOWN:
+                        self.air_blocks.append(block)
+                        self._add_block_to_lists(block, sprites)
                     else:
                         self._add_block_to_lists(block, sprites)
 

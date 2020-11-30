@@ -221,7 +221,6 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
             True if the ground can be drilled, false otherwise
         """
         drillable_blocks_list = sprites.drill_down_list
-        print(len(drillable_blocks_list))
         if len(arcade.check_for_collision_with_list(self, drillable_blocks_list)):
             return True
         else:
