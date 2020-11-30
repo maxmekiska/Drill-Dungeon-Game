@@ -77,9 +77,9 @@ class DungeonWallBlock(Block):
     char = 'W'
 
 class FloorBlock(Block):
-    file = "resources/images/material/dungeon_wall.png"
+    file = "resources/images/material/dungeon_floor.png"
     scale = 1.25
-    char = 'W'
+    char = 'F'
 
 class _Block:
     AIR = AirBlock

@@ -217,8 +217,8 @@ class MapLayer:
         Generates an advanced dungeon from several preconfigured 
         rooms
         """
-        startX = np.randint(20, 40)
-        startY = np.randint(20, 40)
+        startX = np.random.randint(20, 40)
+        startY = np.random.randint(20, 40)
         entrance_room = entrance_room_one #Add method to choose random
         wing_room = wing_room_one #Add method to choose random
         for i in  range(len(entrance_room)):

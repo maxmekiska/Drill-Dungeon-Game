@@ -1,4 +1,5 @@
 import arcade
+import numpy as np
 
 from .entity.entities import Drill, NecromancerEnemy
 from .map import BlockGrid, MapLayer
@@ -54,25 +55,35 @@ class Level:
                                                                              number_of_gold_patches,
                                                                              number_of_shops,
                                                                              drill.center_x, drill.center_y)
-        print(map_layer)
         self.block_grid = BlockGrid(map_layer_configuration, self.sprites)
 
-        self._populate_level_with_enemies()
+        self._populate_level_with_enemies(map_layer_configuration)
         # Set viewpoint boundaries - where the drill currently has scrolled to
 
-    def _populate_level_with_enemies(self) -> None:
-        enemy_one = NecromancerEnemy(300, 300, vision=200, speed=0.7)
-        enemy_two = NecromancerEnemy(500, 400, vision=200, speed=0.7)
-        enemy_three = NecromancerEnemy(300, 50, vision=200, speed=0.7)
+    def _populate_level_with_enemies(self, map_layer_configuration, enemy_chance_cave=0.03, enemy_chance_dungeon=0.01) -> None:
+        """
+        Spawns enemies into caves and dungeons.
 
-        self.sprites.entity_list.append(enemy_one)
-        self.sprites.entity_list.append(enemy_two)
-        self.sprites.entity_list.append(enemy_three)
+        Parameters
+        ----------
+        enemy_chance_cave      :   float
+            Probability of an enemy spawning in an empty cave block
+        enemy_chance_dungeon   :   float
+            Probability of an enemy spawning in an empty dungeon floor block
+        """
+        for row in map_layer_configuration:
+            for block in row:
+                if block[0] == ' ':
+                    if np.random.rand() > (1 - enemy_chance_cave):
+                        enemy_to_append = NecromancerEnemy(block[1], block[2], vision=200, speed=0.7)
+                        self.sprites.entity_list.append(enemy_to_append)
+                        self.sprites.enemy_list.append(enemy_to_append)
+                elif block[0] == 'F':
+                    if np.random.rand() > (1 - enemy_chance_dungeon):
+                        enemy_to_append = NecromancerEnemy(block[1], block[2], vision=200, speed=0.7)
+                        self.sprites.entity_list.append(enemy_to_append)
+                        self.sprites.enemy_list.append(enemy_to_append)
         self.sprites.drill_list.append(self.sprites.drill)
-
-        self.sprites.enemy_list.append(enemy_one)
-        self.sprites.enemy_list.append(enemy_two)
-        self.sprites.enemy_list.append(enemy_three)
 
         for entity in self.sprites.entity_list:
             entity.setup_collision_engine([self.sprites.indestructible_blocks_list])
