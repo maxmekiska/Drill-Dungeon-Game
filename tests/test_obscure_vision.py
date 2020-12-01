@@ -18,7 +18,7 @@ class ObscureVisionTestCase(unittest.TestCase):
         ]
 
         for vision, max_vision, passes in test_data:
-            print(f'{vision}, {max_vision}, {passes}')
+            logging.debug(f'{vision}, {max_vision}, {passes}')
 
             if not passes:
                 self.assertRaises(ValueError, ObscuredVision, vision, max_vision)
