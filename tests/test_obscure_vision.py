@@ -50,7 +50,9 @@ class ObscureVisionTestCase(unittest.TestCase):
             o.far_sight()
             self.assertEqual(o._outer_alpha, 0)
             self.assertEqual(o._center_alpha, 0)
+            self.assertEqual(o.vision, vision)
 
             o.blind()
             self.assertEqual(o._outer_alpha, 255)
             self.assertEqual(o._center_alpha, 255)
+            self.assertEqual(o.vision, vision)
