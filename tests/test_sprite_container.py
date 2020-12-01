@@ -1,6 +1,6 @@
 import pytest
 
-from ..DrillDungeonGame.sprite_container import *
+from DrillDungeonGame.sprite_container import *
 #TODO need to fix this test, it is not really useful at the moment
 
 

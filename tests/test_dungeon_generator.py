@@ -1,6 +1,6 @@
 import pytest
 
-from ..DrillDungeonGame.map.dungeon_generator import *
+from DrillDungeonGame.map.dungeon_generator import *
 
 
 def test_get_walk_direction_input():

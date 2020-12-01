@@ -1,6 +1,6 @@
 import pytest
 
-from ..DrillDungeonGame.level import *
+from DrillDungeonGame.level import *
 
 def test_map_layer_generation():
     level = Level(Drill(10, 10))

@@ -84,6 +84,10 @@ class ObscuredVision:
         """
         if radius > self._max_vision:
             raise ValueError(f"vision: {radius} cannot be greater than max_vision: {self._max_vision}")
+
+        if radius < 0:
+            raise ValueError(f"vision: {radius} cannot be less than 0.")
+
         self._vision = radius
         self._reload_image()
 
