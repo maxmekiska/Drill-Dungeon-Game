@@ -1,7 +1,7 @@
 import arcade
 
-from DrillDungeonGame.views import window, MenuView
-
+from DrillDungeonGame.window import Window
+from DrillDungeonGame.utility import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
 
 def main() -> None:
     """
@@ -17,16 +17,8 @@ def main() -> None:
     None
 
     """
-   # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-
-    main_view = MenuView()
-
-
-    #game_view = DrillDungeonGame(window)
-
-    #game_view.setup()
-    #window.show_view(game_view)
-    window.show_view(main_view)
+    window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window.show_view(window.menu_view)
 
     arcade.run()
 

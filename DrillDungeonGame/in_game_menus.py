@@ -278,6 +278,7 @@ class MenuWindow:
                         self.face_color, self.highlight_color, self.shadow_color,
                         self.shadow_thickness)
 
+
 class InGameMenu(arcade.View):
     """
     Creates a game view with a grey window in center of
@@ -320,15 +321,12 @@ class InGameMenu(arcade.View):
         self.screen_center_y = self.view.bottom_offset + self.window.height/2
         self.button_list = []
 
-
-
     def on_draw(self):
         self.game_view.on_draw()
 
         arcade.draw_lrtb_rectangle_filled(self.view.left_offset, self.view.left_offset+self.window.width, self.view.bottom_offset+self.window.height, self.view.bottom_offset, arcade.color.GRAY + (100,))
         menu_window = MenuWindow(self.screen_center_x, self.screen_center_y, self.width, self.height)
         menu_window.draw()
-
 
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.ESCAPE:   # return to previous view
@@ -397,9 +395,7 @@ class PauseMenu(InGameMenu):
         self.window.show_view(self.game_view)
 
     def return_to_main(self):
-        main_view = MenuView()
-        window.show_view(main_view)
-
+        self.window.show_view(self.window.menu_view)
 
 
 class ShopItem:

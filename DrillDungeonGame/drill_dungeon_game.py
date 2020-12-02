@@ -61,7 +61,7 @@ class DrillDungeonGame(arcade.View):
         super().__init__()
         arcade.set_background_color(arcade.color.BLACK)
 
-        self.game_window = window
+        self.window = window
         self.keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
         self.sprites = None
@@ -170,8 +170,7 @@ class DrillDungeonGame(arcade.View):
             # pause game
             self.keys_pressed = {key: False for key in self.keys_pressed}
             self.drill.stop_moving()
-            pause_menu = PauseMenu(self, self.window, self.view)
-            self.window.show_view(pause_menu)
+            self.window.show_view(self.window.pause_view)
 
         elif self.keys_pressed['U']:
             if self.drill.check_ground_for_drilling(self.current_level.sprites):
@@ -280,6 +279,9 @@ class DrillDungeonGame(arcade.View):
             if issubclass(entity.__class__, ControllableMixin):
                 entity.handle_mouse_release(button)
 
+    def on_show(self) -> None:
+        arcade.set_background_color(arcade.color.BLACK)
+
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float) -> None:
         """
 
@@ -333,8 +335,8 @@ class DrillDungeonGame(arcade.View):
         self.current_level.sprites.explosion_list.update()
 
         for bullet in self.current_level.sprites.bullet_list:
-            if bullet.center_x > self.game_window.width + self.view.left_offset or \
+            if bullet.center_x > self.window.width + self.view.left_offset or \
                     bullet.center_x < self.view.left_offset or \
-                    bullet.center_y > self.game_window.width + self.view.bottom_offset or \
+                    bullet.center_y > self.window.width + self.view.bottom_offset or \
                     bullet.center_y < self.view.bottom_offset:
                 bullet.remove_from_sprite_lists()
