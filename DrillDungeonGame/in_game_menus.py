@@ -1,6 +1,7 @@
 import arcade
 
 from .entity.mixins import ShotType
+from .utility import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 def draw_3d_rectangle(center_x, center_y, width, height, face_color,
@@ -295,7 +296,7 @@ class InGameMenu(arcade.View):
     on_mouse_release(x: float, y: float, button: int, modifiers: int)
         checks if button is pressed
     """
-    def __init__(self, window, game_view, view, width, height):
+    def __init__(self, game_view, view, width, height):
         """
         Parameters
         ----------
@@ -312,21 +313,27 @@ class InGameMenu(arcade.View):
             height of in-game menu
         """
         super().__init__()
-        self.window_width = window
         self.game_view = game_view
         self.width = width
         self.height = height
         self.view = view
-        self.screen_center_x = self.view.left_offset + self.window.width/2
-        self.screen_center_y = self.view.bottom_offset + self.window.height/2
+        self.screen_center_x = None
+        self.screen_center_y = None
         self.button_list = []
+        self.menu_window = None
+
+    def on_show(self):
+        self.screen_center_x = self.view.left_offset + SCREEN_WIDTH/2
+        self.screen_center_y = self.view.bottom_offset + SCREEN_HEIGHT/2
+        self.menu_window = MenuWindow(self.screen_center_x, self.screen_center_y, self.width, self.height)
+
+        self.button_list=[]
 
     def on_draw(self):
         self.game_view.on_draw()
 
         arcade.draw_lrtb_rectangle_filled(self.view.left_offset, self.view.left_offset+self.window.width, self.view.bottom_offset+self.window.height, self.view.bottom_offset, arcade.color.GRAY + (100,))
-        menu_window = MenuWindow(self.screen_center_x, self.screen_center_y, self.width, self.height)
-        menu_window.draw()
+        self.menu_window.draw()
 
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.ESCAPE:   # return to previous view
@@ -356,7 +363,7 @@ class PauseMenu(InGameMenu):
     return_to_main()
         changes view back to main menu
     """
-    def __init__(self, game_view, window, view):
+    def __init__(self, game_view, view):
         """
         Parameters
         ----------
@@ -370,23 +377,29 @@ class PauseMenu(InGameMenu):
         """
         self.game_view = game_view
         self.width = 300
-        self.height = 400
-        super().__init__(window, self.game_view, view, self.width, self.height)
+        self.height = 300
+        super().__init__(self.game_view, view, self.width, self.height)
 
     def on_show(self):
-        resume_button = MenuButton(self.screen_center_x, self.screen_center_y+110, 200, 60)
+        super().on_show()
+        resume_button = MenuButton(self.screen_center_x, self.screen_center_y+50, 200, 60)
         resume_button.add_text("Resume", 16)
         resume_button.assign_action(self.return_to_game)
         self.button_list.append(resume_button)
 
-        main_menu_button = MenuButton(self.screen_center_x, self.screen_center_y+40, 200, 60)
+        main_menu_button = MenuButton(self.screen_center_x, self.screen_center_y-20, 200, 60)
         main_menu_button.add_text("Return to Main Menu", 16)
         main_menu_button.assign_action(self.return_to_main)
         self.button_list.append(main_menu_button)
 
+        quit_button = MenuButton(self.screen_center_x, self.screen_center_y-90, 200, 60)
+        quit_button.add_text("Exit Game", 16)
+        quit_button.assign_action(self.quit_game)
+        self.button_list.append(quit_button)
+
     def on_draw(self):
         super().on_draw()
-        arcade.draw_text("PAUSED", self.screen_center_x, self.screen_center_y+160, arcade.color.BLACK, font_size=20, anchor_x="center")
+        arcade.draw_text("PAUSED", self.screen_center_x, self.screen_center_y+100, arcade.color.BLACK, font_size=20, anchor_x="center")
 
         for button in self.button_list:
           button.draw()
@@ -397,6 +410,8 @@ class PauseMenu(InGameMenu):
     def return_to_main(self):
         self.window.show_view(self.window.menu_view)
 
+    def quit_game(self):
+        quit()
 
 class ShopItem:
     """

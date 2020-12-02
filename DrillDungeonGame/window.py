@@ -1,5 +1,5 @@
 from .drill_dungeon_game import DrillDungeonGame
-from .in_game_menus import PauseMenu
+from .in_game_menus import PauseMenu, GameOverMenu
 from .views import MenuView, InstructionView, ObjectivesView
 import arcade
 
@@ -14,4 +14,5 @@ class Window(arcade.Window):
         self.instructions_view = InstructionView(self)
         self.objectives_view = ObjectivesView(self)
 
-        self.pause_view = PauseMenu(self.game_view, self, self.game_view.view)
+        self.pause_view = PauseMenu(self.game_view, self.game_view.view)
+        self.game_over_view = GameOverMenu(self.game_view, self.game_view.view)

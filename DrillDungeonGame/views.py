@@ -179,6 +179,7 @@ class MenuView(arcade.View):
         Method that changes the window to the game window and start the game.
 
         """
+        self.window.game_view.setup()
         self.window.show_view(self.window.game_view)
 
     def setup(self):
@@ -272,7 +273,7 @@ class InstructionView(arcade.View):
         Ui manager button logic initialization.
 
         """
-        self.ui_manager.unregister_handlers()
+        self.ui_manager.purge_ui_elements()
 
     def setup(self):
         """
@@ -358,7 +359,7 @@ class ObjectivesView(arcade.View):
         Ui manager button logic initialization.
 
         """
-        self.ui_manager.unregister_handlers()
+        self.ui_manager.purge_ui_elements()
 
     def setup(self):
         """
