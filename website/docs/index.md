@@ -1,17 +1,17 @@
-# Welcome to MkDocs
+# Welcome to the Drill Dungeon Game Website
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+This Website was created to support the documentation for our Drill Dungeon
+Game. The game itself is the result of our second coursework of our Software
+Engineering class at the University of Bath. All team members are currently
+attending the MSc in Computer Science.
 
-## Commands
+##The team:
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+- Ahmed Ahmadu
+- John Chan
+- Aditya Gaosindhe
+- Oliver Hamler
+- Zach Howard
+- Maximilian Mekiska
+- Hugh Surdeau
+- Yiming Yuan
