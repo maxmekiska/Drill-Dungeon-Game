@@ -26,8 +26,8 @@ class MyFlatButtonStartGame(arcade.gui.UIFlatButton):
 
         """
         self.window.menu_view.start_game()
-        
-        
+
+
 class MyFlatButtonStartInstruction(arcade.gui.UIFlatButton):
     def __init__(self, window, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -161,16 +161,17 @@ class MenuView(arcade.View):
         Displays the window, sets up background color.
 
         """
+        arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
         self.setup()
         arcade.set_background_color(arcade.color.WHITE)
-                         
+
     def on_hide_view(self):
         """
 
         Ui manager button logic initialization.
 
         """
-        self.ui_manager.unregister_handlers()
+        self.ui_manager.purge_ui_elements()
 
     def start_game(self):
         """
@@ -207,10 +208,10 @@ class MenuView(arcade.View):
             center_x=right_column_x,
             center_y=y_slot * 1,
             width=250,
-          
+
         )
         self.ui_manager.add_ui_element(button_right)
-        
+
         button_upper_right = MyFlatButtonStartGame(
             self.window,
             'Start Game',
@@ -220,7 +221,6 @@ class MenuView(arcade.View):
         )
         self.ui_manager.add_ui_element(button_upper_right)
 
-       
 class InstructionView(arcade.View):
     """
 
@@ -242,7 +242,7 @@ class InstructionView(arcade.View):
         super().__init__()
         self.window = window
         self.ui_manager = UIManager()
-        
+
     def on_show(self):
         """
 
@@ -261,11 +261,11 @@ class InstructionView(arcade.View):
         arcade.start_render()
         arcade.draw_text("Instructions", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.2,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("1. Press W, A, S, D to move\n\n2. Click on screen to aim and shoot\n\n3. Press T to drill down\n\n4. Press B to change fire mode\n\n4. Press ESC to pause the game", 
+        arcade.draw_text("1. Press W, A, S, D to move\n\n2. Click on screen to aim and shoot\n\n3. Press T to drill down\n\n4. Press B to change fire mode\n\n4. Press ESC to pause the game",
                           SCREEN_WIDTH/SCREEN_WIDTH, SCREEN_HEIGHT/2.4,
                           arcade.color.WHITE, font_size= 25, anchor_x="left")
-        
-                         
+
+
     def on_hide_view(self):
         """
 
@@ -273,7 +273,7 @@ class InstructionView(arcade.View):
 
         """
         self.ui_manager.unregister_handlers()
-     
+
     def setup(self):
         """
 
@@ -295,18 +295,18 @@ class InstructionView(arcade.View):
             width=250,
         )
         self.ui_manager.add_ui_element(button_left)
-      
-        
+
+
         button_right = MyFlatButtonObjectives(
             self.window,
             'Next',
             center_x=right_column_x,
             center_y=y_slot * 1,
             width=250,
-          
+
         )
         self.ui_manager.add_ui_element(button_right)
-        
+
 class ObjectivesView(arcade.View):
     """
 
@@ -328,7 +328,7 @@ class ObjectivesView(arcade.View):
         super().__init__()
         self.window = window
         self.ui_manager = UIManager()
-        
+
     def on_show(self):
         """
 
@@ -347,11 +347,11 @@ class ObjectivesView(arcade.View):
         arcade.start_render()
         arcade.draw_text("The Objective", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.2,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Text here", 
+        arcade.draw_text("Text here",
                           SCREEN_WIDTH/SCREEN_WIDTH, SCREEN_HEIGHT/2.4,
                           arcade.color.WHITE, font_size= 25, anchor_x="left")
-        
-                         
+
+
     def on_hide_view(self):
         """
 
@@ -359,7 +359,7 @@ class ObjectivesView(arcade.View):
 
         """
         self.ui_manager.unregister_handlers()
-     
+
     def setup(self):
         """
 
@@ -381,20 +381,14 @@ class ObjectivesView(arcade.View):
             width=250,
         )
         self.ui_manager.add_ui_element(button_left)
-      
-        
+
+
         button_right = MyFlatButtonStartGame(
             self.window,
             'Start Game',
             center_x=right_column_x,
             center_y=y_slot * 1,
             width=250,
-          
+
         )
         self.ui_manager.add_ui_element(button_right)
-
-
- 
-
-
-
