@@ -1,3 +1,16 @@
+<style>
+	div {
+		text-align: justify;
+		text-justify: inter-word;
+		font-family: "Times New Roman";			
+	}
+
+	object {
+		display: block;
+		margin: 0 auto;
+	}
+</style>
+
 # The Story
 
 ## Introduction

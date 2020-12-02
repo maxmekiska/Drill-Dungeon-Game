@@ -1,3 +1,16 @@
+<style>
+	div {
+		text-align: justify;
+		text-justify: inter-word;
+		font-family: "Times New Roman";			
+	}
+
+	object {
+		display: block;
+		margin: 0 auto;
+	}
+</style>
+
 # Welcome to the Drill Dungeon Game Website
 
 This Website was created to support the documentation for our Drill Dungeon
