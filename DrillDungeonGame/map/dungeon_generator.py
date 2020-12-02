@@ -239,7 +239,6 @@ class MapLayer:
         startX = np.random.randint(20, 40)
         startY = np.random.randint(20, 40)
         entrance_room = entrance_room_one #Add method to choose random
-        wing_room = wing_room_one #Add method to choose random
         for i in  range(len(entrance_room)):
             for j in range(len(entrance_room[0])):
                     self.map_layer_matrix[i+startY][j+startX] = entrance_room[i][j]
@@ -462,7 +461,9 @@ class MapLayer:
             3 = Left        (x - 1)
 
         """
-        if x == 0:
+        if x not in range(0, self.width) or y not in range(0, self.height):
+            raise ValueError("Row or column out of range")
+        elif x == 0:
             if y == 0:
                 return random.choice([0, 1])
             elif y == self.height - 1:

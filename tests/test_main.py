@@ -1,5 +1,6 @@
 import pytest
-from DrillDungeonGame.main import *
+from DrillDungeonGame.drill_dungeon_game import DrillDungeonGame
+
 
 def test_fill_map_with_terrain_blockWidth_error():
     dungeonGame = DrillDungeonGame()
