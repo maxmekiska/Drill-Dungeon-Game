@@ -88,7 +88,7 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
                          time_between_animation_texture_updates=time_between_animation_texture_updates)
 
         self.inventory = Inventory(gold=gold, coal=coal, ammunition=ammunition)
-        self.children.append(Turret(turret_sprite, turret_scale, parent=self, relative_x=-7, bullet_type=BlueNormalBullet,
+        self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
                                     firing_mode=ShotType.SINGLE))
         self.distance_moved = distance_moved
         self.shield_enabled = False
