@@ -9,6 +9,13 @@
 		display: block;
 		margin: 0 auto;
 	}
+
+  a[title="centre"] {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
 </style>
 
 
@@ -35,7 +42,9 @@ Please continue by clicking on the "Start Game" button with a right mouse click.
 Please have a look at the lower left corner. This is your HUD which will provide you with mission vital information and should be the best metric to decide tactical decisions during your adventure. The green bar represents your drills health. If the green bar is completely depleted your drill will explode and your mission failed:
 
 
-![](pictures/HUD.png)
+
+[![](pictures/HUD.png)](# "centre")
+
 
 
 So keep an eye on this metric before deciding to engage any further enemies. Below the green bar you will find your energy level that will power your shield. The shield will protect your drill from damage however it will not last forever. When depleted, the shield will disintegrate and leave you vulnerable to damage from enemies. But don't worry, your shield will recharge over time.
@@ -67,3 +76,16 @@ To collect those precious resources your simply need to drill through them. Next
 For close contact combat your turret is capable of changing the fire mode to buck shot. This is done by clicking the B key:
 
 ![](gifs/Buck-shot-demo.gif)
+
+A word of caution, bullets will not only defend from enemies but also destroy valuable gold and coal blocks:
+
+![](gifs/Coal-explosion.gif)
+
+Having learned the basics of shooting, now is the time to learn more about the enemies you will be encountering during the game. Enemies will be hiding in the dark and might catch you by surprise so be careful while exploring. However, sometimes you might see the enemy before he can see you. This will give you a strategic advantage. As a tip, prior taking the decision to engage the enemy, have a look at your inventory, health and energy shield levels:
+
+![](gifs/undetected-enemy.gif)
+
+
+As you can see in the above, the enemy hasn't detected us yet and we might decide to avoid combat because of our low health level. If you look closely, you will notice a similar health bar below the enemy. In combat you want to make sure that this health bar runs out faster than your own. In case it doesn't go as planned, it might be necessary to consider a tactical retreat. As a tip, if you need to retreat, use the shield to buy enough time to outrun the enemy. You can activate your shield by holding the right mouse button:
+
+![](gifs/fight-enemy.gif)
