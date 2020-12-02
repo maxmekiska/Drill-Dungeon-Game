@@ -731,3 +731,64 @@ class ShopMenu(InGameMenu):
         self.repair_button.mouse_release(x+self.view.left_offset, y+self.view.bottom_offset)
 
         self.tab_list[self.tab_position].check_mouse_release(x+self.view.left_offset, y+self.view.bottom_offset)
+
+
+class GameOverMenu(InGameMenu):
+    """
+    Creates a game over screen which displays score and options to go back
+    to main menu or exit game
+
+    Methods
+    -------
+    on_show()
+        runs when view is loaded; creates buttons
+    on_draw()
+        draws to screen
+    return_to_game()
+        changes view back to game
+    return_to_main()
+        changes view back to main menu
+    """
+    def __init__(self, game_view, view):
+        """
+        Parameters
+        ----------
+        game_view   :   arcade.View
+            Previous screen arcade.view; used to get and update data from game
+            and to return to it after
+        window      :   arcade.Window
+            arcade window being used; used to get screen dimensions
+        view        :   drill_dungeon_game/View
+            used to get screen offsets to adjust x and y coordinates
+        """
+        self.game_view = game_view
+        self.width = 500
+        self.height = 200
+        super().__init__(self.game_view, view, self.width, self.height)
+
+    def on_show(self):
+        super().on_show()
+        main_menu_button = MenuButton(self.screen_center_x-110, self.screen_center_y-50, 200, 60)
+        main_menu_button.add_text("Return to Main Menu", 16)
+        main_menu_button.assign_action(self.return_to_main)
+        self.button_list.append(main_menu_button)
+
+        quit_button = MenuButton(self.screen_center_x+110, self.screen_center_y-50, 200, 60)
+        quit_button.add_text("Exit Game", 16)
+        quit_button.assign_action(self.quit_game)
+        self.button_list.append(quit_button)
+
+    def on_draw(self):
+        super().on_draw()
+        arcade.draw_text("Game Over", self.screen_center_x, self.screen_center_y+40, arcade.color.BLACK, font_size=30, anchor_x="center")
+        arcade.draw_text("Score:", self.screen_center_x-100, self.screen_center_y, arcade.color.BLACK, font_size=15, anchor_x="center")
+        arcade.draw_text(str(self.game_view.score), self.screen_center_x, self.screen_center_y, arcade.color.BLACK, font_size=15, anchor_x="center")
+
+        for button in self.button_list:
+          button.draw()
+
+    def return_to_main(self):
+        self.window.show_view(self.window.menu_view)
+
+    def quit_game(self):
+        quit()
