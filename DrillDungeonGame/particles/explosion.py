@@ -49,7 +49,8 @@ class Smoke(arcade.SpriteCircle):
 
     Notes
     -----
-    Only used for coal blocks.
+    Only used for coal blocks. \n
+    Source: https://arcade.academy/examples/sprite_explosion_particles.html
 
     Methods
     -------
@@ -99,6 +100,10 @@ class ParticleDirt(arcade.SpriteCircle):
     """
 
     Explosion particle for dirt blocks.
+
+    Notes
+    -----
+    Source: https://arcade.academy/examples/sprite_explosion_particles.html
 
     Methods
     -------
@@ -165,6 +170,10 @@ class ParticleCoal(arcade.SpriteCircle):
 
     Explosion particle for coal blocks.
 
+    Notes
+    -----
+    Source: https://arcade.academy/examples/sprite_explosion_particles.html
+
     Methods
     -------
     update()
@@ -229,6 +238,10 @@ class ParticleGold(arcade.SpriteCircle):
 
     Explosion particle for gold blocks.
 
+    Notes
+    -----
+    Source: https://arcade.academy/examples/sprite_explosion_particles.html
+
     Methods
     -------
     update()
@@ -292,6 +305,10 @@ class ParticleShield(arcade.SpriteCircle):
     """
 
     Explosion particle for shield.
+
+    Notes
+    -----
+    Source: https://arcade.academy/examples/sprite_explosion_particles.html
 
     Methods
     -------
