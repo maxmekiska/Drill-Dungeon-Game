@@ -29,7 +29,7 @@ This guide will guide you through every step necessary to start up and enjoy the
 
 Make sure that you have followed the Installation guide before continuing with this section. Now, please navigate into the Drill Dungeons Folder and start up the main.py python file:
 
-![](gifs/start-drill-game.gif)
+![](gifs/start-drill-game2.gif)
 
 ## Main Menu
 
