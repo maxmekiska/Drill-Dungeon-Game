@@ -34,5 +34,3 @@ markdown_extensions:
 
 extra:
     version: 0.1.4
-    extra.logo: logo/drill_v2_2.png  # tab icon dows not work yet
-    favicon: logo/drill_v2_2.png
