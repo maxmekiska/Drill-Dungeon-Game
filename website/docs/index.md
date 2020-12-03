@@ -30,3 +30,15 @@ attending the MSc in Computer Science.
 - Maximilian Mekiska
 - Hugh Surdeau
 - Yiming Yuan
+
+## Reports
+
+Our reports can be downloaded below:
+
+### Process documentation
+<object data="documents/CW2_Process_Documentation.pdf" type="application/pdf" width="560" height="650">
+</object>
+
+### Product documentation
+<object data="documents/CW2_ProductDocumentation.pdf" type="application/pdf" width="560" height="650">
+</object>
