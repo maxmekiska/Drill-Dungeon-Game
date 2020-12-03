@@ -13,14 +13,16 @@ theme:
     include_search_page: true
     search_index_only: true
     history_buttons: true
-    article_nav_top: true
+    article_nav_top: false
     article_nav_bottom: true
 
 
 nav:
     - Home: index.md
+    - Installation: installation.md
     - The Story: story.md
     - User Manual: user-manual.md
+    - Maintenance Guide: maintenance-guide.md
 
 
 
@@ -33,3 +35,4 @@ markdown_extensions:
 extra:
     version: 0.1.4
     extra.logo: logo/drill_v2_2.png  # tab icon dows not work yet
+    favicon: logo/drill_v2_2.png
