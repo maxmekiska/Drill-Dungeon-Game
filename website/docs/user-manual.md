@@ -89,3 +89,10 @@ Having learned the basics of shooting, now is the time to learn more about the e
 As you can see in the above, the enemy hasn't detected us yet and we might decide to avoid combat because of our low health level. If you look closely, you will notice a similar health bar below the enemy. In combat you want to make sure that this health bar runs out faster than your own. In case it doesn't go as planned, it might be necessary to consider a tactical retreat. As a tip, if you need to retreat, use the shield to buy enough time to outrun the enemy. You can activate your shield by holding the right mouse button:
 
 ![](gifs/fight-enemy.gif)
+
+
+After having learned the basics of combat, lets have a look at the options you have to aid you in the quest of exploring the depths of the dungeons. During the game, you will be able to encounter friendly locals in form of shops. To interact with the shop, drive in its proximity and click on it with a left mouse click. A shop menu will open up and offer you a variety of purchasable upgrades. Furthermore, the shop offers to replenish your ammunition inventory:
+
+During your journeys you will encounter not only natural caves and resources but also enemy built structures. These structures are usually made out of material that cannot be destroyed by shooting at it or drilling through it. Have a look at the example below:
+
+![](gifs/enemy-structure.gif)
