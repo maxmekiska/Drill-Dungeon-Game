@@ -20,7 +20,7 @@
 
 
 # User Manual
-
+Note: examples shown in this guide might not represent the end product at the game release data (submission date)
 ## Introduction
 
 This guide will guide you through every step necessary to start up and enjoy the Drill Dungeon Game. We hope that you will enjoy your adventures through the depths of exciting but dangerous dungeons.
