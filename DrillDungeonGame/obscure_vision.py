@@ -1,10 +1,9 @@
 import math
 from typing import Union
 
-from .utility.constants import SCREEN_HEIGHT, SCREEN_WIDTH, VIEWPOINT_MARGIN
 import arcade
 
-from DrillDungeonGame.utility import make_vignette
+from .utility import make_vignette, SCREEN_HEIGHT, SCREEN_WIDTH, VIEWPOINT_MARGIN
 
 
 class ObscuredVision:
@@ -85,6 +84,10 @@ class ObscuredVision:
         """
         if radius > self._max_vision:
             raise ValueError(f"vision: {radius} cannot be greater than max_vision: {self._max_vision}")
+
+        if radius < 0:
+            raise ValueError(f"vision: {radius} cannot be less than 0.")
+
         self._vision = radius
         self._reload_image()
 

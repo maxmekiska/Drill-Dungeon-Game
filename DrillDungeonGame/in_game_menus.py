@@ -1,5 +1,8 @@
 import arcade
-from DrillDungeonGame.entity.mixins.shooting_mixin import ShootingMixin, ShotType
+
+from .entity.mixins import ShotType
+from .utility import SCREEN_WIDTH, SCREEN_HEIGHT
+
 
 def draw_3d_rectangle(center_x, center_y, width, height, face_color,
                       highlight_color, shadow_color, shadow_thickness):
@@ -276,6 +279,7 @@ class MenuWindow:
                         self.face_color, self.highlight_color, self.shadow_color,
                         self.shadow_thickness)
 
+
 class InGameMenu(arcade.View):
     """
     Creates a game view with a grey window in center of
@@ -292,7 +296,7 @@ class InGameMenu(arcade.View):
     on_mouse_release(x: float, y: float, button: int, modifiers: int)
         checks if button is pressed
     """
-    def __init__(self, window, game_view, view, width, height):
+    def __init__(self, game_view, view, width, height):
         """
         Parameters
         ----------
@@ -309,24 +313,27 @@ class InGameMenu(arcade.View):
             height of in-game menu
         """
         super().__init__()
-        self.window_width = window
         self.game_view = game_view
         self.width = width
         self.height = height
         self.view = view
-        self.screen_center_x = self.view.left_offset + self.window.width/2
-        self.screen_center_y = self.view.bottom_offset + self.window.height/2
+        self.screen_center_x = None
+        self.screen_center_y = None
         self.button_list = []
+        self.menu_window = None
 
+    def on_show(self):
+        self.screen_center_x = self.view.left_offset + SCREEN_WIDTH/2
+        self.screen_center_y = self.view.bottom_offset + SCREEN_HEIGHT/2
+        self.menu_window = MenuWindow(self.screen_center_x, self.screen_center_y, self.width, self.height)
 
+        self.button_list=[]
 
     def on_draw(self):
         self.game_view.on_draw()
 
         arcade.draw_lrtb_rectangle_filled(self.view.left_offset, self.view.left_offset+self.window.width, self.view.bottom_offset+self.window.height, self.view.bottom_offset, arcade.color.GRAY + (100,))
-        menu_window = MenuWindow(self.screen_center_x, self.screen_center_y, self.width, self.height)
-        menu_window.draw()
-
+        self.menu_window.draw()
 
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.ESCAPE:   # return to previous view
@@ -356,7 +363,7 @@ class PauseMenu(InGameMenu):
     return_to_main()
         changes view back to main menu
     """
-    def __init__(self, game_view, window, view):
+    def __init__(self, game_view, view):
         """
         Parameters
         ----------
@@ -370,23 +377,29 @@ class PauseMenu(InGameMenu):
         """
         self.game_view = game_view
         self.width = 300
-        self.height = 400
-        super().__init__(window, self.game_view, view, self.width, self.height)
+        self.height = 300
+        super().__init__(self.game_view, view, self.width, self.height)
 
     def on_show(self):
-        resume_button = MenuButton(self.screen_center_x, self.screen_center_y+110, 200, 60)
+        super().on_show()
+        resume_button = MenuButton(self.screen_center_x, self.screen_center_y+50, 200, 60)
         resume_button.add_text("Resume", 16)
         resume_button.assign_action(self.return_to_game)
         self.button_list.append(resume_button)
 
-        main_menu_button = MenuButton(self.screen_center_x, self.screen_center_y+40, 200, 60)
+        main_menu_button = MenuButton(self.screen_center_x, self.screen_center_y-20, 200, 60)
         main_menu_button.add_text("Return to Main Menu", 16)
         main_menu_button.assign_action(self.return_to_main)
         self.button_list.append(main_menu_button)
 
+        quit_button = MenuButton(self.screen_center_x, self.screen_center_y-90, 200, 60)
+        quit_button.add_text("Exit Game", 16)
+        quit_button.assign_action(self.quit_game)
+        self.button_list.append(quit_button)
+
     def on_draw(self):
         super().on_draw()
-        arcade.draw_text("PAUSED", self.screen_center_x, self.screen_center_y+160, arcade.color.BLACK, font_size=20, anchor_x="center")
+        arcade.draw_text("PAUSED", self.screen_center_x, self.screen_center_y+100, arcade.color.BLACK, font_size=20, anchor_x="center")
 
         for button in self.button_list:
           button.draw()
@@ -395,10 +408,10 @@ class PauseMenu(InGameMenu):
         self.window.show_view(self.game_view)
 
     def return_to_main(self):
-        main_view = MenuView()
-        window.show_view(main_view)
+        self.window.show_view(self.window.menu_view)
 
-
+    def quit_game(self):
+        quit()
 
 class ShopItem:
     """
@@ -718,3 +731,64 @@ class ShopMenu(InGameMenu):
         self.repair_button.mouse_release(x+self.view.left_offset, y+self.view.bottom_offset)
 
         self.tab_list[self.tab_position].check_mouse_release(x+self.view.left_offset, y+self.view.bottom_offset)
+
+
+class GameOverMenu(InGameMenu):
+    """
+    Creates a game over screen which displays score and options to go back
+    to main menu or exit game
+
+    Methods
+    -------
+    on_show()
+        runs when view is loaded; creates buttons
+    on_draw()
+        draws to screen
+    return_to_game()
+        changes view back to game
+    return_to_main()
+        changes view back to main menu
+    """
+    def __init__(self, game_view, view):
+        """
+        Parameters
+        ----------
+        game_view   :   arcade.View
+            Previous screen arcade.view; used to get and update data from game
+            and to return to it after
+        window      :   arcade.Window
+            arcade window being used; used to get screen dimensions
+        view        :   drill_dungeon_game/View
+            used to get screen offsets to adjust x and y coordinates
+        """
+        self.game_view = game_view
+        self.width = 500
+        self.height = 200
+        super().__init__(self.game_view, view, self.width, self.height)
+
+    def on_show(self):
+        super().on_show()
+        main_menu_button = MenuButton(self.screen_center_x-110, self.screen_center_y-50, 200, 60)
+        main_menu_button.add_text("Return to Main Menu", 16)
+        main_menu_button.assign_action(self.return_to_main)
+        self.button_list.append(main_menu_button)
+
+        quit_button = MenuButton(self.screen_center_x+110, self.screen_center_y-50, 200, 60)
+        quit_button.add_text("Exit Game", 16)
+        quit_button.assign_action(self.quit_game)
+        self.button_list.append(quit_button)
+
+    def on_draw(self):
+        super().on_draw()
+        arcade.draw_text("Game Over", self.screen_center_x, self.screen_center_y+40, arcade.color.BLACK, font_size=30, anchor_x="center")
+        arcade.draw_text("Score:", self.screen_center_x-100, self.screen_center_y, arcade.color.BLACK, font_size=15, anchor_x="center")
+        arcade.draw_text(str(self.game_view.score), self.screen_center_x, self.screen_center_y, arcade.color.BLACK, font_size=15, anchor_x="center")
+
+        for button in self.button_list:
+          button.draw()
+
+    def return_to_main(self):
+        self.window.show_view(self.window.menu_view)
+
+    def quit_game(self):
+        quit()

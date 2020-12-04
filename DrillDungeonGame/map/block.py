@@ -12,6 +12,13 @@ class Block(arcade.Sprite):
         self.x, self.y = x, y
         self.is_visible = False
 
+        self.adjacent_positions = (
+            (self.x, self.y + 1),
+            (self.x, self.y - 1),
+            (self.x + 1, self.y),
+            (self.x - 1, self.y),
+        )
+
     @property
     @abc.abstractmethod
     def file(self) -> str:
@@ -30,31 +37,31 @@ class Block(arcade.Sprite):
 
 class AirBlock(Block):
     file = "resources/images/material/brown.png"
-    scale = 0.25
+    scale = 1.25
     char = ' '
 
 
 class DirtBlock(Block):
-    file = ":resources:images/tiles/grassCenter.png"
-    scale = 0.16
+    file = "resources/images/material/dirt_2.png"
+    scale = 1.25
     char = 'X'
 
 
 class CoalBlock(Block):
     file = "resources/images/material/Coal_square2.png"
-    scale = 0.04  # 0.03
+    scale = 1.25
     char = 'C'
 
 
 class GoldBlock(Block):
     file = "resources/images/material/Gold_square.png"
-    scale = 0.03
+    scale = 1.25
     char = 'G'
 
 
 class BorderBlock(Block):
     file = "resources/images/material/dungeon_wall.png"
-    scale = 1.2
+    scale = 1.25
     char = 'O'
 
 
@@ -66,25 +73,18 @@ class ShopBlock(Block):
 
 class DungeonWallBlock(Block):
     file = "resources/images/material/dungeon_wall.png"
-    scale = 1.2
+    scale = 1.25
     char = 'W'
 
+class FloorBlock(Block):
+    file = "resources/images/material/dungeon_floor.png"
+    scale = 1.25
+    char = 'F'
 
-class DungeonWallTopper(Block):
-    file = "resources/images/material/wall_topper.png"
-    scale = 1.2
-    char = 'W'
-
-
-class DungeonWallRight(Block):
-    file = "resources/images/material/right_wall.png"
-    scale = 1.2
-    char = 'RW'
-
-class DungeonWallLeft(Block):
-    file = "resources/images/material/left_wall.png"
-    scale = 1.2
-    char = 'LW'
+class DrillDownBlock(Block):
+    file = "resources/images/material/drill_down.png"
+    scale = 1.25
+    char = 'D'
 
 class _Block:
     AIR = AirBlock
@@ -94,9 +94,8 @@ class _Block:
     SHOP = ShopBlock
     BORDER = BorderBlock
     WALL = DungeonWallBlock
-    WALLTOPPER = DungeonWallTopper
-    RIGHTWALL = DungeonWallRight
-    LEFTWALL = DungeonWallLeft
+    FLOOR = FloorBlock
+    DRILLDOWN = DrillDownBlock
 
 
 BLOCK = _Block

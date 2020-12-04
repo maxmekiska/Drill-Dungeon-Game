@@ -1,17 +1,12 @@
 from __future__ import annotations
 
-from typing import Tuple, Union, List, Type, Iterator
-
-from itertools import chain
-import arcade
 import math
+from typing import Tuple, Union, List
 
-from typing import TYPE_CHECKING
+import arcade
 
-from ..map.block_grid import BlockGrid
-
-if TYPE_CHECKING:
-    from ..sprite_container import SpriteContainer
+from ..map import BlockGrid
+from ..utility import load_mirrored_textures, FaceDirection
 
 
 class Entity(arcade.Sprite):
@@ -48,27 +43,35 @@ class Entity(arcade.Sprite):
     def __init__(self, base_sprite: str, sprite_scale: float,
                  center_x: Union[float, int], center_y: Union[float, int],
                  speed: Union[float, int] = 1, angle: float = 0.0,
-                 current_health: float = -1, max_health: float = -1) -> None:
+                 current_health: float = -1, max_health: float = -1,
+                 idle_textures: List[str] = [], moving_textures: List[str] = [],
+                 time_between_animation_texture_updates: int = 1) -> None:
         """
 
         Parameters
         ----------
-        base_sprite     :   str
+        base_sprite                 :   str
             The path to the file containing the sprite for this entity.
-        sprite_scale    :   float
+        sprite_scale                :   float
             The scale to draw the sprite for this entity
-        center_x        :   Union[float, int]
+        center_x                    :   Union[float, int]
             The starting x position in the map for this entity.
-        center_y        :   Union[float, int]
+        center_y                    :   Union[float, int]
             The starting y position in the map for this entity.
-        speed           :   Union[float, int]
+        speed                       :   Union[float, int]
             The speed that entity can move at.
-        angle           :   float
+        angle                       :   float
             The starting angle for this entity.
-        current_health  :   float
+        current_health              :   float
             The starting health for this entity. -1 means invincibility.
-        max_health      :   float
+        max_health                  :   float
             The maximum amount of health this entity can have. -1 means unlimited.
+        idle_textures               :   List[str]
+            Optional list of textures to display while the entity is standing still.
+        moving_textures             :   List[str]
+            Optional list of textures to display while the entity is moving around.
+        time_between_animation_texture_updates :   Union[Float, Int]
+            How often the entity should cycle to the next animation in the cycle.
 
         """
         super().__init__(base_sprite, sprite_scale, center_x=center_x, center_y=center_y)
@@ -85,6 +88,24 @@ class Entity(arcade.Sprite):
         self.collision_engine = []  # Any Physics engine. One for each sprite list in sprite container.
         self.current_health = current_health  # The health of this entity. -1 means invincible.
         self.max_health = max_health
+
+        # Animation logic
+        self._texture_index = 0
+        self._facing_direction = FaceDirection.RIGHT
+        self._moving_textures = []
+        self._idle_textures = []
+        self._time_between_animation_texture_updates = time_between_animation_texture_updates
+        self._time_since_last_texture_update = 0
+
+        for texture in idle_textures:
+            self._idle_textures.append(load_mirrored_textures(texture))
+
+        for texture in moving_textures:
+            self._moving_textures.append(load_mirrored_textures(texture))
+
+    @property
+    def is_animated(self) -> bool:
+        return True if len(self._moving_textures) > 0 or len(self._idle_textures) > 0 else False
 
     def get_all_children(self) -> List[Entity]:
         """
@@ -259,7 +280,7 @@ class Entity(arcade.Sprite):
         """
         pass
 
-    def update_collision_engine(self, time: float, delta_time: float, sprites: SpriteContainer, block_grid) -> None:
+    def update_collision_engine(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
 
         This is called from the entity.update() function.
@@ -340,8 +361,27 @@ class Entity(arcade.Sprite):
         for child in self.children:
             child.draw()
 
+    def update_animation(self, delta_time: float = 1/60):
+        # Figure out if we need to flip face left or right
+        if self.change_x < 0 and self._facing_direction == FaceDirection.RIGHT:
+            self._facing_direction = FaceDirection.LEFT
+        elif self.change_x > 0 and self._facing_direction == FaceDirection.LEFT:
+            self._facing_direction = FaceDirection.RIGHT
+
+        self._time_since_last_texture_update += delta_time
+        if self._time_since_last_texture_update > self._time_between_animation_texture_updates:
+            self._time_since_last_texture_update = 0
+
+            if self.change_x == 0 and self.change_y == 0:
+                textures = self._idle_textures
+            else:
+                textures = self._moving_textures
+
+            self._texture_index = (self._texture_index + 1) % len(textures)
+            self.texture = textures[self._texture_index][self._facing_direction.value]
+
     # noinspection PyMethodOverriding
-    def update(self, time: float, delta_time: float, sprites: SpriteContainer, block_grid: BlockGrid) -> None:
+    def update(self, time: float, delta_time: float, sprites, block_grid: BlockGrid) -> None:
         """
 
         This function is called every game loop iteration for each entity so it can update all collision engines.
@@ -367,6 +407,9 @@ class Entity(arcade.Sprite):
             Reference to all blocks in the game.
         """
         self.update_collision_engine(time, delta_time, sprites, block_grid)
+
+        if self.is_animated:
+            self.update_animation(delta_time)
 
         for mixin in self.__class__.__mro__:
             # Used to be issubclass(mixin, Entity), but entity inherits from arcade.Sprite now. So we also don't want
@@ -462,7 +505,7 @@ class ChildEntity(Entity):
             klass = klass.parent
         return parents
 
-    def update(self, time: float, delta_time: float, sprites: SpriteContainer, block_grid: BlockGrid) -> None:
+    def update(self, time: float, delta_time: float, sprites, block_grid: BlockGrid) -> None:
         """
 
         Adds additional logic to the Entity.update function so that the child can maintain position/angle with

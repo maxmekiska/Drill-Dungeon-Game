@@ -1,8 +1,8 @@
 import random
+
 import numpy as np
 
-from DrillDungeonGame.map.prefab_dungeon_rooms import *
-
+from ..map.prefab_dungeon_rooms import *
 
 MAP_WIDTH = 2400
 MAP_HEIGHT = 2400
@@ -53,7 +53,7 @@ class MapLayer:
 
     """
 
-    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=500, mean_coal_size: int=5, mean_gold_size: int=5) -> None:
+    def __init__(self, height: int=128, width: int=128, mean_dungeon_size: int=500, mean_coal_size: int=5, mean_gold_size: int=5, mean_drillable_size: int=8) -> None:
         """
 
         Parameters
@@ -76,6 +76,7 @@ class MapLayer:
         self.mean_dungeon_size = mean_dungeon_size
         self.mean_coal_size = mean_coal_size # coal
         self.mean_gold_size = mean_gold_size # gold
+        self.mean_drillable_size = mean_drillable_size #Size of drillable patches
         self.map_layer_configuration = []
 
     def __repr__(self) -> str:
@@ -100,7 +101,7 @@ class MapLayer:
             map_layer_matrixString += "\n"
         return map_layer_matrixString
 
-    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int, number_of_shops: int, drillX, drillY) -> list:
+    def get_full_map_layer_configuration(self, number_of_dungeons: int, number_of_coal_patches: int, number_of_gold_patches: int, number_of_shops: int, drillX, drillY, number_of_drillable_patches: int=8) -> list:
         """
 
         Generates a map layer configuration from scratch
@@ -139,10 +140,13 @@ class MapLayer:
             self.generate_gold()
         for i in range(number_of_shops):
             self.generate_shop()
+        for i in range(number_of_drillable_patches):
+            self.generate_drillable_zones()
 
         self.generate_border_walls()
         self.generate_advanced_dungeon()
         self.generate_map_layer_configuration()
+        self.generate_drillable_zones()
         self.create_space_for_drill(drillX, drillY)
         return self.map_layer_configuration
 
@@ -160,14 +164,29 @@ class MapLayer:
         None
 
         """
-        block_height = MAP_HEIGHT / self.height
-        block_width = MAP_WIDTH / self.width
+        block_height = 20
+        block_width = 20
 
         y_block_center = 0.5 * block_height
         for row in self.map_layer_matrix:
             configuration_row = self.load_row_from_matrix(row, y_block_center, block_width, block_height)
             self.map_layer_configuration.append(configuration_row)
             y_block_center += block_height
+
+
+    def generate_drillable_zones(self):
+        """
+        Generates drillable patches. The start point only spawns within 10 blocks of the side
+        """
+        x = np.random.choice([np.random.randint(0, 10), np.random.randint(self.width-11, self.width-1)])
+        y = np.random.choice([np.random.randint(0, 10), np.random.randint(self.height-11, self.height-1)])
+        drillable_size = self.generate_patch_size(self.mean_drillable_size)
+        while drillable_size > 0:
+            if self.map_layer_matrix[y][x] != 'D':
+                self.map_layer_matrix[y][x] = 'D'
+                drillable_size -= 1
+            walkDirection = self.get_walk_direction(x, y)
+            x, y = self.update_dungeon_coords(x, y, walkDirection)
 
     def load_row_from_matrix(self, row: list, y_block_center: float, block_width: float, block_height: float) -> list:
         """
@@ -212,59 +231,28 @@ class MapLayer:
                     new_item = (" ", item[1], item[2])
                     self.map_layer_configuration[i][j] = new_item
 
-    def generate_advanced_dungeon(self, wing_chance=0) -> None:
+    def generate_advanced_dungeon(self) -> None:
         """
         Generates an advanced dungeon from several preconfigured 
         rooms
         """
-        startX = 20
-        startY = 20
+        startX = np.random.randint(20, 40)
+        startY = np.random.randint(20, 40)
         entrance_room = entrance_room_one #Add method to choose random
-        wing_room = wing_room_one #Add method to choose random
-        west_wing = True if np.random.rand() > wing_chance else False
-        east_wing = True if np.random.rand() > wing_chance else False
-        north_wing = True if np.random.rand() > wing_chance else False
         for i in  range(len(entrance_room)):
             for j in range(len(entrance_room[0])):
                     self.map_layer_matrix[i+startY][j+startX] = entrance_room[i][j]
-        #Shelved in favour of nice prefab dungeons. This method produces pretty 
-        #lame dungeons so for now I think prefab is the best way to go, can make ~10-15 dungeons
+
+
+    def generate_dungeon(self) -> None:
         """
-        if west_wing:
-            for i in  range(len(wing_room)):
-                for j in range(len(wing_room[0])):
-                    self.map_layer_matrix[i+startY][j+startX+len(entrance_room) + 5] = wing_room[i][j]
-            wing_startX = startX + len(entrance_room[0]) - 1
-            wing_startY = startY + int(len(entrance_room) / 2)
-            for i in  range(len(corridor_one)):
-                for j in range(len(corridor_one[0])):
-                    self.map_layer_matrix[i+startY][j+startX] = corridor_one[i][j]
-        """
-
-
-
-                
-
-
-    def generate_dungeon(self, enemy_chance: float=0.1) -> None:
-        """
-
         Generates a single dungeon on a map layer matrix
-
-        Parameters
-        ----------
-        enemy_chance   :   float
-            The probability of there being an enemy in every dungeon tile
-
         """
         x, y = self.generate_random_start_point()
         dungeonSize = self.generate_patch_size(self.mean_dungeon_size)
         while dungeonSize > 0:
             if self.map_layer_matrix[y][x] != ' ':
-                if np.random.randint(0, 100) * 0.01 < enemy_chance:
-                    self.map_layer_matrix[y][x] = 'E'
-                else:
-                    self.map_layer_matrix[y][x] = ' '
+                self.map_layer_matrix[y][x] = ' '
                 dungeonSize -= 1
             walkDirection = self.get_walk_direction(x, y)
             x, y = self.update_dungeon_coords(x, y, walkDirection)
@@ -473,7 +461,9 @@ class MapLayer:
             3 = Left        (x - 1)
 
         """
-        if x == 0:
+        if x not in range(0, self.width) or y not in range(0, self.height):
+            raise ValueError("Row or column out of range")
+        elif x == 0:
             if y == 0:
                 return random.choice([0, 1])
             elif y == self.height - 1:

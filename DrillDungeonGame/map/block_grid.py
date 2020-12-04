@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import arcade
 
-from DrillDungeonGame.map.block import BLOCK, Block
+from ..map.block import BLOCK, Block
 
 
 class BlockGrid:
@@ -12,7 +12,7 @@ class BlockGrid:
 
         for x in range(len(matrix)):
             for y in range(len(matrix[0])):
-                b = matrix[x][y]
+                b = matrix[y][x]
                 char = b[0]
                 block_x = b[1]
                 block_y = b[2]
@@ -26,25 +26,14 @@ class BlockGrid:
                     self.blocks[x].append(BLOCK.BORDER(x, y, block_x, block_y))
                 elif char == ' ':
                     self.blocks[x].append(BLOCK.AIR(x, y, block_x, block_y))
-                elif char == 'E':
-                    self.blocks[x].append(BLOCK.AIR(x, y, block_x, block_y))  # TODO spawn enemies.
                 elif char == 'S':
                     self.blocks[x].append(BLOCK.SHOP(x, y, block_x, block_y))
                 elif char == 'W':
                     self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
-                    self.blocks[x].append(BLOCK.WALLTOPPER(x, y, block_x, block_y))
-                elif char == 'LW':
-                    self.blocks[x].append(BLOCK.LEFTWALL(x, y, block_x, block_y))
-                elif char == 'RW':
-                    self.blocks[x].append(BLOCK.RIGHTWALL(x, y, block_x, block_y))
-                elif char == 'ULW':
-                    self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
-                    self.blocks[x].append(BLOCK.WALLTOPPER(x, y, block_x, block_y))
-                    self.blocks[x].append(BLOCK.LEFTWALL(x, y, block_x, block_y))
-                elif char == 'URW':
-                    self.blocks[x].append(BLOCK.WALL(x, y, block_x, block_y))
-                    self.blocks[x].append(BLOCK.WALLTOPPER(x, y, block_x, block_y))
-                    self.blocks[x].append(BLOCK.RIGHTWALL(x, y, block_x, block_y))
+                elif char == 'F':
+                    self.blocks[x].append(BLOCK.FLOOR(x, y, block_x, block_y))
+                elif char == 'D':
+                    self.blocks[x].append(BLOCK.DRILLDOWN(x, y, block_x, block_y))
                 else:
                     raise ValueError(f'Unknown char, {char} for block type received.')
 
@@ -60,17 +49,14 @@ class BlockGrid:
 
     def _add_block_to_lists(self, block: Block, sprites) -> None:
         if type(block) == BLOCK.DIRT:
-            sprites.dirt_list.append(block)
             sprites.destructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
 
         elif type(block) == BLOCK.COAL:
-            sprites.coal_list.append(block)
             sprites.destructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
 
         elif type(block) == BLOCK.GOLD:
-            sprites.gold_list.append(block)
             sprites.destructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
 
@@ -83,30 +69,22 @@ class BlockGrid:
             sprites.indestructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
             sprites.border_wall_list.append(block)
+
         elif type(block) == BLOCK.WALL:
             sprites.indestructible_blocks_list.append(block)
             sprites.all_blocks_list.append(block)
             sprites.border_wall_list.append(block)
-        elif type(block) == BLOCK.WALLTOPPER:
-            sprites.indestructible_blocks_list.append(block)
-            sprites.all_blocks_list.append(block)
-            sprites.border_wall_list.append(block)
-        elif type(block) == BLOCK.RIGHTWALL:
-            sprites.indestructible_blocks_list.append(block)
-            sprites.all_blocks_list.append(block)
-            sprites.border_wall_list.append(block)
-        elif type(block) == BLOCK.LEFTWALL:
-            sprites.indestructible_blocks_list.append(block)
-            sprites.all_blocks_list.append(block)
-            sprites.border_wall_list.append(block)
 
+        elif type(block) == BLOCK.DRILLDOWN:
+            sprites.drill_down_list.append(block)
+            sprites.all_blocks_list.append(block)
 
         else:
             raise ValueError(f'Incorrect block type: {type(block)}!')
 
     def break_block(self, block: Block, sprites) -> None:
         for adjacent_block in self._get_adjacent_blocks_to(block):
-            if type(adjacent_block) != BLOCK.AIR:
+            if type(adjacent_block) != BLOCK.AIR and type(adjacent_block) != BLOCK.FLOOR and type(adjacent_block) != BLOCK.DRILLDOWN:
                 self._add_block_to_lists(adjacent_block, sprites)
 
         block.remove_from_sprite_lists()
@@ -120,23 +98,19 @@ class BlockGrid:
         for x in range(self.width):
             for y in range(self.height):
                 block = self.blocks[x][y]
-                if any(type(adjacent_block) == BLOCK.AIR for adjacent_block in self._get_adjacent_blocks_to(block)):
-                    if type(block) == BLOCK.AIR:
+                if any(type(adjacent_block) in (BLOCK.AIR, BLOCK.DRILLDOWN, BLOCK.FLOOR) for adjacent_block in self._get_adjacent_blocks_to(block)):
+                    if type(block) in (BLOCK.FLOOR, BLOCK.AIR):
                         self.air_blocks.append(block)
+                    elif type(block) == BLOCK.DRILLDOWN:
+                        self.air_blocks.append(block)
+                        self._add_block_to_lists(block, sprites)
                     else:
                         self._add_block_to_lists(block, sprites)
 
     def _get_adjacent_blocks_to(self, block: Block) -> List[Block]:
         """Returns a list of blocks (total: 4) that are adjacent to a block. Doesn't include diagonal blocks."""
         adjacent_blocks = []
-        adjacent_positions = (
-            (block.x, block.y + 1),
-            (block.x, block.y - 1),
-            (block.x + 1, block.y),
-            (block.x - 1, block.y),
-        )
-        for adjacent_position in adjacent_positions:
-            x, y = adjacent_position
+        for x, y in block.adjacent_positions:
             try:
                 adjacent_blocks.append(self.blocks[x][y])
             except IndexError:

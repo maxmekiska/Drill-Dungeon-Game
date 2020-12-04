@@ -1,12 +1,14 @@
 import math
+import random
 from typing import Union, Tuple
 
-import arcade
-import numpy as np
-import random
-from DrillDungeonGame.particles.explosion import PARTICLE_COUNT
 import PIL.Image
 import PIL.ImageDraw
+import arcade
+import numpy as np
+
+from ..particles.explosion import PARTICLE_COUNT
+
 
 def generate_next_layer_resource_patch_amount(current_layer, base_amount=20, minimum_patches=5):
     """
@@ -159,10 +161,11 @@ def make_vignette(diameter: int, color: arcade.Color, vignette_radius, center_al
     name = f"vignette_circle_texture:{diameter}:{color}:{center_alpha}:{outer_alpha}"
     return arcade.Texture(name, image)
 
-def load_mirrored_textures(filename):
+
+def load_mirrored_textures(filename) -> Tuple[arcade.Texture, arcade.Texture]:
     """
     Loads a file and its flipped equivalent
     """
     initial_sprite = arcade.load_texture(filename)
     flipped_sprite = arcade.load_texture(filename, flipped_horizontally=True)
-    return [initial_sprite, flipped_sprite]
+    return initial_sprite, flipped_sprite

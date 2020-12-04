@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, Union, Dict, Tuple
-
 import math
+from typing import Callable, Union, Dict, Tuple
 
 
 class ControllableMixin:

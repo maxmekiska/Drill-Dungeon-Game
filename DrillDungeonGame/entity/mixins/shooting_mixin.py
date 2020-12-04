@@ -1,17 +1,14 @@
 from __future__ import annotations
+
 import math
+from enum import Enum
+from typing import Union, List, Type, Callable
 
 import arcade
-
-from enum import Enum
-
-from typing import Union, List, Type
 
 from ..bullet import Bullet
 from ..entity import Entity
 from ...inventory import Inventory
-
-from typing import Callable
 
 
 class ShotType(Enum):

@@ -5,9 +5,7 @@ from typing import Union
 from .bullets import BlueNormalBullet
 from .turret import Turret
 from ..enemy import Enemy
-from ..mixins.path_finding_mixin import PathFindingMixin
-from ..mixins.shooting_mixin import ShootingMixin, ShotType
-from ..mixins.digging_mixin import DiggingMixin
+from ..mixins import DiggingMixin, PathFindingMixin, ShotType
 
 
 class SpaceshipEnemy(Enemy, PathFindingMixin, DiggingMixin):
