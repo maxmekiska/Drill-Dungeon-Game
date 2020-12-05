@@ -18,7 +18,9 @@ class Window(arcade.Window):
         self.pause_view = PauseMenu(self.game_view, self.game_view.view)
         self.game_over_view = GameOverMenu(self.game_view, self.game_view.view)
 
-        self._music_list = ["resources/sound/background_song.wav"]
+        self._music_list = (
+            arcade.Sound("resources/sound/background_song.wav", streaming=True),
+        )
         self.music = None
         self._song_index = 0
         self.play_music()
@@ -27,9 +29,6 @@ class Window(arcade.Window):
         """
         Advance our pointer to the next song. This does NOT start the song.
         """
-        if self.music:
-            self.music.stop()
-
         self._song_index = (self._song_index + 1) % len(self._music_list)
 
     def play_music(self) -> None:
@@ -41,9 +40,16 @@ class Window(arcade.Window):
             self.music.stop()
 
         # Play the next song
-        self.music = arcade.Sound(self._music_list[self._song_index], streaming=True)
+        self.music = self._music_list[self._song_index]
         self.music.play(MUSIC_VOLUME)
         # This is a quick delay. If we don't do this, our elapsed time is 0.0
         # and on_update will think the music is over and advance us to the next
         # song before starting this one.
         # time.sleep(0.03)
+
+    def on_update(self, delta_time: float):
+        if self.music:
+            position = self.music.get_stream_position()
+            if position == 0.0:
+                self.advance_song()
+                self.play_music()

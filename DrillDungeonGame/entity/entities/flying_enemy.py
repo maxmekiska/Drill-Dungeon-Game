@@ -71,8 +71,6 @@ class FlyingEnemy(Enemy, DiggingMixin, PathFindingMixin):
         PathFindingMixin.__init__(self, vision)
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
                                     firing_mode=ShotType.SINGLE))
-        self._last_shot_time = 0
-        self._last_pathfind_time = 0
 
         self.attack = False
         self._attack_textures = []

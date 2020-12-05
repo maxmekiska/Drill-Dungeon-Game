@@ -8,6 +8,7 @@ from ..enemy import Enemy
 from ..mixins import DiggingMixin, PathFindingMixin, ShotType, ShootingMixin
 from ...utility import load_mirrored_textures
 
+
 class FireEnemy(Enemy, DiggingMixin, PathFindingMixin, ShootingMixin):
     """
 
@@ -53,9 +54,6 @@ class FireEnemy(Enemy, DiggingMixin, PathFindingMixin, ShootingMixin):
                          idle_textures=idle_textures, moving_textures=moving_textures,
                          time_between_animation_texture_updates=time_between_animation_texture_updates)
         PathFindingMixin.__init__(self, vision)
-
-        self._last_shot_time = 0
-        self._last_pathfind_time = 0
 
         ShootingMixin.__init__(self)
         self.bullet_type = FireBall

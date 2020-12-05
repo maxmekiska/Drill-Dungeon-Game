@@ -71,9 +71,6 @@ class GoblinEnemy(Enemy, DiggingMixin, PathFindingMixin):
                          time_between_animation_texture_updates=time_between_animation_texture_updates)
         PathFindingMixin.__init__(self, vision)
 
-        self._last_shot_time = 0
-        self._last_pathfind_time = 0
-
         self.attack = False
         self._attack_textures = []
         for texture in attack_textures:

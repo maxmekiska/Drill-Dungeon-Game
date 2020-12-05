@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from typing import Union, List
 
 import arcade
@@ -54,6 +55,8 @@ class Enemy(Entity):
 
         self._hurt_sound = arcade.load_sound("resources/sound/hit_marker.wav")
         self._attack_sound = arcade.load_sound("resources/sound/magic_shoot.wav")
+        self._last_pathfind_time = random.uniform(0, 1)
+        self._last_shot_time = random.uniform(0, 1)
 
     def draw_health_bar(self):
         super().draw_health_bar(self.center_x, self.center_y - 20, self.width, 5)
