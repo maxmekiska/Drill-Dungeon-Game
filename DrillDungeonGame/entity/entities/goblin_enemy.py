@@ -10,6 +10,7 @@ from ...utility import load_mirrored_textures, FaceDirection
 
 import arcade
 
+
 class GoblinEnemy(Enemy, DiggingMixin, PathFindingMixin):
     """
 
@@ -77,7 +78,10 @@ class GoblinEnemy(Enemy, DiggingMixin, PathFindingMixin):
         self._attack_textures = []
         for texture in attack_textures:
             self._attack_textures.append(load_mirrored_textures(texture))
-        self.damage=400
+
+        self.damage = 400
+
+        self._attack_sound = arcade.load_sound("resources/sound/meele.wav")
 
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """

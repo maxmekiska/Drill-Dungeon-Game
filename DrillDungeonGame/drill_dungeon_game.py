@@ -381,3 +381,8 @@ class DrillDungeonGame(arcade.View):
                     bullet.center_y > self.window.width + self.view.bottom_offset or \
                     bullet.center_y < self.view.bottom_offset:
                 bullet.remove_from_sprite_lists()
+
+        position = self.window.music.get_stream_position()
+        if position == 0.0:
+            self.window.advance_song()
+            self.window.play_song()

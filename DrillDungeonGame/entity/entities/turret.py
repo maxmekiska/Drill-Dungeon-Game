@@ -1,5 +1,7 @@
 from typing import Union, Type
 
+import arcade
+
 from ..bullet import Bullet
 from ..entity import ChildEntity, Entity
 from ..mixins import ShootingMixin, ShotType
@@ -51,3 +53,5 @@ class Turret(ChildEntity, ShootingMixin):
         self.inventory = self.parent.inventory if hasattr(self.parent, 'inventory') else None
         self.firing_mode = firing_mode
         self.firing_rate = firing_rate
+
+        self._attack_sound = arcade.load_sound("resources/sound/cannon.ogg")

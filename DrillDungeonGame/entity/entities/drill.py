@@ -100,6 +100,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         self._shield_cooldown_uptime = 0.0
         self._shield_sprite = Shield("resources/images/shield/blue_aura.png", 0.9, parent=self, relative_x=4)
 
+        self._hurt_sound = arcade.load_sound("resources/sound/hit_marker.wav")
+
     def draw_shield_bar(self, position_x, position_y, width, height):
         """Draws a shield health below the drill when shield activated."""
         level_width = (self._shield_duration/self._max_shield_duration)*width
