@@ -89,11 +89,9 @@ class NecromancerEnemy(Enemy, DiggingMixin, PathFindingMixin):
         """
         if (time - self._last_shot_time) > 1.5:
             self._last_shot_time = time
-            print('b4')
             if self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list):
                 self.children[0].aim(*sprites.drill.position)
                 self.children[0].shoot(self.children[0].firing_mode, sprites)
-            print('af')
 
         if (time - self._last_pathfind_time) > 1:
             self._last_pathfind_time = time
