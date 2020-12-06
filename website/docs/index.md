@@ -13,8 +13,8 @@
 
 
 
-# Drill Dungeon Game Website
-
+# Welcome!
+![](gifs/drill_v2_2.gif)
 This Website was created to support the documentation for our Drill Dungeon
 Game. The game itself is the result of our second coursework of our Software
 Engineering class at the University of Bath. All team members are currently
