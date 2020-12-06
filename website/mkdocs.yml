@@ -1,0 +1,36 @@
+site_name: Drill Dungeon Game
+
+
+
+
+
+theme:
+    name: null
+    custom_dir: mkdocs_windmill_dark
+
+    static_templates:
+        - 404.html
+    include_search_page: true
+    search_index_only: true
+    history_buttons: true
+    article_nav_top: false
+    article_nav_bottom: true
+
+
+nav:
+    - Home: index.md
+    - Installation: installation.md
+    - The Story: story.md
+    - User Manual: user-manual.md
+    - Maintenance Guide: maintenance-guide.md
+
+
+
+
+
+markdown_extensions:
+    - toc:
+        permalink: '#'
+
+extra:
+    version: 0.1.4

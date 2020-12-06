@@ -1,7 +1,7 @@
 import time
 
 from .drill_dungeon_game import DrillDungeonGame
-from .in_game_menus import PauseMenu, GameOverMenu
+from .in_game_menus import PauseMenu, GameOverMenu, ShopMenu
 from .utility import MUSIC_VOLUME
 from .views import MenuView, InstructionView, ObjectivesView
 import arcade
@@ -17,6 +17,7 @@ class Window(arcade.Window):
 
         self.pause_view = PauseMenu(self.game_view, self.game_view.view)
         self.game_over_view = GameOverMenu(self.game_view, self.game_view.view)
+        self.shop_view = ShopMenu(self.game_view, self.game_view.view)
 
         self._music_list = (
             arcade.Sound("resources/sound/background_song.wav", streaming=True),

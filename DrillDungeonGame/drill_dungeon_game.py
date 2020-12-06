@@ -2,7 +2,7 @@ import arcade
 
 from .entity.entities import Drill
 from .entity.mixins import ControllableMixin
-from .in_game_menus import draw_3d_rectangle, PauseMenu, ShopMenu, GameOverMenu
+from .in_game_menus import draw_3d_rectangle
 from .level import Level
 from .obscure_vision import ObscuredVision
 from .utility import generate_next_layer_resource_patch_amount, generate_next_layer_dungeon_amount
@@ -221,8 +221,7 @@ class DrillDungeonGame(arcade.View):
             self.vignette.far_sight()
 
         elif self.keys_pressed['M']:
-            shop = ShopMenu(self, self.window, self.view)
-            self.window.show_view(shop)
+            self.window.show_view(self.window.shop_view)
 
     def on_key_release(self, key: int, modifiers: int) -> None:
         """
@@ -276,8 +275,7 @@ class DrillDungeonGame(arcade.View):
                     if issubclass(entity.__class__, ControllableMixin):
                         entity.handle_mouse_release(button)
 
-                shop = ShopMenu(self, self.window, self.view)
-                self.window.show_view(shop)
+                self.window.show_view(self.window.shop_view)
 
         for entity in (*self.current_level.sprites.entity_list, self.drill):
             if issubclass(entity.__class__, ControllableMixin):
