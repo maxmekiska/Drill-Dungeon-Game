@@ -9,7 +9,7 @@ class BlockGrid:
     def __init__(self, matrix: List[List[Tuple[str, float, float]]], sprites) -> None:
         self.blocks = [[] for _ in range(len(matrix[0]))]
         self.air_blocks = arcade.SpriteList()
-
+        self._block_break_sound = arcade.load_sound("resources/sound/block_break.wav")
         for x in range(len(matrix)):
             for y in range(len(matrix[0])):
                 b = matrix[y][x]
@@ -83,6 +83,8 @@ class BlockGrid:
             raise ValueError(f'Incorrect block type: {type(block)}!')
 
     def break_block(self, block: Block, sprites) -> None:
+        arcade.play_sound(self._block_break_sound, 0.005)
+
         for adjacent_block in self._get_adjacent_blocks_to(block):
             if type(adjacent_block) != BLOCK.AIR and type(adjacent_block) != BLOCK.FLOOR and type(adjacent_block) != BLOCK.DRILLDOWN:
                 self._add_block_to_lists(adjacent_block, sprites)

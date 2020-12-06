@@ -591,7 +591,7 @@ class ShopMenu(InGameMenu):
         checks if button is pressed
     """
 
-    def __init__(self, game_view, window, view):
+    def __init__(self, game_view, view):
         """
         Parameters
         ----------
@@ -606,11 +606,8 @@ class ShopMenu(InGameMenu):
         self.game_view = game_view
         self.width = 500
         self.height = 400
-        super().__init__(window, self.game_view, view, self.width, self.height)
+        super().__init__(self.game_view, view, self.width, self.height)
         self.gold = game_view.drill.inventory.gold
-
-        self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
-        self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
 
         self.tab_list = []
         self.tab_position = 0
@@ -636,6 +633,9 @@ class ShopMenu(InGameMenu):
         self.game_view.drill._shield_duration = 12.0
 
     def on_show(self):
+        super().on_show()
+        self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
+        self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
         close_button = MenuButton(self.screen_center_x-230, self.screen_center_y+180, 28, 28)
         close_button.add_image("resources/images/gui/cross.png", 0.2, 180)
         close_button.assign_action(self.return_to_game)

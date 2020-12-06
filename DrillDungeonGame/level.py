@@ -62,7 +62,10 @@ class Level:
         self._populate_level_with_enemies(map_layer_configuration)
         # Set viewpoint boundaries - where the drill currently has scrolled to
 
-    def _populate_level_with_enemies(self, map_layer_configuration, enemy_chance_cave=0.003, enemy_chance_dungeon=0.001) -> None:
+    def _populate_level_with_enemies(self,
+                                     map_layer_configuration,
+                                     enemy_chance_cave: int = 0.006,
+                                     enemy_chance_dungeon: int = 0.006) -> None:
         """
         Spawns enemies into caves and dungeons.
 

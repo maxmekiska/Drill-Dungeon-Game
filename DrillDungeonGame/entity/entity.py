@@ -103,6 +103,9 @@ class Entity(arcade.Sprite):
         for texture in moving_textures:
             self._moving_textures.append(load_mirrored_textures(texture))
 
+        # Sound logic
+        self._hurt_sound = None
+
     @property
     def is_animated(self) -> bool:
         return True if len(self._moving_textures) > 0 or len(self._idle_textures) > 0 else False
@@ -148,6 +151,9 @@ class Entity(arcade.Sprite):
         """
         if self.current_health == -1:  # invincible. Do nothing.
             return
+
+        if self._hurt_sound:
+            arcade.play_sound(self._hurt_sound, 0.03)
 
         self.current_health -= damage
         if self.current_health <= 0:

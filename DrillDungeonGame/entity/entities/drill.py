@@ -68,12 +68,24 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
             The maximum amount of health that this entity can have. -1 means unlimited.
 
         """
-        base_sprite: str = "resources/images/drills/drill_v2_2.png"
+        base_sprite: str = "resources/images/drills/drill_v3/drill_both_1.png"
         turret_sprite: str = "resources/images/weapons/turret1.png"
         sprite_scale = 0.3
         turret_scale = 0.2
+
+        idle_textures = ["resources/images/drills/drill_v3/drill_both_1.png"]
+
+        moving_textures = ["resources/images/drills/drill_v3/drill_both_1.png",
+                           "resources/images/drills/drill_v3/drill_both_2.png",
+                           "resources/images/drills/drill_v3/drill_both_3.png",
+                           "resources/images/drills/drill_v3/drill_both_4.png",]
+
+        time_between_animation_texture_updates = 0.15  # How many seconds between cycling to next texture
+
         super().__init__(base_sprite, sprite_scale, center_x, center_y, speed=speed, angle=angle,
-                         current_health=current_health, max_health=max_health)
+                         current_health=current_health, max_health=max_health,
+                         idle_textures=idle_textures, moving_textures=moving_textures,
+                         time_between_animation_texture_updates=time_between_animation_texture_updates)
 
         self.inventory = Inventory(gold=gold, coal=coal, ammunition=ammunition)
         self.children.append(Turret(turret_sprite, turret_scale, parent=self, bullet_type=BlueNormalBullet,
@@ -87,6 +99,8 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
         self._shield_cooldown_duration = 2.0
         self._shield_cooldown_uptime = 0.0
         self._shield_sprite = Shield("resources/images/shield/blue_aura.png", 0.9, parent=self, relative_x=4)
+
+        self._hurt_sound = arcade.load_sound("resources/sound/hit_marker.wav")
 
     def draw_shield_bar(self, position_x, position_y, width, height):
         """Draws a shield health below the drill when shield activated."""
@@ -276,3 +290,16 @@ class Drill(Entity, DiggingMixin, ControllableMixin):
 
         # If we do end up updating this in an entity subclass, we need to call super.update() so mixins get updated.
         super().update(time, delta_time, sprites, block_grid)
+
+    def update_animation(self, delta_time: float = 1/60):
+        self._time_since_last_texture_update += delta_time
+        if self._time_since_last_texture_update > self._time_between_animation_texture_updates:
+            self._time_since_last_texture_update = 0
+
+            if self.change_x == 0 and self.change_y == 0:
+                textures = self._idle_textures
+            else:
+                textures = self._moving_textures
+
+            self._texture_index = (self._texture_index + 1) % len(textures)
+            self.texture = textures[self._texture_index][self._facing_direction.value]

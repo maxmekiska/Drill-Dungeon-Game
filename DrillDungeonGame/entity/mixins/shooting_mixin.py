@@ -54,6 +54,7 @@ class ShootingMixin:
     def __init__(self) -> None:
         self._last_shoot_time = 0
         self._trigger_pulled = False
+        self._attack_sound = None
 
     def aim(self, dest_x: float, dest_y: float) -> None:
         """
@@ -157,6 +158,10 @@ class ShootingMixin:
             y_component = math.sin(math.radians(self.angle + 10)) * bullet_right.speed
             bullet_right.set_velocity((x_component, y_component))
             sprites.bullet_list.append(bullet_right)
+
+        if self._attack_sound:
+            arcade.play_sound(self._attack_sound, 0.05)
+
 
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
