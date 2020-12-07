@@ -46,3 +46,47 @@ Blocks loaded from BlockGrid are stored in an instance of the SpriteContainer me
 ## Extending the Code
 
 ## Adding Additional Block Types
+
+All map blocks are represented in a map layer matrix, which stores the type of block and its relative position. Block type is represented as a short string (for example, 'X' for dirt or ' ' for an air block). This map layer matrix is later loaded into a map layer configuration, which also stores the X and Y coordinates of the block, which is then loaded into the BlockGrid class, which manages the sprites displayed on the map.
+
+In order to add additional block types, first a new string must be assigned to the block type. A method then needs to be added to add the string representing the new block to the map layer matrix. How exactly this is to be implemented depends on the nature of the block and is thus up to the maintainer. As an example, gold and coal blocks are generated in random patches in the methods generate_coal() and generate_gold() in the MapLayer class. However it is implemented, make sure the method to load the blocks into the map layer matrix is called in the get_full_map_layer_configuration() method, as this is what is called when loading in the map layer to the game.
+
+Once the block type string is loaded into the map layer configuration, a new block type has to be defined. The block.py file contains all the block classes, which extend the main block class. Create a new block class following the format of the other ones, ensuring the char attribute is set to the same one that was loaded into the map layer matrix. File is the location of the image that the new block type will take as its sprite, while scale changed the size of the block. Make sure that the block will scale to 20x20 pixels. Finally, add the new block class to the _Block class at the end of the file, which allows for the block classes to be called.
+
+Finally, the new block type needs to be added to the BlockGrid class in the block_grid.py file. The exact implementation of this depends on what the intended behaviour of the block is. If the block is purely for visual purposes and never needs to interact with the drill, then it is classified as an air block. To add the new block type as an air block, simply append BLOCK.$<$ NEWTYPE$>$ to the if statement on line 102. This checks if the block being iterated over is meant to be an air block, and initialises it as such.
+
+If the block needs to interact with the drill, then an elif statement needs to be appended to the _add_block_to_list() method in block_grid.py file. Depending on if the block can be broken or not, it should be appended to the sprites' indestructible_block_list or the destructable_blocks_list. Either way, it should also be added to all_blocks_list.
+
+If the block requires some sort of special interaction with the drill, it may require that a sprite list be appended to the SpriteContainer class. This list can then be called in other methods which will allow for just that type of block to be checked for collision or other interactions. To add this list, simply extend the constructor method of the SpriteContainer class in the sprite_container.py file, adding a new sprite list as an argument and class attribute.
+
+
+## Adding Additional Prefabricated Dungeons
+
+
+## Automated Dungeon Generation
+
+Automated dungeon generation is more of an open ended addition, and can be implemented in several ways. In theory, the only thing requires is some way to alter the map layer matrix to add some floor and dungeon wall tiles, represented by characters 'F' and 'W' respectively.
+
+Two methods were attempted for this iteration of the game, but were both shelved due to balancing difficulties. These can be re-added by the maintainer and improved if they so wish. The first method used the same basic principle of the generate_coal() and generate_gold() methods, instead adding floor blocks. Then, the map layer matrix should then be iterated over, adding wall blocks to any blocks adjacent to floors which are not also floor tiles.
+
+The other method which was attempted was constructing new dungeons from several prefabricated rooms. This is similar to the prefabricated method, but more open ended.
+
+## Adding Additional Explosion Effects
+
+Adding additional tailored explosion effects are recommended to create when new blocks, enemies or other objects are added to the game. To do so, please navigate to DrillDungeonGame/particles/explosion.py file. The file begins by defining a list of constants that control how the explosion will be rendered onto the screen. These constants are universally used by all explosion classes. If for a particular explosions this behaviour is not wished, it is recommended to create a new constant and manually add it into the specific particle class. As an example, this specific tailoring approach is applied to the explosion particles colours. Each currently available block in the game has its own explosion particle colour list.
+[Here](https://arcade.academy/arcade.color.html) you can see the full library provided colour list.
+
+The general structure of the file consists of a general Smoke class and multiple individual particle classes. The smoke class can be used by each particle class to cause a smoke effect upon a particle explosion. A good example of a particle class using the smoke class is the ParticleCoal class. In the update() method of the ParticleCoal class, a smoke object is created which in turn generates the smoke effect:
+
+``` python3
+if random.random() <= SMOKE_CHANCE:
+    smoke = Smoke(5)
+    smoke.position = self.position
+    self.my_list.append(smoke)
+```
+
+To generate a new particle explosion, follow the example of the other particle classes. If you wish to add the smoke effect, add into the newly created particle classes update() method the code block above.
+
+## Main Menu Modifications
+
+Modifying or adding new elements to the main menu is possible by navigating to the following python file: DrillDungeonGame/views.py. The general structure of this file consist first of button classes and second of view classes. First, button classes (inherent from arcade.gui.UIFlatButton) define the behaviour of what happens when a particular button is pressed. Second, View classes define (inherent from arcade.View) the general structure of the window and graphical representation. Each view class contains a setup() method that is used to place the buttons to the preferred location. It further, creates a button objects to add the preferred logic to the buttons placed onto the window.
