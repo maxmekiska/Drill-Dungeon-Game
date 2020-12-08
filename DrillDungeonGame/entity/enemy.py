@@ -57,6 +57,8 @@ class Enemy(Entity):
         self._attack_sound = arcade.load_sound("resources/sound/magic_shoot.wav")
         self._last_pathfind_time = random.uniform(0, 1)
         self._last_shot_time = random.uniform(0, 1)
+        self._last_line_of_sight_check_time = random.uniform(0, 1)
+        self._has_line_of_sight_with_drill = False
 
     def draw_health_bar(self):
         super().draw_health_bar(self.center_x, self.center_y - 20, self.width, 5)

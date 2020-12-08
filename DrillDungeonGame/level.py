@@ -61,6 +61,8 @@ class Level:
 
         self._populate_level_with_enemies(map_layer_configuration)
         # Set viewpoint boundaries - where the drill currently has scrolled to
+        self.time = 0
+        self.frame = 0
 
     def _populate_level_with_enemies(self,
                                      map_layer_configuration,
@@ -99,12 +101,12 @@ class Level:
         self.sprites.all_blocks_list.draw()
         self.sprites.explosion_list.draw()
 
-        for entity in (*self.sprites.entity_list, *self.sprites.bullet_list, self.sprites.drill):
+        for entity in (*self.sprites.entity_list, self.sprites.drill):
             entity.draw()
 
         for entity in self.sprites.entity_list:
             if entity.path:
                 arcade.draw_line_strip(entity.path, arcade.color.BLUE, 2)
 
-    def update(self):
+    def update(self, time: float, delta_time: float, sprites, block_grid: BlockGrid):
         pass  # TODO currently this is all done in class: DrillDungeonGame

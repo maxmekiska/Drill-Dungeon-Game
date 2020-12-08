@@ -103,15 +103,21 @@ class GoblinEnemy(Enemy, DiggingMixin, PathFindingMixin):
             Reference to all blocks in the game.
 
         """
-        if (time - self._last_shot_time) > 1.5:
-            self._last_shot_time = time
-            if self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list) and (arcade.get_distance_between_sprites(self, sprites.drill) < 40):
-                self.attack = True
-                sprites.drill.hurt(self.damage)
-
-        if (time - self._last_pathfind_time) > 1:
-            self._last_pathfind_time = time
+        if (time - self._last_line_of_sight_check_time) > 1:
+            self._last_line_of_sight_check_time = time
             if self.has_line_of_sight_with(sprites.drill, sprites.all_blocks_list):
+                self._has_line_of_sight_with_drill = True
+            else:
+                self._has_line_of_sight_with_drill = False
+
+        if self._has_line_of_sight_with_drill:
+            if (time - self._last_shot_time) > 1.5:
+                self._last_shot_time = time
+                self.children[0].aim(*sprites.drill.position)
+                self.children[0].shoot(self.children[0].firing_mode, sprites)
+
+            if (time - self._last_pathfind_time) > 1:
+                self._last_pathfind_time = time
                 self.path_to_position(sprites.drill.center_x, sprites.drill.center_y, sprites.all_blocks_list)
 
         super().update(time, delta_time, sprites, block_grid)

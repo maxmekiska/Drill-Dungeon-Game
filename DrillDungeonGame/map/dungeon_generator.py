@@ -220,7 +220,6 @@ class MapLayer:
             x_block_center += block_width
         return configuration_row
 
-
     def create_space_for_drill(self, drillX, drillY) -> None:
         #TODO need to make it so the drill cannot drill down over dungeons i.e. only on 
         #edges of map or so
