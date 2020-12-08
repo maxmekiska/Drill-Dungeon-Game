@@ -111,7 +111,8 @@ class GoblinEnemy(Enemy, DiggingMixin, PathFindingMixin):
                 self._has_line_of_sight_with_drill = False
 
         if self._has_line_of_sight_with_drill:
-            if (time - self._last_shot_time) > 1.5:
+            if ((time - self._last_shot_time) > 1.5) and \
+                    (arcade.get_distance_between_sprites(self, sprites.drill) < 40):
                 self._last_shot_time = time
                 self.attack = True
                 sprites.drill.hurt(self.damage)
