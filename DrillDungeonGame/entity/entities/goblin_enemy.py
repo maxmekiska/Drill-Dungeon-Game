@@ -113,8 +113,8 @@ class GoblinEnemy(Enemy, DiggingMixin, PathFindingMixin):
         if self._has_line_of_sight_with_drill:
             if (time - self._last_shot_time) > 1.5:
                 self._last_shot_time = time
-                self.children[0].aim(*sprites.drill.position)
-                self.children[0].shoot(self.children[0].firing_mode, sprites)
+                self.attack = True
+                sprites.drill.hurt(self.damage)
 
             if (time - self._last_pathfind_time) > 1:
                 self._last_pathfind_time = time
