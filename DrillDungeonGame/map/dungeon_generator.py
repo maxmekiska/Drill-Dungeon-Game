@@ -222,8 +222,16 @@ class MapLayer:
 
 
     def create_space_for_drill(self, drillX, drillY) -> None:
-        #TODO need to make it so the drill cannot drill down over dungeons i.e. only on 
-        #edges of map or so
+        """
+        Clears out empty space for when the drill goes down or up a layer.
+
+        Parameters
+        ----------
+        drillX   :   int, float
+            The X coordinate of the drill
+        drillY   :   int, float
+            The Y coordinate of the drill
+        """
         for i, row in enumerate(self.map_layer_configuration):
             for j, item in enumerate(row):
                 distance_from_drill = np.sqrt((drillX - item[1])**2 + (drillY - item[2])**2)

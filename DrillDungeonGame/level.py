@@ -71,7 +71,7 @@ class Level:
                                      map_layer_configuration,
                                      enemy_chance_cave: int = 0.006,
                                      enemy_chance_dungeon: int = 0.006,
-                                     boss_chance: int = 0.01) -> None:
+                                     boss_chance: int = 0.001) -> None:
         """
         Spawns enemies into caves and dungeons.
 
