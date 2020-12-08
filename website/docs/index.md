@@ -20,7 +20,7 @@ Game. The game itself is the result of our second coursework of our Software
 Engineering class at the University of Bath. All team members are currently
 attending the MSc in Computer Science.
 
-##The team
+## Team Purple
 
 - Ahmed Ahmadu
 - John Chan
