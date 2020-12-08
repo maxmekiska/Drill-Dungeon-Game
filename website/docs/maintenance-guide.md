@@ -60,8 +60,38 @@ If the block needs to interact with the drill, then an elif statement needs to b
 If the block requires some sort of special interaction with the drill, it may require that a sprite list be appended to the SpriteContainer class. This list can then be called in other methods which will allow for just that type of block to be checked for collision or other interactions. To add this list, simply extend the constructor method of the SpriteContainer class in the sprite_container.py file, adding a new sprite list as an argument and class attribute.
 
 
-## Adding Additional Prefabricated Dungeons
+## Additional Prefabricated Dungeons
 
+To add additional prefabricated dungeons please navigate to DrillDungeonGame/map/prefab_dungeon_rooms.py. Any dungeon added into this file will later on be displayed in the exact same format as defined here. Prefabricated dungeons are entered via a simple array:
+
+
+```python3
+entrance_room_one =  [['W', 'W', 'W', 'W', 'F', 'F', 'W', 'W', 'W','W', 'W','W'],
+['W', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F','F', 'F','W'],
+['W', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F','F', 'F','W'],
+['W', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F','F', 'F','W'],
+['W', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F','F', 'F','W'],
+['W', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F','F', 'F','W'],
+['W', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F','F', 'F','W'],
+['W', 'F', 'F', 'F', 'F', 'F', 'F', 'F', 'F','F', 'F','W'],
+['W', 'W', 'W', 'W', 'F', 'F', 'W', 'W', 'W','W', 'W', 'W']]
+```
+
+In more detail, the letters in the matrix above stand each for a specific tile in the game. 'W' represents a wall and will be displayed as an indestructible wall when rendered in the game. The other letter, 'F', represents a simple floor tile which matches the style of the indestructible wall tiles.
+
+``` python3
+wing_room_one =  [['F', 'W', 'W', 'W', 'W', 'W', 'F'] ,
+['LW', 'F', 'F', 'F', 'F', 'F',  'RW'] ,
+['LW', 'F', 'F', 'F', 'F', 'F',  'RW'] ,
+['LW', 'F', 'F', 'G', 'G', 'F',  'RW'] ,
+['LW', 'F', 'F', 'G', 'G', 'F',  'RW'] ,
+['LW', 'F', 'F', 'F', 'F', 'F',  'RW'] ,
+['LW', 'F', 'F', 'F', 'F', 'C',  'RW'] ,
+['LW', 'F', 'F', 'F', 'C', 'C',  'RW'] ,
+['LW', 'W', 'W', 'W', 'W', 'W', 'RW']]
+```
+
+Other available options can be seen in the above wing room example. In fact, LW and RW represent left walls and right walls which are a specific design version of a normal wall. Other elements can be added such as gold blocks or coal blocks ('G', 'C').
 
 ## Automated Dungeon Generation
 
