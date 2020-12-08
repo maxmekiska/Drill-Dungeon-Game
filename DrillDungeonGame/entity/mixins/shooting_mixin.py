@@ -134,7 +134,7 @@ class ShootingMixin:
             x_component = math.cos(math.radians(self.angle)) * bullet.speed
             y_component = math.sin(math.radians(self.angle)) * bullet.speed
             bullet.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet)
+            # sprites.bullet_list.append(bullet)
 
         elif shot_type == ShotType.BUCKSHOT:
             bullet_middle = self.bullet_type(self, angle=self.angle)

@@ -220,7 +220,6 @@ class MapLayer:
             x_block_center += block_width
         return configuration_row
 
-
     def create_space_for_drill(self, drillX, drillY) -> None:
         """
         Clears out empty space for when the drill goes down or up a layer.

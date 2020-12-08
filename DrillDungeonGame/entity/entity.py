@@ -218,7 +218,7 @@ class Entity(arcade.Sprite):
             True if there is line of sight, False otherwise.
 
         """
-        return arcade.has_line_of_sight(self.position, entity.position, blocking_sprites)
+        return arcade.has_line_of_sight(self.position, entity.position, blocking_sprites, 200)
 
     def look_at(self, x: float, y: float) -> None:
         """

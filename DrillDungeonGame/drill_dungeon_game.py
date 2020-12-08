@@ -1,7 +1,7 @@
 import arcade
 
 from .entity.entities import Drill
-from .entity.mixins import ControllableMixin
+from .entity.mixins import ControllableMixin, ShotType
 from .in_game_menus import draw_3d_rectangle
 from .level import Level
 from .obscure_vision import ObscuredVision
@@ -188,6 +188,7 @@ class DrillDungeonGame(arcade.View):
                 self.drill.collision_engine = []  # Clear previous level collision engine first.
                 self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
                 self.vignette.decrease_vision()
+                self.drill.children[0].shoot(ShotType.SINGLE, self.current_level.sprites)
             else:
                 print("Cannot drill here")
 
@@ -344,6 +345,9 @@ class DrillDungeonGame(arcade.View):
         self.frame += 1
         self.time += delta_time
 
+        if self.frame == 1:
+            self.drill.children[0].shoot(ShotType.SINGLE, self.current_level.sprites)
+
         if self.drill.current_health <= 0:
             self.drill.current_health = 0
             self.window.show_view(self.window.game_over_view)
@@ -360,7 +364,7 @@ class DrillDungeonGame(arcade.View):
         gold = self.drill.inventory.gold
         coal = self.drill.inventory.coal
 
-        for entity in (*self.current_level.sprites.entity_list, *self.current_level.sprites.bullet_list, self.drill):
+        for entity in (*self.current_level.sprites.entity_list, self.drill):
             # pass the sprite Container so update function can interact with other sprites.
             entity.update(self.time, delta_time, self.current_level.sprites, self.current_level.block_grid)
 
@@ -373,9 +377,9 @@ class DrillDungeonGame(arcade.View):
 
         self.current_level.sprites.explosion_list.update()
 
-        for bullet in self.current_level.sprites.bullet_list:
-            if bullet.center_x > self.window.width + self.view.left_offset or \
-                    bullet.center_x < self.view.left_offset or \
-                    bullet.center_y > self.window.width + self.view.bottom_offset or \
-                    bullet.center_y < self.view.bottom_offset:
-                bullet.remove_from_sprite_lists()
+        # for bullet in self.current_level.sprites.bullet_list:
+        #     if bullet.center_x > self.window.width + self.view.left_offset or \
+        #             bullet.center_x < self.view.left_offset or \
+        #             bullet.center_y > self.window.width + self.view.bottom_offset or \
+        #             bullet.center_y < self.view.bottom_offset:
+        #         bullet.remove_from_sprite_lists()
