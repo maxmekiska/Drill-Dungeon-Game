@@ -44,7 +44,7 @@ class DiggingMixin:
         destructible_blocks = sprites.destructible_blocks_list
         blocks_to_remove.extend(arcade.check_for_collision_with_list(self, destructible_blocks))
         for block in blocks_to_remove:
-            if hasattr(self, 'inventory'):
+            if hasattr(self, 'inventory') and self.inventory is not None:
                 if type(block) == BLOCK.COAL:
                     self.inventory.coal += 1  # We found coal!
 
