@@ -111,7 +111,7 @@ class FlyingEnemy(Enemy, DiggingMixin, PathFindingMixin):
             if (time - self._last_shot_time) > 1.5:
                 self._last_shot_time = time
                 self.children[0].aim(*sprites.drill.position)
-                self.children[0].shoot(self.children[0].firing_mode, sprites)
+                self.children[0].shoot(self.children[0].firing_mode)
 
             if (time - self._last_pathfind_time) > 1:
                 self._last_pathfind_time = time
