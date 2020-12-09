@@ -96,7 +96,7 @@ class ShootingMixin:
         self._trigger_pulled = False
 
     # noinspection PyArgumentList
-    def shoot(self, shot_type: ShotType, sprites) -> None:
+    def shoot(self, shot_type: ShotType) -> None:
         """
         Shoots a bullet of a certain type. This does not limit how fast the turret fires according to firing rate!
 
@@ -108,8 +108,7 @@ class ShootingMixin:
         ----------
         shot_type: ShotType
             The type of shooting mode to shoot the bullets in. Ie Single or buckshot.
-        sprites: SpriteContainer
-            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
         """
         if self.inventory is not None:
             if shot_type == ShotType.SINGLE:
