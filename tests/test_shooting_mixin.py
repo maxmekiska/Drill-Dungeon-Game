@@ -5,7 +5,7 @@ import arcade
 from DrillDungeonGame.entity.entities import BlueNormalBullet
 from DrillDungeonGame.entity.entity import Entity
 from DrillDungeonGame.entity.mixins import ShootingMixin, ShotType
-from DrillDungeonGame.map import DirtBlock, BlockGrid
+from DrillDungeonGame.map import DirtBlock
 from DrillDungeonGame.sprite_container import SpriteContainer
 
 
@@ -51,6 +51,7 @@ class ShootingMixinTestCase(unittest.TestCase):
 
         b = DirtBlock(0, 0, 100, 100)  # One dirt block horizontal
         sprites.all_blocks_list.append(b)
+        block_grid = FakeBlockGrid()
 
         time = 0
         delta_time = 0.1
@@ -58,7 +59,7 @@ class ShootingMixinTestCase(unittest.TestCase):
         self.assertIn(b, sprites.all_blocks_list)
         for i in range(100):
             e.shoot(ShotType.SINGLE)
-            e.update(time, delta_time, sprites, FakeBlockGrid())
+            e.update(time, delta_time, sprites, block_grid)
             time += delta_time
             frame += 1
         self.assertNotIn(b, sprites.all_blocks_list)
