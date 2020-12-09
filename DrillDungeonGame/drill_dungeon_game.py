@@ -188,7 +188,7 @@ class DrillDungeonGame(arcade.View):
                 self.drill.collision_engine = []  # Clear previous level collision engine first.
                 self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
                 self.vignette.decrease_vision()
-                self.drill.children[0].shoot(ShotType.SINGLE, self.current_level.sprites)
+                self.drill.children[0].shoot(ShotType.SINGLE)
             else:
                 print("Cannot drill here")
 
@@ -346,7 +346,7 @@ class DrillDungeonGame(arcade.View):
         self.time += delta_time
 
         if self.frame == 1:
-            self.drill.children[0].shoot(ShotType.SINGLE, self.current_level.sprites)
+            self.drill.children[0].shoot(ShotType.SINGLE)
 
         if self.drill.current_health <= 0:
             self.drill.current_health = 0
