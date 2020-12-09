@@ -95,7 +95,7 @@ class FireEnemy(Enemy, DiggingMixin, PathFindingMixin, ShootingMixin):
             if (time - self._last_shot_time) > 1.5:
                 self._last_shot_time = time
                 self.aim(*sprites.drill.position)
-                self.shoot(self.firing_mode, sprites)
+                self.shoot(self.firing_mode)
 
             if (time - self._last_pathfind_time) > 1:
                 self._last_pathfind_time = time
