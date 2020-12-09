@@ -5,6 +5,7 @@ import arcade
 from DrillDungeonGame.entity.entities import BlueNormalBullet
 from DrillDungeonGame.entity.entity import Entity
 from DrillDungeonGame.entity.mixins import ShootingMixin, ShotType
+from DrillDungeonGame.map import DirtBlock, BlockGrid
 from DrillDungeonGame.sprite_container import SpriteContainer
 
 
@@ -18,6 +19,11 @@ class FakeShootableEntity(Entity, ShootingMixin):
         self.bullet_type = BlueNormalBullet
         self.firing_rate = 1
         ShootingMixin.__init__(self)
+
+
+class FakeBlockGrid:
+    def break_block(self, block, sprites):
+        block.remove_from_sprite_lists()
 
 
 class ShootingMixinTestCase(unittest.TestCase):
@@ -36,13 +42,28 @@ class ShootingMixinTestCase(unittest.TestCase):
         self.assertEqual(e._trigger_pulled, False)
 
     def test_shooting_with_gameloop(self):
-        angle = 100.0
-        e = FakeShootableEntity(angle)
+        angle = 90.0
+        e = FakeShootableEntity(angle=angle)
         sprites = SpriteContainer(None, arcade.SpriteList(), arcade.SpriteList(),
                                   arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(),
                                   arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(),
                                   arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(),)
 
+        b = DirtBlock(0, 0, 100, 100)  # One dirt block horizontal
+        sprites.all_blocks_list.append(b)
+
+        time = 0
+        delta_time = 0.1
+        frame = 0
+        self.assertIn(b, sprites.all_blocks_list)
+        for i in range(100):
+            e.shoot(ShotType.SINGLE)
+            e.update(time, delta_time, sprites, FakeBlockGrid())
+            time += delta_time
+            frame += 1
+        self.assertNotIn(b, sprites.all_blocks_list)
+
+        e = FakeShootableEntity(angle=angle)
         time = 0
         delta_time = 0.1
         frame = 0

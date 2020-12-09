@@ -52,7 +52,6 @@ class EntityTestCase(unittest.TestCase):
         self.assertNotIn(e, sprite_list)
         self.assertNotIn(child, e.children)
 
-
     def test_entity_hurt_heal_invincible(self):
         e = self.create_mock_entity(100, 100,
                                     current_health=-1, max_health=100)
