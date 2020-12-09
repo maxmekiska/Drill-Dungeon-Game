@@ -175,8 +175,10 @@ class Entity(arcade.Sprite):
         if self.current_health == -1:  # Invincible. Do nothing.
             return
 
-        if self.current_health < self.max_health:
+        if self.max_health != -1:
             self.current_health = min(self.max_health, self.current_health + amount)
+        else:
+            self.current_health += amount
 
     def draw_health_bar(self, position_x, position_y, width, height):
         """Draws a simple health bar below the enemy."""
