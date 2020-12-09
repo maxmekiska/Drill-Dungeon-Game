@@ -134,7 +134,6 @@ class ShootingMixin:
             x_component = math.cos(math.radians(self.angle)) * bullet.speed
             y_component = math.sin(math.radians(self.angle)) * bullet.speed
             bullet.set_velocity((x_component, y_component))
-            # sprites.bullet_list.append(bullet)
 
         elif shot_type == ShotType.BUCKSHOT:
             bullet_middle = self.bullet_type(self, angle=self.angle)
@@ -147,21 +146,17 @@ class ShootingMixin:
             x_component = math.cos(math.radians(self.angle)) * bullet_middle.speed
             y_component = math.sin(math.radians(self.angle)) * bullet_middle.speed
             bullet_middle.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet_middle)
             # Left
             x_component = math.cos(math.radians(self.angle - 10)) * bullet_left.speed
             y_component = math.sin(math.radians(self.angle - 10)) * bullet_left.speed
             bullet_left.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet_left)
             # Right
             x_component = math.cos(math.radians(self.angle + 10)) * bullet_right.speed
             y_component = math.sin(math.radians(self.angle + 10)) * bullet_right.speed
             bullet_right.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet_right)
 
         if self._attack_sound:
             arcade.play_sound(self._attack_sound, 0.05)
-
 
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
