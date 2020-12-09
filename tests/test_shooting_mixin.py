@@ -3,12 +3,9 @@ import unittest
 import arcade
 
 from DrillDungeonGame.entity.entities import BlueNormalBullet
-from DrillDungeonGame.entity.entity import Entity, ChildEntity
+from DrillDungeonGame.entity.entity import Entity
 from DrillDungeonGame.entity.mixins import ShootingMixin, ShotType
-from DrillDungeonGame.map import BlockGrid
 from DrillDungeonGame.sprite_container import SpriteContainer
-
-from tests.test_entity import create_mock_entity, create_mock_child_entity
 
 
 class FakeShootableEntity(Entity, ShootingMixin):
