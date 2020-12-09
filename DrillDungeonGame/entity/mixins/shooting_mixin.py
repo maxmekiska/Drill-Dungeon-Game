@@ -178,4 +178,4 @@ class ShootingMixin:
         """
         if self._trigger_pulled and (time - self._last_shoot_time) > self.firing_rate:
             self._last_shoot_time = time
-            self.shoot(self.firing_mode, sprites)
+            self.shoot(self.firing_mode)
