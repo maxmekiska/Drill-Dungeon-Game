@@ -110,7 +110,7 @@ class ShootingMixin:
             The type of shooting mode to shoot the bullets in. Ie Single or buckshot.
 
         """
-        if self.inventory is not None:
+        if hasattr(self, 'inventory') and self.inventory is not None:
             if shot_type == ShotType.SINGLE:
                 if self.inventory.ammunition > 0:
                     self.inventory.ammunition -= 1
