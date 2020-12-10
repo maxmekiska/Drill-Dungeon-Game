@@ -13,6 +13,7 @@ potential_bosses = (WizardBoss, TankBoss)
 
 class Level:
     def __init__(self, drill: Drill,
+                 current_level: int,
                  number_of_coal_patches: int = 20,
                  number_of_gold_patches: int = 20,
                  number_of_dungeons: int = 3,
@@ -63,6 +64,7 @@ class Level:
                                                                              number_of_shops,
                                                                              drill.center_x, drill.center_y)
         self.block_grid = BlockGrid(map_layer_configuration, self.sprites)
+        self.current_level = current_level
 
         self._populate_level_with_enemies(map_layer_configuration)
         # Set viewpoint boundaries - where the drill currently has scrolled to
@@ -71,9 +73,9 @@ class Level:
 
     def _populate_level_with_enemies(self,
                                      map_layer_configuration,
-                                     enemy_chance_cave: int = 0.006,
-                                     enemy_chance_dungeon: int = 0.006,
-                                     boss_chance: int = 0.003) -> None:
+                                     base_enemy_chance_cave: float = 0.006,
+                                     base_enemy_chance_dungeon: float = 0.006,
+                                     base_boss_chance: float = 0.003) -> None:
         """
         Spawns enemies into caves and dungeons.
 
@@ -84,6 +86,9 @@ class Level:
         enemy_chance_dungeon   :   float
             Probability of an enemy spawning in an empty dungeon floor block
         """
+        enemy_chance_cave = self.generate_enemy_chance(base_enemy_chance_cave)
+        enemy_chance_dungeon = self.generate_enemy_chance(base_enemy_chance_dungeon)
+        boss_chance = self.generate_enemy_chance(base_boss_chance)
         for row in map_layer_configuration:
             for block in row:
                 if block[0] == ' ':
@@ -107,6 +112,24 @@ class Level:
 
         for entity in self.sprites.entity_list:
             entity.setup_collision_engine([self.sprites.indestructible_blocks_list])
+
+    def generate_enemy_chance(self, base_enemy_chance: float):
+        """
+        Generates the odds of an enemy spawning in a given spot.
+        Enemy chance increases by a natural logarithmic scale.
+
+        Parameters
+        ----------
+        base_enemy_chance   :   float
+            The minimum chance of this type of enemy
+
+        Returns
+        -------
+        enemy_chance   :   float
+            The chance of this type of enemy on the current layer
+        """
+        enemy_chance = base_enemy_chance * (1 + np.log(self.current_level + 1))
+        return enemy_chance
 
     def draw(self) -> None:
         arcade.start_render()

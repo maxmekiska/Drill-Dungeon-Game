@@ -89,7 +89,7 @@ class DrillDungeonGame(arcade.View):
 
         self._levels = []
         self._level_index = 0
-        self._levels.append(Level(drill=self.drill))
+        self._levels.append(Level(drill=self.drill, current_level=self._level_index))
         self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
 
         self.vignette = ObscuredVision()
@@ -112,7 +112,7 @@ class DrillDungeonGame(arcade.View):
 
         self._levels = []
         self._level_index = 0
-        self._levels.append(Level(drill=self.drill))
+        self._levels.append(Level(drill=self.drill, current_level=self._level_index))
         self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
 
         self.vignette = ObscuredVision()
@@ -211,16 +211,16 @@ class DrillDungeonGame(arcade.View):
         Requires the drill to be over a drill down block and have more than 50 coal.
         """
         if self.drill.check_ground_for_drilling(self.current_level.sprites):
-            if self.drill.inventory.coal > 50:
+            if self.drill.inventory.coal > 30:
                 if (len(self._levels) - self._level_index) == 1:
-                    next_level = Level(self.drill)
+                    next_level = Level(self.drill, self._level_index)
                     self._levels.append(next_level)
                 self._level_index += 1
                 self.drill.collision_engine = []  # Clear previous level collision engine first.
                 self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
                 self.vignette.decrease_vision()
                 self.drill.children[0].shoot(ShotType.SINGLE)
-                self.drill.inventory.coal += -50
+                self.drill.inventory.coal += -30
             else:
                 print("Not enough coal!")
         else:
