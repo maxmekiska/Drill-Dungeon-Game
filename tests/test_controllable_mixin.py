@@ -15,7 +15,7 @@ class FakeControllableEntity(Entity, ControllableMixin):
         ControllableMixin.__init__(self)
 
 
-class DiggingMixinTestCase(unittest.TestCase):
+class ControllableMixinTestCase(unittest.TestCase):
 
     def test_controlling_mixin(self):
         e = FakeControllableEntity(speed=1.0)
