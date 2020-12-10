@@ -122,14 +122,17 @@ The walls of this artificially made dungeon are out of the material you will not
 ## Drill down and up
 
 Next, to advance further to the core of the planet you will need to find a drill friendly surface.
-Once you have found these specific tiles, you will be able to drill one more level down by pressing the K key. But drilling down will have a price. You will loose x amount of coal and conditions on the next level will be more harsh. Your view will decrease and the speed of the drill will be reduced as well. Hint: Make sure to visit a shop and upgrade your drill before drilling into the next layer:
+Once you have found these specific tiles, you will be able to drill one more level down by pressing the T key. But drilling down will have a price. You will loose 30 amount of coal and conditions on the next level will be more harsh. Your view will decrease and the speed of the drill will be reduced as well. Hint: Make sure to visit a shop and upgrade your drill before drilling into the next layer:
 
 ![](gifs/drill-up-down.gif)
 
-Furthermore, if you decide to return back into the prior layer you will be able to do so by searching for drill friendly tiles and press the U key. Keep in mind that this manoeuvre will also cost x amount of coal.
+Furthermore, if you decide to return back into the prior layer you will be able to do so by searching for drill friendly tiles and press the U key. Keep in mind that resources on this level will be depleted from your drilling.
 
 ## Pause
 
 Lastly, if you need a break or want to exit the game, you can pause the game by pressing the ESC key. This will open up the pause menu:
 
 ![](gifs/pause-menu.gif)
+
+
+Best of luck on your adventures, Commander! Defeat those aliens and bring back the gold!
