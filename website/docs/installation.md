@@ -16,7 +16,7 @@
 }
 </style>
 
-# Installation guide
+# Installation guide for Developer
 
 
 ## Install Python
@@ -120,3 +120,7 @@ python3 main.py
 
 pytest tests/
 ```
+
+# Installation guide for User
+
+To install and play the Drill Dungeon Game, please download the .exe file either from the official Drill Dungeon Game website or the GitHub repository. Please make sure that your computer has a working version of Python 3.8.5 or higher installed. For the installation of Python, please refer to the explanation given above at 1.2.1 "Install Python".
