@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import random
 from typing import Union, List
+
+import arcade
 
 from .entity import Entity
 
@@ -49,6 +52,13 @@ class Enemy(Entity):
                          speed=speed, angle=angle, current_health=current_health, max_health=max_health,
                          idle_textures=idle_textures, moving_textures=moving_textures,
                          time_between_animation_texture_updates=time_between_animation_texture_updates)
+
+        self._hurt_sound = arcade.load_sound("resources/sound/hit_marker.wav")
+        self._attack_sound = arcade.load_sound("resources/sound/magic_shoot.wav")
+        self._last_pathfind_time = random.uniform(0, 1)
+        self._last_shot_time = random.uniform(0, 1)
+        self._last_line_of_sight_check_time = random.uniform(0, 1)
+        self._has_line_of_sight_with_drill = False
 
     def draw_health_bar(self):
         super().draw_health_bar(self.center_x, self.center_y - 20, self.width, 5)

@@ -103,6 +103,9 @@ class Entity(arcade.Sprite):
         for texture in moving_textures:
             self._moving_textures.append(load_mirrored_textures(texture))
 
+        # Sound logic
+        self._hurt_sound = None
+
     @property
     def is_animated(self) -> bool:
         return True if len(self._moving_textures) > 0 or len(self._idle_textures) > 0 else False
@@ -149,6 +152,9 @@ class Entity(arcade.Sprite):
         if self.current_health == -1:  # invincible. Do nothing.
             return
 
+        if self._hurt_sound:
+            arcade.play_sound(self._hurt_sound, 0.03)
+
         self.current_health -= damage
         if self.current_health <= 0:
             for child in self.get_all_children():
@@ -169,8 +175,10 @@ class Entity(arcade.Sprite):
         if self.current_health == -1:  # Invincible. Do nothing.
             return
 
-        if self.current_health < self.max_health:
+        if self.max_health != -1:
             self.current_health = min(self.max_health, self.current_health + amount)
+        else:
+            self.current_health += amount
 
     def draw_health_bar(self, position_x, position_y, width, height):
         """Draws a simple health bar below the enemy."""
@@ -212,7 +220,7 @@ class Entity(arcade.Sprite):
             True if there is line of sight, False otherwise.
 
         """
-        return arcade.has_line_of_sight(self.position, entity.position, blocking_sprites)
+        return arcade.has_line_of_sight(self.position, entity.position, blocking_sprites, 200)
 
     def look_at(self, x: float, y: float) -> None:
         """

@@ -1,11 +1,11 @@
 import arcade
 
 from .entity.entities import Drill
-from .entity.mixins import ControllableMixin
-from .in_game_menus import draw_3d_rectangle, PauseMenu, ShopMenu, GameOverMenu
+from .entity.mixins import ControllableMixin, ShotType
+from .in_game_menus import draw_3d_rectangle
 from .level import Level
 from .obscure_vision import ObscuredVision
-from .utility import generate_next_layer_resource_patch_amount, generate_next_layer_dungeon_amount
+from .utility import SCREEN_TITLE, generate_next_layer_resource_patch_amount, generate_next_layer_dungeon_amount
 from .view_margins import View
 
 
@@ -89,7 +89,7 @@ class DrillDungeonGame(arcade.View):
 
         self._levels = []
         self._level_index = 0
-        self._levels.append(Level(drill=self.drill))
+        self._levels.append(Level(drill=self.drill, current_level=self._level_index))
         self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
 
         self.vignette = ObscuredVision()
@@ -102,17 +102,17 @@ class DrillDungeonGame(arcade.View):
 
         self.mouse_position = (1, 1)
 
-        self.drill = Drill(center_x=150,
-                           center_y=150,
-                           current_health=700,
-                           max_health=700,
-                           ammunition=400,
-                           coal=200,
+        self.drill = Drill(center_x=200,
+                           center_y=200,
+                           current_health=150,
+                           max_health=150,
+                           ammunition=50,
+                           coal=40,
                            gold=0)
 
         self._levels = []
         self._level_index = 0
-        self._levels.append(Level(drill=self.drill))
+        self._levels.append(Level(drill=self.drill, current_level=self._level_index))
         self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
 
         self.vignette = ObscuredVision()
@@ -139,6 +139,11 @@ class DrillDungeonGame(arcade.View):
         self.current_level.draw()
 
         self.vignette.draw(self.drill.center_x, self.drill.center_y)
+
+        draw_3d_rectangle(self.view.left_offset+718, self.view.bottom_offset+587, 160, 25, arcade.color.LIGHT_GRAY+(150,),
+                          arcade.color.WHITE+(150,), arcade.color.GRAY+(150,), 1)
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, self.view.left_offset + 643, self.view.bottom_offset + 574, arcade.color.BLACK, 18)
 
         draw_3d_rectangle(self.view.left_offset+110, self.view.bottom_offset+70, 220, 140, arcade.color.LIGHT_GRAY+(150,),
                           arcade.color.WHITE+(150,), arcade.color.GRAY+(150,), 2)
@@ -180,17 +185,7 @@ class DrillDungeonGame(arcade.View):
 
         if self.keys_pressed['T']:
             # Drill down to the next layer.
-            if self.drill.check_ground_for_drilling(self.current_level.sprites):
-                if (len(self._levels) - self._level_index) == 1:
-                    next_level = Level(self.drill)
-                    self._levels.append(next_level)
-                self._level_index += 1
-                self.drill.collision_engine = []  # Clear previous level collision engine first.
-                self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
-                self.vignette.decrease_vision()
-            else:
-                print("Cannot drill here")
-
+            self.handle_drill_down()
         elif self.keys_pressed['ESCAPE']:
             # pause game
             self.keys_pressed = {key: False for key in self.keys_pressed}
@@ -207,22 +202,29 @@ class DrillDungeonGame(arcade.View):
             else:
                 print('Cannot drill here')
 
-        # DEBUGGING CONTROLS
-        elif self.keys_pressed['O']:
-            self.vignette.increase_vision()
-
-        elif self.keys_pressed['L']:
-            self.vignette.decrease_vision()
-
-        elif self.keys_pressed['K']:
-            self.vignette.blind()
-
-        elif self.keys_pressed['SEMICOLON']:
-            self.vignette.far_sight()
-
         elif self.keys_pressed['M']:
-            shop = ShopMenu(self, self.window, self.view)
-            self.window.show_view(shop)
+            self.window.show_view(self.window.shop_view)
+
+    def handle_drill_down(self):
+        """
+        Handles drilling down, when the player presses 'T'.
+        Requires the drill to be over a drill down block and have more than 50 coal.
+        """
+        if self.drill.check_ground_for_drilling(self.current_level.sprites):
+            if self.drill.inventory.coal > 30:
+                if (len(self._levels) - self._level_index) == 1:
+                    next_level = Level(self.drill, self._level_index)
+                    self._levels.append(next_level)
+                self._level_index += 1
+                self.drill.collision_engine = []  # Clear previous level collision engine first.
+                self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
+                self.vignette.decrease_vision()
+                self.drill.children[0].shoot(ShotType.SINGLE)
+                self.drill.inventory.coal += -30
+            else:
+                print("Not enough coal!")
+        else:
+            print("Cannot drill here")
 
     def on_key_release(self, key: int, modifiers: int) -> None:
         """
@@ -276,8 +278,7 @@ class DrillDungeonGame(arcade.View):
                     if issubclass(entity.__class__, ControllableMixin):
                         entity.handle_mouse_release(button)
 
-                shop = ShopMenu(self, self.window, self.view)
-                self.window.show_view(shop)
+                self.window.show_view(self.window.shop_view)
 
         for entity in (*self.current_level.sprites.entity_list, self.drill):
             if issubclass(entity.__class__, ControllableMixin):
@@ -346,6 +347,9 @@ class DrillDungeonGame(arcade.View):
         self.frame += 1
         self.time += delta_time
 
+        if self.frame == 1:
+            self.drill.children[0].shoot(ShotType.SINGLE)
+
         if self.drill.current_health <= 0:
             self.drill.current_health = 0
             self.window.show_view(self.window.game_over_view)
@@ -362,12 +366,13 @@ class DrillDungeonGame(arcade.View):
         gold = self.drill.inventory.gold
         coal = self.drill.inventory.coal
 
-        for entity in (*self.current_level.sprites.entity_list, *self.current_level.sprites.bullet_list, self.drill):
+        for entity in (*self.current_level.sprites.entity_list, self.drill):
             # pass the sprite Container so update function can interact with other sprites.
             entity.update(self.time, delta_time, self.current_level.sprites, self.current_level.block_grid)
 
         if len(self.current_level.sprites.entity_list) < enemies:
-            self.score += enemies-len(self.current_level.sprites.entity_list)
+            self.score += (enemies-len(self.current_level.sprites.entity_list))*2
+            self.drill.inventory.gold += 1
         if self.drill.inventory.gold > gold:
             self.score += self.drill.inventory.gold-gold
         if self.drill.inventory.coal > coal:
@@ -375,9 +380,9 @@ class DrillDungeonGame(arcade.View):
 
         self.current_level.sprites.explosion_list.update()
 
-        for bullet in self.current_level.sprites.bullet_list:
-            if bullet.center_x > self.window.width + self.view.left_offset or \
-                    bullet.center_x < self.view.left_offset or \
-                    bullet.center_y > self.window.width + self.view.bottom_offset or \
-                    bullet.center_y < self.view.bottom_offset:
-                bullet.remove_from_sprite_lists()
+        # for bullet in self.current_level.sprites.bullet_list:
+        #     if bullet.center_x > self.window.width + self.view.left_offset or \
+        #             bullet.center_x < self.view.left_offset or \
+        #             bullet.center_y > self.window.width + self.view.bottom_offset or \
+        #             bullet.center_y < self.view.bottom_offset:
+        #         bullet.remove_from_sprite_lists()

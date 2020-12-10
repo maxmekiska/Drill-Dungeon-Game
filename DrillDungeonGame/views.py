@@ -13,6 +13,11 @@ class MyFlatButtonStartGame(arcade.gui.UIFlatButton):
 
     Class to create a flat button that starts the game.
 
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
+
     Methods
     -------
     on_click()
@@ -35,6 +40,11 @@ class MyFlatButtonStartInstruction(arcade.gui.UIFlatButton):
     """
 
     Class to create a flat button that leads to the instruction menu.
+
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
 
     Methods
     -------
@@ -59,6 +69,11 @@ class MyFlatButtonMenu(arcade.gui.UIFlatButton):
 
     Class to create a flat button that leads to the main menu.
 
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
+
     Methods
     -------
     on_click()
@@ -81,6 +96,11 @@ class MyFlatButtonObjectives(arcade.gui.UIFlatButton):
     """
 
     Class to create a flat button that leads to the main menu.
+
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
 
     Methods
     -------
@@ -106,6 +126,11 @@ class MyFlatButtonExit(arcade.gui.UIFlatButton):
 
     Class to create a flat button that closes the game.
 
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
+
     Methods
     -------
     on_click()
@@ -125,6 +150,11 @@ class MenuView(arcade.View):
     """
 
     Class that defines the layout and logics of the main menu.
+
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
 
     Methods
     -------
@@ -227,6 +257,11 @@ class InstructionView(arcade.View):
 
     Class that defines the layout and logics of the instruction window.
 
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
+
     Methods
     -------
     on_draw()
@@ -313,6 +348,11 @@ class ObjectivesView(arcade.View):
 
     Class that defines the layout and logics of the objectives window.
 
+    Notes
+    -----
+    Inspiration taken from source:
+    https://arcade.academy/examples/gui_elements.html
+    
     Methods
     -------
     on_draw()

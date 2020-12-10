@@ -1,15 +1,17 @@
-import pytest
+import unittest
+
 
 from DrillDungeonGame.level import *
 
-def test_map_layer_generation():
-    level = Level(Drill(10, 10))
-    assert len(level.sprites.all_blocks_list) > 0
 
+class LevelTestCase(unittest.TestCase):
+    def test_map_layer_generation(self):
+        level = Level(Drill(10, 10))
+        self.assertGreater(len(level.sprites.all_blocks_list), 0)
 
-def test_enemy_generation():
-    level = Level(Drill(10, 10))
-    assert len(level.sprites.enemy_list) > 0
+    def test_enemy_generation(self):
+        level = Level(Drill(10, 10))
+        self.assertGreater(len(level.sprites.enemy_list), 0)
 
 
 

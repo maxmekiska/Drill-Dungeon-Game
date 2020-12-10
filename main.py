@@ -1,7 +1,5 @@
-import arcade
+from DrillDungeonGame import *
 
-from DrillDungeonGame.window import Window
-from DrillDungeonGame.utility import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE
 
 def main() -> None:
     """

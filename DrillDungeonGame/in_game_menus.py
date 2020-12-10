@@ -478,17 +478,17 @@ class ShopItem:
 
 
     def buy(self):
-        if (self.shop_menu.gold >= self.cost) and self.available:
+        if (self.shop_menu.game_view.drill.inventory.gold >= self.cost) and self.available:
             if not self.reusable:
                 self.available = False
-            self.shop_menu.gold -= self.cost
+            self.shop_menu.game_view.drill.inventory.gold -= self.cost
             if self.function_inputs != None:
                 self.button_function(self.function_inputs)
             else:
                 self.button_function()
 
     def can_afford(self):
-        if self.shop_menu.gold >= self.cost:
+        if self.shop_menu.game_view.drill.inventory.gold >= self.cost:
             return True
         else:
             return False
@@ -591,7 +591,7 @@ class ShopMenu(InGameMenu):
         checks if button is pressed
     """
 
-    def __init__(self, game_view, window, view):
+    def __init__(self, game_view, view):
         """
         Parameters
         ----------
@@ -606,11 +606,7 @@ class ShopMenu(InGameMenu):
         self.game_view = game_view
         self.width = 500
         self.height = 400
-        super().__init__(window, self.game_view, view, self.width, self.height)
-        self.gold = game_view.drill.inventory.gold
-
-        self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
-        self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
+        super().__init__(self.game_view, view, self.width, self.height)
 
         self.tab_list = []
         self.tab_position = 0
@@ -628,14 +624,19 @@ class ShopMenu(InGameMenu):
         self.game_view.drill.speed = self.game_view.drill.speed*1.5
 
     def repair_drill(self):
-        if self.gold >= self.repair_cost:
-            self.gold -= self.repair_cost
+        if self.game_view.drill.inventory.gold >= self.repair_cost:
+            self.game_view.drill.inventory.gold -= self.repair_cost
             self.game_view.drill.current_health = self.game_view.drill.max_health
 
     def shield_upgrade(self):
         self.game_view.drill._shield_duration = 12.0
 
     def on_show(self):
+        super().on_show()
+        self.tab_list = []
+        self.tab_position = 0
+        self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
+        self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
         close_button = MenuButton(self.screen_center_x-230, self.screen_center_y+180, 28, 28)
         close_button.add_image("resources/images/gui/cross.png", 0.2, 180)
         close_button.assign_action(self.return_to_game)
@@ -696,7 +697,7 @@ class ShopMenu(InGameMenu):
         super().on_draw()
 
         arcade.draw_text("Shop", self.screen_center_x, self.screen_center_y+160, arcade.color.BLACK, font_size=20, anchor_x="center")
-        arcade.draw_text("Gold: "+str(self.gold), self.screen_center_x-210, self.screen_center_y+135, arcade.color.BLACK, font_size=16, anchor_x="center")
+        arcade.draw_text("Gold: "+str(self.game_view.drill.inventory.gold), self.screen_center_x-210, self.screen_center_y+135, arcade.color.BLACK, font_size=16, anchor_x="center")
 
         arcade.draw_rectangle_filled(self.screen_center_x, self.screen_center_y+110, 450, 30, arcade.color.GRAY)
         arcade.draw_text(self.tab_list[self.tab_position].tab_name, self.screen_center_x, self.screen_center_y+98, arcade.color.BLACK, font_size=18, anchor_x="center")
@@ -705,16 +706,13 @@ class ShopMenu(InGameMenu):
             button.draw()
 
         if self.game_view.drill.current_health < self.game_view.drill.max_health:
-            if self.gold < self.repair_cost:
+            if self.game_view.drill.inventory.gold < self.repair_cost:
                 self.repair_button.draw(False)
             else:
                 self.repair_button.draw()
 
 
         self.tab_list[self.tab_position].draw()
-
-    def on_update(self, delta_time):
-        self.game_view.drill.inventory.gold = self.gold
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int) -> None:
         for button in self.button_list:

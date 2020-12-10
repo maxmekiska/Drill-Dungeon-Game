@@ -54,6 +54,7 @@ class ShootingMixin:
     def __init__(self) -> None:
         self._last_shoot_time = 0
         self._trigger_pulled = False
+        self._attack_sound = None
 
     def aim(self, dest_x: float, dest_y: float) -> None:
         """
@@ -95,7 +96,7 @@ class ShootingMixin:
         self._trigger_pulled = False
 
     # noinspection PyArgumentList
-    def shoot(self, shot_type: ShotType, sprites) -> None:
+    def shoot(self, shot_type: ShotType) -> None:
         """
         Shoots a bullet of a certain type. This does not limit how fast the turret fires according to firing rate!
 
@@ -107,10 +108,9 @@ class ShootingMixin:
         ----------
         shot_type: ShotType
             The type of shooting mode to shoot the bullets in. Ie Single or buckshot.
-        sprites: SpriteContainer
-            The SpriteContainer class which contains all sprites so we can interact and do calculations with them.
+
         """
-        if self.inventory is not None:
+        if hasattr(self, 'inventory') and self.inventory is not None:
             if shot_type == ShotType.SINGLE:
                 if self.inventory.ammunition > 0:
                     self.inventory.ammunition -= 1
@@ -133,7 +133,6 @@ class ShootingMixin:
             x_component = math.cos(math.radians(self.angle)) * bullet.speed
             y_component = math.sin(math.radians(self.angle)) * bullet.speed
             bullet.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet)
 
         elif shot_type == ShotType.BUCKSHOT:
             bullet_middle = self.bullet_type(self, angle=self.angle)
@@ -146,17 +145,17 @@ class ShootingMixin:
             x_component = math.cos(math.radians(self.angle)) * bullet_middle.speed
             y_component = math.sin(math.radians(self.angle)) * bullet_middle.speed
             bullet_middle.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet_middle)
             # Left
             x_component = math.cos(math.radians(self.angle - 10)) * bullet_left.speed
             y_component = math.sin(math.radians(self.angle - 10)) * bullet_left.speed
             bullet_left.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet_left)
             # Right
             x_component = math.cos(math.radians(self.angle + 10)) * bullet_right.speed
             y_component = math.sin(math.radians(self.angle + 10)) * bullet_right.speed
             bullet_right.set_velocity((x_component, y_component))
-            sprites.bullet_list.append(bullet_right)
+
+        if self._attack_sound:
+            arcade.play_sound(self._attack_sound, 0.05)
 
     def update(self, time: float, delta_time: float, sprites, block_grid) -> None:
         """
@@ -179,4 +178,4 @@ class ShootingMixin:
         """
         if self._trigger_pulled and (time - self._last_shoot_time) > self.firing_rate:
             self._last_shoot_time = time
-            self.shoot(self.firing_mode, sprites)
+            self.shoot(self.firing_mode)

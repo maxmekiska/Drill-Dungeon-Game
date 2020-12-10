@@ -220,10 +220,17 @@ class MapLayer:
             x_block_center += block_width
         return configuration_row
 
-
     def create_space_for_drill(self, drillX, drillY) -> None:
-        #TODO need to make it so the drill cannot drill down over dungeons i.e. only on 
-        #edges of map or so
+        """
+        Clears out empty space for when the drill goes down or up a layer.
+
+        Parameters
+        ----------
+        drillX   :   int, float
+            The X coordinate of the drill
+        drillY   :   int, float
+            The Y coordinate of the drill
+        """
         for i, row in enumerate(self.map_layer_configuration):
             for j, item in enumerate(row):
                 distance_from_drill = np.sqrt((drillX - item[1])**2 + (drillY - item[2])**2)
@@ -238,7 +245,8 @@ class MapLayer:
         """
         startX = np.random.randint(20, 40)
         startY = np.random.randint(20, 40)
-        entrance_room = entrance_room_one #Add method to choose random
+        entrance_room = random.choice((entrance_room_one, entrance_room_two, 
+                entrance_room_three, entrance_room_four, entrance_room_five))
         for i in  range(len(entrance_room)):
             for j in range(len(entrance_room[0])):
                     self.map_layer_matrix[i+startY][j+startX] = entrance_room[i][j]
