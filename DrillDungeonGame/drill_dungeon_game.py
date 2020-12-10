@@ -208,19 +208,6 @@ class DrillDungeonGame(arcade.View):
             else:
                 print('Cannot drill here')
 
-        # DEBUGGING CONTROLS
-        elif self.keys_pressed['O']:
-            self.vignette.increase_vision()
-
-        elif self.keys_pressed['L']:
-            self.vignette.decrease_vision()
-
-        elif self.keys_pressed['K']:
-            self.vignette.blind()
-
-        elif self.keys_pressed['SEMICOLON']:
-            self.vignette.far_sight()
-
         elif self.keys_pressed['M']:
             self.window.show_view(self.window.shop_view)
 

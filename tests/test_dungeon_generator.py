@@ -41,9 +41,9 @@ class DungeonGeneratorTestCase(unittest.TestCase):
 
     def test_generate_random_start_point(self):
         map_layer = MapLayer()
-        self.assertIn(map_layer.generate_random_start_point()[0], range(0, map_layer.width-1))
-        self.assertIn(map_layer.generate_random_start_point()[1], range(0, map_layer.height-1))
-
+        for _ in range(100):
+            self.assertIn(map_layer.generate_random_start_point()[0], range(0, map_layer.width))
+            self.assertIn(map_layer.generate_random_start_point()[1], range(0, map_layer.height))
 
     def test_generate_blank_row(self):
         map_layer = MapLayer()
