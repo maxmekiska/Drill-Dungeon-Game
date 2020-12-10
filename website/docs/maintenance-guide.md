@@ -39,9 +39,57 @@ The map layer configuration is converted into sprites and manages through the Bl
 
 Blocks loaded from BlockGrid are stored in an instance of the SpriteContainer method, contained in the sprite_container.py file. This class is purely a wrapper for the many types of blocks that are used in the game. The class contains lists for groups of blocks that need to behave differently, as the arcade package used in creating Drill Dungeon requires sprite lists for collision detection. Each level is thus ultimately represented by a SpriteContainer, which is used in the levels.py file to generate the map.
 
+
+## Entities
+
+The entity subdirectory, contained within the DrillDungeonGame package contains all classes responsible for creating, containing and moving sprites with logic. Currently, this includes the Drill class, as well as all enemies and bullets. In the future this should also contain friendly AI. All entities inherit from the base class: Entity, or through the ChildEntity class which extends Entity. Examples of when the ChildEntity class should be over Entity is if it forms any moving part for that base entity such as a turret, hand, or bullet. This is essential for bullets so that they do not collide with the entity that fired the bullet as it launches from the barrel.
+
+To implement the simplest Entity possible, all you should need to do is sub-class Entity and pass several parameters to the super function, namely a string containing a path to the sprite, the scale of that sprite as well as an x and y coordinate. The only step left to have this entity drawn to the screen is to call the update() function followed by the draw() function on that entity in each game loop iteration. Both of these functions also recursively update or draw all entity’s that are children to parent that it is called upon. This is made possible through the get_all_children() function, and the opposite is possible by calling get_all_parents() on any given ChildEntity.
+
+The current entity package structure allows for additional logic to be abstracted into mix-in classes, reducing the need for repeated code in different enemies that require identical logic. Some Mixin classes require direct instantiation within the entity’s \__init__() function, while others simply require inheriting to gain access to additional functions. Should the mix-in require instantiation, this can be possible by calling MixinName.\__init__(self, *args, **kwargs). By passing the self-parameter to the mix-in, the mix-in can also access any attributes and functions in the entity class such as health, speed, inventory and so on. Similar to how all children entities are updated when calling the parent.update() function, this also calls the update() function in all mix-ins of every child to the entity it is called upon. This makes using these mix-in classes very low effort and means more time can be spent on developing new features for them. Current functionality which has seen this abstraction to mix-in classes include a PathFindingMixin, DiggingMixin, ShootingMixin and ControllableMixin.
+
+Firstly, the path finding mix-in provides functionality to calculate a path to another given entity or specific position and maintain that path until it is complete or otherwise cancelled. This is done through a path_to_position() function which takes an x and y coordinate as an argument as well as a SpriteList of blockling sprites and a boolean denoting whether diagonal movement is permitted. This function is also wrapped in a path_to_entity() function, which takes another Entity object as a parameter instead of an x, y coordinate and extracts its position. Both functions update an attribute called ‘path’ that contains a list of coordinates to denoting the path to the coordinate requested to path-find to. Each time the mix-in is then updated, it checks to see if this list is populated and if so, pops the first item from the list and calls the move_towards() function, which updates the velocity of the entity to that position.
+
+Next, the digging mix-in allows the entity to break certain blocks which it collides with. This is generally restricted to dirt and ores. The controllable mix-in allows the entity to listen and react to keyboard or mouse presses. Abstracting this movement logic from outside the Drill class provides the foundation required to implement controllable bullets or other controllable friendlies. This mix-in does not require instantiation, and by simply calling the up
+
+Lastly, the shooting mix-in can be inherited to allow that entity to shoot a projectile. This is made possible with very few functions, namely an aim() function to aim at a given x, y coordinate, as well as a pull_trigger() and release_trigger() function to fire at the position aimed at. The shoot() function can also be used to instantly fire a bullet, but note that this bypasses fire rate limit.
+
 ## Running Unit Tests
 
+Unit tests can be performed by running the following command:
+
+#### Windows
+```console
+python -m unittest discover tests
+```
+
+#### Linux, macOS
+```console
+py -m unittest discover tests
+```
+
+
 ## Debugging Features
+
+To make it easier for everyone working on the code, debugging features are added. These features can be activated in-game by pressing specific keys. The debugging features can be found at the following location in the source code: DrillDungeonGame/drill_dungeon_game.py.
+
+```python3
+  #DEBUGGING CONTROLS
+  elif self.keys_pressed['O']:
+      self.vignette.increase_vision()
+
+  elif self.keys_pressed['L']:
+      self.vignette.decrease_vision()
+
+  elif self.keys_pressed['K']:
+      self.vignette.blind()
+
+  elif self.keys_pressed['SEMICOLON']:
+      self.vignette.far_sight()
+
+  elif self.keys_pressed['M']:
+      self.window.show_view(self.window.shop_view)
+```
 
 ## Extending the Code
 
