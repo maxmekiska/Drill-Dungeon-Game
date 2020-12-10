@@ -31,6 +31,19 @@ attending the MSc in Computer Science.
 - Hugh Surdeau
 - Yiming Yuan
 
+
+# Downloads
+
+
+## Game
+
+An exe version of the game can be downloaded here:
+
+For the latest version please visit our GitHub repository [here](https://github.bath.ac.uk/hs706/DrillDungeonGame)
+
+
+
+
 ## Reports
 
 Our reports can be downloaded below:
