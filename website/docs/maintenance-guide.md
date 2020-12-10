@@ -50,13 +50,13 @@ The current entity package structure allows for additional logic to be abstracte
 
 Firstly, the path finding mix-in provides functionality to calculate a path to another given entity or specific position and maintain that path until it is complete or otherwise cancelled. This is done through a path_to_position() function which takes an x and y coordinate as an argument as well as a SpriteList of blockling sprites and a boolean denoting whether diagonal movement is permitted. This function is also wrapped in a path_to_entity() function, which takes another Entity object as a parameter instead of an x, y coordinate and extracts its position. Both functions update an attribute called ‘path’ that contains a list of coordinates to denoting the path to the coordinate requested to path-find to. Each time the mix-in is then updated, it checks to see if this list is populated and if so, pops the first item from the list and calls the move_towards() function, which updates the velocity of the entity to that position.
 
-Next, the digging mix-in allows the entity to break certain blocks which it collides with. This is generally restricted to dirt and ores. The controllable mix-in allows the entity to listen and react to keyboard or mouse presses. Abstracting this movement logic from outside the Drill class provides the foundation required to implement controllable bullets or other controllable friendlies. This mix-in does not require instantiation, and by simply calling the up
+Next, the digging mix-in allows the entity to break certain blocks which it collides with. This is generally restricted to dirt and ores. The controllable mix-in allows the entity to listen and react to keyboard or mouse presses. Abstracting this movement logic from outside the Drill class provides the foundation required to implement controllable bullets or other controllable friendlies. This mix-in does not require instantiation and simply functions by calling the update method every game loop.
 
 Lastly, the shooting mix-in can be inherited to allow that entity to shoot a projectile. This is made possible with very few functions, namely an aim() function to aim at a given x, y coordinate, as well as a pull_trigger() and release_trigger() function to fire at the position aimed at. The shoot() function can also be used to instantly fire a bullet, but note that this bypasses fire rate limit.
 
 ## Running Unit Tests
 
-Unit tests can be performed by running the following command:
+By running the following command:
 
 #### Windows
 ```console
@@ -68,6 +68,7 @@ python -m unittest discover tests
 py -m unittest discover tests
 ```
 
+Unit test can be run. All unit tests are contained in the tests directory in the top level directory.
 
 ## Debugging Features
 
@@ -101,11 +102,70 @@ In order to add additional block types, first a new string must be assigned to t
 
 Once the block type string is loaded into the map layer configuration, a new block type has to be defined. The block.py file contains all the block classes, which extend the main block class. Create a new block class following the format of the other ones, ensuring the char attribute is set to the same one that was loaded into the map layer matrix. File is the location of the image that the new block type will take as its sprite, while scale changed the size of the block. Make sure that the block will scale to 20x20 pixels. Finally, add the new block class to the _Block class at the end of the file, which allows for the block classes to be called.
 
-Finally, the new block type needs to be added to the BlockGrid class in the block_grid.py file. The exact implementation of this depends on what the intended behaviour of the block is. If the block is purely for visual purposes and never needs to interact with the drill, then it is classified as an air block. To add the new block type as an air block, simply append BLOCK.$<$ NEWTYPE$>$ to the if statement on line 102. This checks if the block being iterated over is meant to be an air block, and initialises it as such.
+The new block type then needs to be added to the BlockGrid class in the block\textunderscore grid.py file. The exact implementation of this depends on what the intended behaviour of the block is. If the block is purely for visual purposes and never needs to interact with the drill, then it is classified as an air block. To add the new block type as an air block, simply append BLOCK.$<$NEWTYPE$>$ to the if statement to the following for loop on line 102:
 
-If the block needs to interact with the drill, then an elif statement needs to be appended to the _add_block_to_list() method in block_grid.py file. Depending on if the block can be broken or not, it should be appended to the sprites' indestructible_block_list or the destructable_blocks_list. Either way, it should also be added to all_blocks_list.
+```python3
+def initialise_blocks_adjacent_to_air(self, sprites):
+		for x in range(self.width):
+				for y in range(self.height):
+						block = self.blocks[x][y]
+						if any(type(adjacent_block) in (BLOCK.AIR, BLOCK.DRILLDOWN,
+																				BLOCK.FLOOR) for adjacent_block in
+																				self._get_adjacent_blocks_to(block)):
+								if type(block) in (BLOCK.FLOOR, BLOCK.AIR):
+										self.air_blocks.append(block)
+								elif type(block) == BLOCK.DRILLDOWN:
+										self.air_blocks.append(block)
+										if block not in sprites.all_blocks_list:
+												self._add_block_to_lists(block, sprites)
+								else:
+										if block not in sprites.all_blocks_list:
+												self._add_block_to_lists(block, sprites)
 
-If the block requires some sort of special interaction with the drill, it may require that a sprite list be appended to the SpriteContainer class. This list can then be called in other methods which will allow for just that type of block to be checked for collision or other interactions. To add this list, simply extend the constructor method of the SpriteContainer class in the sprite_container.py file, adding a new sprite list as an argument and class attribute.
+```
+
+This checks if the block being iterated over is meant to be an air block, and initialises it as such.
+
+If the block needs to interact with the drill, then an elif statement needs to be appended to the _add_block_to_list() method in block_grid.py file:
+```python3
+def _add_block_to_lists(self, block: Block, sprites) -> None:
+    if type(block) == BLOCK.DIRT:
+        sprites.destructible_blocks_list.append(block)
+        sprites.all_blocks_list.append(block)
+
+    elif type(block) == BLOCK.COAL:
+        sprites.destructible_blocks_list.append(block)
+        sprites.all_blocks_list.append(block)
+
+    elif type(block) == BLOCK.GOLD:
+        sprites.destructible_blocks_list.append(block)
+        sprites.all_blocks_list.append(block)
+
+    elif type(block) == BLOCK.SHOP:
+        sprites.shop_list.append(block)
+        sprites.indestructible_blocks_list.append(block)
+        sprites.all_blocks_list.append(block)
+
+    elif type(block) == BLOCK.BORDER:
+        sprites.indestructible_blocks_list.append(block)
+        sprites.all_blocks_list.append(block)
+        sprites.border_wall_list.append(block)
+
+    elif type(block) == BLOCK.WALL:
+        sprites.indestructible_blocks_list.append(block)
+        sprites.all_blocks_list.append(block)
+        sprites.border_wall_list.append(block)
+
+    elif type(block) == BLOCK.DRILLDOWN:
+        sprites.drill_down_list.append(block)
+        sprites.all_blocks_list.append(block)
+
+    else:
+        raise ValueError(f'Incorrect block type: {type(block)}!')
+```
+Depending on if the block can be broken or not, it should be appended to the sprites' indestructible_block_list or the destructable_blocks_list. Either way, it should also be added to all_blocks_list.
+
+If the block requires some sort of special interaction with the drill, it may require that a sprite list be appended to the SpriteContainer class. This list can then be called in other methods which will allow just that type of block to be checked for collision or other interactions. To add this list, simply extend the constructor method of the SpriteContainer class in the sprite_container.py file, adding a new sprite list as an argument and class attribute.
 
 
 ## Additional Prefabricated Dungeons
@@ -145,9 +205,25 @@ Other available options can be seen in the above wing room example. In fact, LW 
 
 Automated dungeon generation is more of an open ended addition, and can be implemented in several ways. In theory, the only thing requires is some way to alter the map layer matrix to add some floor and dungeon wall tiles, represented by characters 'F' and 'W' respectively.
 
-Two methods were attempted for this iteration of the game, but were both shelved due to balancing difficulties. These can be re-added by the maintainer and improved if they so wish. The first method used the same basic principle of the generate_coal() and generate_gold() methods, instead adding floor blocks. Then, the map layer matrix should then be iterated over, adding wall blocks to any blocks adjacent to floors which are not also floor tiles.
+Two methods were attempted for this iteration of the game, but were both shelved due to balancing difficulties. These can be re-added by the maintainer and improved if they so wish. The first method used the same basic principle of the generate\_coal() and generate\_gold() methods, instead adding floor blocks. Then, the map layer matrix should then be iterated over, adding wall blocks to any blocks adjacent to floors which are not also floor tiles.
 
 The other method which was attempted was constructing new dungeons from several prefabricated rooms. This is similar to the prefabricated method, but more open ended.
+
+
+
+## Extending the Entity class
+The entity class may be extended to include extra features such as animations. There are 2 main default animations you can add to the entity which are the idle animations and moving animations. The idle animation loop when the character is not moving while the moving animations loop when character is in motion. To add any of these include a list of the images to loop through in the subclass initialisation. This list should then be passed when initialising the parent class Entity. The idle images should be passed as idle\_textures and the moving images should be passed as moving\_textures. Lastly a time value would also need to be passed to the Entity initialisation as \time\_between\_animation\_texture\_updates. This determines the time it takes before switching the pictures.
+
+More animations may be added but this would require overriding the update\_animation method. To implement them, add the list with images as before but instead of calling it with the parent initialisation create an attribute for the textures. The images can be loaded into the texture list using load\_mirrored\_textures, which loads all images into the created attribute. The load\_mirrored\_textures needs to be imported from DrillDungeonGame/utility.py. The update\_animation method can then be adjusted to change the animations based on the certain conditions for the animation being added.
+
+An Entity can have multiple children including a Turret object used by most enemies and the drill. The Entity class has a children attribute which is a list to store all ChildEntity's.
+
+To add specific functionality to the class the update method can be overridden. When this is done ensure to call the parents update method. In this update specific functions such as checking line of sight, aiming, firing can be added.
+
+The Enemy class is a subset of the Entity class. It adds functionality to the Entity class such as, a health bar displayed under the character, sounds for when they attack or are attacked, and initialised variables to be used for bot implementation such as '\_has\_line\_of\_sight\_with\_drill'.
+
+To create an enemy in the game a subclass of the Enemy class should be made instead of the Entity. The subclass can then also inherit the mix-ins DiggingMixin and PathFindingMixin. The PathFindingMixin is necessary in eneabling them to find a route to the drill and the DiggingMixin enables them to remove dirt blocks in their way. To enable this the update function needs to be overridden to include code that checks if enemy has a line of sight with the drill and also code to follow, aim and fire at the drill.
+
 
 ## Adding Additional Explosion Effects
 
