@@ -24,6 +24,7 @@ class Window(arcade.Window):
         )
         self.music = None
         self._song_index = 0
+        self._player = None
         self.play_music()
 
     def advance_song(self) -> None:
@@ -42,15 +43,8 @@ class Window(arcade.Window):
 
         # Play the next song
         self.music = self._music_list[self._song_index]
-        self.music.play(MUSIC_VOLUME)
+        self._player = self.music.play(MUSIC_VOLUME, loop=True)
         # This is a quick delay. If we don't do this, our elapsed time is 0.0
         # and on_update will think the music is over and advance us to the next
         # song before starting this one.
         # time.sleep(0.03)
-
-    def on_update(self, delta_time: float):
-        if self.music:
-            position = self.music.get_stream_position()
-            if position == 0.0:
-                self.advance_song()
-                self.play_music()
