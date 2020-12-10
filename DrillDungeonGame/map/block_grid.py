@@ -9,7 +9,7 @@ class BlockGrid:
     def __init__(self, matrix: List[List[Tuple[str, float, float]]], sprites) -> None:
         self.blocks = [[] for _ in range(len(matrix[0]))]
         self.air_blocks = arcade.SpriteList()
-        self._block_break_sound = arcade.load_sound("resources/sound/block_break.wav")
+        self._block_break_sound = arcade.load_sound("resources/sound/meele.wav")
         for x in range(len(matrix)):
             for y in range(len(matrix[0])):
                 b = matrix[y][x]
