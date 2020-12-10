@@ -168,3 +168,25 @@ To generate a new particle explosion, follow the example of the other particle c
 ## Main Menu Modifications
 
 Modifying or adding new elements to the main menu is possible by navigating to the following python file: DrillDungeonGame/views.py. The general structure of this file consist first of button classes and second of view classes. First, button classes (inherent from arcade.gui.UIFlatButton) define the behaviour of what happens when a particular button is pressed. Second, View classes define (inherent from arcade.View) the general structure of the window and graphical representation. Each view class contains a setup() method that is used to place the buttons to the preferred location. It further, creates a button objects to add the preferred logic to the buttons placed onto the window.
+
+## Adding Shop Items and Tabs
+
+In order to add a new item to the shop menu the DrillDungeonGame/in_game_menus.py file needs to be edited. In this file the ShopMenu class inherits from a InGameMenu class. The InGameMenu class is an arcade.view class which fogs the game screen and displays a grey box for a menu. The InGameMenu class is initialised in the ShopMenu class with dimentions for the shop menu.
+
+To add an item to the shop a ShopItem  object needs to be  added. The ShopItem class needs to be initialised in ShopMenu, in the on\_show method, with the following:
+
+- shop\_menu, which is the shop menu the item would be added to.
+- center\_x, which is the x-axis screen location for the item
+- item\_name, the name of the item you want to add.
+- cost, how much the item would cost
+- image, the image used when displaying item
+- reusablility, set this to true if item can be bought multiple times
+- button\_function, add method to be executed when item bought
+- function\_inputs, if method requires input it here otherwise it's set to none.
+
+An item needs to be added to a tab. Currently there are 2 tabs in the game, upgrades and ammo. To add a new tab a ShopTab object needs to be added . The ShopTab class needs to be initialised in ShopMenu, in the on\_show method, with the following:
+
+- tab\_name, name of the tab
+- start\_center\_y, the y-axis location to start listing items in tab.
+
+With the tab and item objects defined in the on\_show method, the items then need to be added to the tabs using the tabs add\_item method. After all items have been added to their respective tabs the tab\_list attribute of the ShopMenu class needs to be extended with the tabs created.

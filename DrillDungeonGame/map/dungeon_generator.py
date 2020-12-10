@@ -245,7 +245,8 @@ class MapLayer:
         """
         startX = np.random.randint(20, 40)
         startY = np.random.randint(20, 40)
-        entrance_room = entrance_room_one #Add method to choose random
+        entrance_room = random.choice((entrance_room_one, entrance_room_two, 
+                entrance_room_three, entrance_room_four, entrance_room_five))
         for i in  range(len(entrance_room)):
             for j in range(len(entrance_room[0])):
                     self.map_layer_matrix[i+startY][j+startX] = entrance_room[i][j]
