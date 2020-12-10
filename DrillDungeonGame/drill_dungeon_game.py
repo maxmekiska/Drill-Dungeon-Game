@@ -140,6 +140,11 @@ class DrillDungeonGame(arcade.View):
 
         self.vignette.draw(self.drill.center_x, self.drill.center_y)
 
+        draw_3d_rectangle(self.view.left_offset+718, self.view.bottom_offset+587, 160, 25, arcade.color.LIGHT_GRAY+(150,),
+                          arcade.color.WHITE+(150,), arcade.color.GRAY+(150,), 1)
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, self.view.left_offset + 643, self.view.bottom_offset + 574, arcade.color.BLACK, 18)
+
         draw_3d_rectangle(self.view.left_offset+110, self.view.bottom_offset+70, 220, 140, arcade.color.LIGHT_GRAY+(150,),
                           arcade.color.WHITE+(150,), arcade.color.GRAY+(150,), 2)
         self.drill.draw_health_bar(self.view.left_offset+80, self.view.bottom_offset+50, 130, 20)
