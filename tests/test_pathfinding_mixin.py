@@ -63,10 +63,8 @@ class PathFindingMixinTestCase(unittest.TestCase):
 
         time = 0
         delta_time = 0.1
-        frame = 0
         for i in range(100):  # Game loop mock. iterate 1000 ticks.
             time += delta_time
-            frame += 1
 
             e1.update(time, delta_time, sprites, block_grid)
             e2.update(time, delta_time, sprites, block_grid)
