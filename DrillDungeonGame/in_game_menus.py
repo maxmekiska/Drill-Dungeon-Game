@@ -633,6 +633,8 @@ class ShopMenu(InGameMenu):
 
     def on_show(self):
         super().on_show()
+        self.tab_list = []
+        self.tab_position = 0
         self.upgrades_tab = ShopTab("Upgrades", self.screen_center_y+40)
         self.ammo_tab = ShopTab("Ammo", self.screen_center_y+40)
         close_button = MenuButton(self.screen_center_x-230, self.screen_center_y+180, 28, 28)
