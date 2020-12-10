@@ -25,7 +25,9 @@ class ControllableMixinTestCase(unittest.TestCase):
         e.handle_key_press_release(keys_pressed)
         self.assertEqual(e.velocity, [0.0, 0.0])
 
-        # Test 4 way vertical and horizontal movement
+    def test_up_movement(self):
+        e = FakeControllableEntity(speed=1.0)
+        keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
         keys_pressed['W'] = True
         e.handle_key_press_release(keys_pressed)
@@ -35,13 +37,9 @@ class ControllableMixinTestCase(unittest.TestCase):
         e.handle_key_press_release(keys_pressed)
         self.assertEqual(e.velocity, [0.0, 0.0])
 
-        keys_pressed['A'] = True
-        e.handle_key_press_release(keys_pressed)
-        self.assertEqual(e.velocity, [-1.0, 0.0])
-
-        keys_pressed['A'] = False
-        e.handle_key_press_release(keys_pressed)
-        self.assertEqual(e.velocity, [0.0, 0.0])
+    def test_down_movement(self):
+        e = FakeControllableEntity(speed=1.0)
+        keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
         keys_pressed['S'] = True
         e.handle_key_press_release(keys_pressed)
@@ -51,6 +49,10 @@ class ControllableMixinTestCase(unittest.TestCase):
         e.handle_key_press_release(keys_pressed)
         self.assertEqual(e.velocity, [0.0, 0.0])
 
+    def test_right_movement(self):
+        e = FakeControllableEntity(speed=1.0)
+        keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
+
         keys_pressed['D'] = True
         e.handle_key_press_release(keys_pressed)
         self.assertEqual(e.velocity, [1.0, 0.0])
@@ -59,7 +61,21 @@ class ControllableMixinTestCase(unittest.TestCase):
         e.handle_key_press_release(keys_pressed)
         self.assertEqual(e.velocity, [0.0, 0.0])
 
-        # Test diagonal movement
+    def test_left_movement(self):
+        e = FakeControllableEntity(speed=1.0)
+        keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
+
+        keys_pressed['A'] = True
+        e.handle_key_press_release(keys_pressed)
+        self.assertEqual(e.velocity, [-1.0, 0.0])
+
+        keys_pressed['A'] = False
+        e.handle_key_press_release(keys_pressed)
+        self.assertEqual(e.velocity, [0.0, 0.0])
+
+    def test_diagonal_movement(self):
+        e = FakeControllableEntity(speed=1.0)
+        keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
 
         keys_pressed['W'] = True
         keys_pressed['D'] = True
@@ -72,7 +88,9 @@ class ControllableMixinTestCase(unittest.TestCase):
         e.handle_key_press_release(keys_pressed)
         self.assertEqual(e.velocity, [0.0, 0.0])
 
-        # Opposite movement should cancel.
+    def test_opposite_keys_cancel(self):
+        e = FakeControllableEntity(speed=1.0)
+        keys_pressed = {key: False for key in arcade.key.__dict__.keys() if not key.startswith('_')}
         keys_pressed['W'] = True
         keys_pressed['S'] = True
         e.handle_key_press_release(keys_pressed)
