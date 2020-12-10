@@ -102,12 +102,12 @@ class DrillDungeonGame(arcade.View):
 
         self.mouse_position = (1, 1)
 
-        self.drill = Drill(center_x=150,
-                           center_y=150,
-                           current_health=700,
-                           max_health=700,
-                           ammunition=400,
-                           coal=200,
+        self.drill = Drill(center_x=200,
+                           center_y=200,
+                           current_health=150,
+                           max_health=150,
+                           ammunition=50,
+                           coal=40,
                            gold=0)
 
         self._levels = []
