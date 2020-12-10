@@ -185,18 +185,7 @@ class DrillDungeonGame(arcade.View):
 
         if self.keys_pressed['T']:
             # Drill down to the next layer.
-            if self.drill.check_ground_for_drilling(self.current_level.sprites):
-                if (len(self._levels) - self._level_index) == 1:
-                    next_level = Level(self.drill)
-                    self._levels.append(next_level)
-                self._level_index += 1
-                self.drill.collision_engine = []  # Clear previous level collision engine first.
-                self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
-                self.vignette.decrease_vision()
-                self.drill.children[0].shoot(ShotType.SINGLE)
-            else:
-                print("Cannot drill here")
-
+            self.handle_drill_down()
         elif self.keys_pressed['ESCAPE']:
             # pause game
             self.keys_pressed = {key: False for key in self.keys_pressed}
@@ -215,6 +204,27 @@ class DrillDungeonGame(arcade.View):
 
         elif self.keys_pressed['M']:
             self.window.show_view(self.window.shop_view)
+
+    def handle_drill_down(self):
+        """
+        Handles drilling down, when the player presses 'T'.
+        Requires the drill to be over a drill down block and have more than 50 coal.
+        """
+        if self.drill.check_ground_for_drilling(self.current_level.sprites):
+            if self.drill.inventory.coal > 50:
+                if (len(self._levels) - self._level_index) == 1:
+                    next_level = Level(self.drill)
+                    self._levels.append(next_level)
+                self._level_index += 1
+                self.drill.collision_engine = []  # Clear previous level collision engine first.
+                self.drill.setup_collision_engine([self.current_level.sprites.indestructible_blocks_list])
+                self.vignette.decrease_vision()
+                self.drill.children[0].shoot(ShotType.SINGLE)
+                self.drill.inventory.coal += -50
+            else:
+                print("Not enough coal!")
+        else:
+            print("Cannot drill here")
 
     def on_key_release(self, key: int, modifiers: int) -> None:
         """
