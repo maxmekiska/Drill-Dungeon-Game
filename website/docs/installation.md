@@ -23,7 +23,7 @@
 
 1. There are various ways to install Python on your machine.  This guide demonstrates one way, so for alternative solutions, please refer [here](https://docs.python.org/3/using/windows.html)
 2. Navigate [here](https://python.org/downloads)
-3. Download the latest Python version by clicking the yellow button labelled “Download Python”. This library requires Python 3.8.5 or higher.
+3. Download the latest Python version by clicking the yellow button labelled “Download Python”. This library requires Python 3.8 or higher. However, since 09/10/2020 a new version of the arcade library got released which prevents Linux and macOS user from using a Python version higher than 3.8.
 
 [![](pictures/Installation1.png)](# "centre")
 
