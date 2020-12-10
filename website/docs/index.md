@@ -37,7 +37,7 @@ attending the MSc in Computer Science.
 
 ## Game
 
-An exe version of the game can be downloaded here:
+An exe version of the game can be downloaded [here](exe/DrillDungeonGame.exe)
 
 For the latest version please visit our GitHub repository [here](https://github.bath.ac.uk/hs706/DrillDungeonGame)
 
@@ -47,6 +47,7 @@ For the latest version please visit our GitHub repository [here](https://github.
 ## Reports
 
 Our reports can be downloaded below:
+(The relevant versions of these two reports are the ones we have submitted via Moodle)
 
 ### Process documentation
 <object data="documents/CW2_Process_Documentation.pdf" type="application/pdf" width="560" height="650">
