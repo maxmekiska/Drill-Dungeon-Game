@@ -704,7 +704,7 @@ class ShopMenu(InGameMenu):
             button.draw()
 
         if self.game_view.drill.current_health < self.game_view.drill.max_health:
-            if self.self.game_view.drill.inventory.gold < self.repair_cost:
+            if self.game_view.drill.inventory.gold < self.repair_cost:
                 self.repair_button.draw(False)
             else:
                 self.repair_button.draw()
