@@ -5,7 +5,7 @@ from .entity.mixins import ControllableMixin, ShotType
 from .in_game_menus import draw_3d_rectangle
 from .level import Level
 from .obscure_vision import ObscuredVision
-from .utility import generate_next_layer_resource_patch_amount, generate_next_layer_dungeon_amount
+from .utility import SCREEN_TITLE, generate_next_layer_resource_patch_amount, generate_next_layer_dungeon_amount
 from .view_margins import View
 
 
