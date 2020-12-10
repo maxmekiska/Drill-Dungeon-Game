@@ -362,6 +362,7 @@ class DrillDungeonGame(arcade.View):
 
         if len(self.current_level.sprites.entity_list) < enemies:
             self.score += (enemies-len(self.current_level.sprites.entity_list))*2
+            self.drill.inventory.gold += 1
         if self.drill.inventory.gold > gold:
             self.score += self.drill.inventory.gold-gold
         if self.drill.inventory.coal > coal:
