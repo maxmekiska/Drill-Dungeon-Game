@@ -93,21 +93,24 @@ class Level:
             for block in row:
                 if block[0] == ' ':
                     if np.random.rand() > (1 - enemy_chance_cave):
-                        enemy_to_add = random.choice(potential_enemies)
-                        enemy_to_append = enemy_to_add(block[1], block[2], vision=200)
-                        self.sprites.entity_list.append(enemy_to_append)
-                        self.sprites.enemy_list.append(enemy_to_append)
+                       if self.sprites.drill.center_x != block[1] or self.sprites.drill.center_y != block[2]:
+                            enemy_to_add = random.choice(potential_enemies)
+                            enemy_to_append = enemy_to_add(block[1], block[2], vision=200)
+                            self.sprites.entity_list.append(enemy_to_append)
+                            self.sprites.enemy_list.append(enemy_to_append)
                 elif block[0] == 'F':
                     if np.random.rand() > (1 - enemy_chance_dungeon):
-                        enemy_to_add = random.choice(potential_enemies)
-                        enemy_to_append = enemy_to_add(block[1], block[2], vision=200)
-                        self.sprites.entity_list.append(enemy_to_append)
-                        self.sprites.enemy_list.append(enemy_to_append)
+                       if self.sprites.drill.center_x != block[1] or self.sprites.drill.center_y != block[2]:
+                            enemy_to_add = random.choice(potential_enemies)
+                            enemy_to_append = enemy_to_add(block[1], block[2], vision=200)
+                            self.sprites.entity_list.append(enemy_to_append)
+                            self.sprites.enemy_list.append(enemy_to_append)
                     elif np.random.rand() > (1 - boss_chance):
-                        enemy_to_add = random.choice(potential_bosses)
-                        enemy_to_append = enemy_to_add(block[1], block[2], vision=200, speed=0.7)
-                        self.sprites.entity_list.append(enemy_to_append)
-                        self.sprites.enemy_list.append(enemy_to_append)
+                       if self.sprites.drill.center_x != block[1] or self.sprites.drill.center_y != block[2]:
+                            enemy_to_add = random.choice(potential_bosses)
+                            enemy_to_append = enemy_to_add(block[1], block[2], vision=200, speed=0.7)
+                            self.sprites.entity_list.append(enemy_to_append)
+                            self.sprites.enemy_list.append(enemy_to_append)
         self.sprites.drill_list.append(self.sprites.drill)
 
         for entity in self.sprites.entity_list:
