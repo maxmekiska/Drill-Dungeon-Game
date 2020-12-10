@@ -4,15 +4,22 @@ import arcade
 
 from DrillDungeonGame.entity.entity import Entity
 from DrillDungeonGame.entity.mixins import ControllableMixin
+from DrillDungeonGame.map import DungeonWallBlock
+from DrillDungeonGame.sprite_container import SpriteContainer
 
 
 class FakeControllableEntity(Entity, ControllableMixin):
     def __init__(self, *args, **kwargs):
         super().__init__('resources/images/drills/drill_v3/drill_both_1.png',
                          1.0,
-                         100,
-                         100)
+                         0.0,
+                         0.0)
         ControllableMixin.__init__(self)
+
+
+class FakeBlockGrid:
+    def break_block(self, block, sprites):
+        block.remove_from_sprite_lists()
 
 
 class ControllableMixinTestCase(unittest.TestCase):
@@ -100,3 +107,32 @@ class ControllableMixinTestCase(unittest.TestCase):
         keys_pressed['D'] = True
         e.handle_key_press_release(keys_pressed)
         self.assertEqual(e.velocity, [0.0, 0.0])
+
+    def test_collidable_walls_with_gameloop(self):
+        sprites = SpriteContainer(None, arcade.SpriteList(), arcade.SpriteList(),
+                                  arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(),
+                                  arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(),
+                                  arcade.SpriteList(), arcade.SpriteList(), arcade.SpriteList(), )
+
+        e = FakeControllableEntity()
+        b = DungeonWallBlock(0, 0, 0.0, 100.0)  # One dirt block above the entity
+        sprites.indestructible_blocks_list.append(b)
+        block_grid = FakeBlockGrid()
+
+        e.setup_collision_engine([sprites.indestructible_blocks_list])
+        self.assertIn(b, sprites.indestructible_blocks_list)
+
+        e.set_velocity((0, 1))
+        time = 0
+        delta_time = 0.1
+        frame = 0
+        for i in range(1000):  # Game loop mock. iterate 1000 ticks.
+            time += delta_time
+            frame += 1
+
+            e.update(time, delta_time, sprites, block_grid)
+
+        print(e.position)
+        self.assertEqual(e.center_x, 0.0)
+        self.assertLess(e.center_y, 50.0)  # Entity has not moved much due to colliding with the wall.
+
