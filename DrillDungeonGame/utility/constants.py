@@ -1,7 +1,7 @@
 from enum import Enum
 
-SCREEN_TITLE = "Welcome to the Drill Dungeon"
 
+SCREEN_TITLE = "Welcome to the Drill Dungeon"
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 VIEWPOINT_MARGIN = 200

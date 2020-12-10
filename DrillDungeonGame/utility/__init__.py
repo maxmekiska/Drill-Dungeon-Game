@@ -1,2 +1,2 @@
-from .utility import *
 from .constants import *
+from .utility import *
