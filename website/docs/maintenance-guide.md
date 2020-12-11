@@ -70,27 +70,6 @@ py -m unittest discover tests
 
 Unit test can be run. All unit tests are contained in the tests directory in the top level directory.
 
-## Debugging Features
-
-To make it easier for everyone working on the code, debugging features are added. These features can be activated in-game by pressing specific keys. The debugging features can be found at the following location in the source code: DrillDungeonGame/drill_dungeon_game.py.
-
-```python3
-  #DEBUGGING CONTROLS
-  elif self.keys_pressed['O']:
-      self.vignette.increase_vision()
-
-  elif self.keys_pressed['L']:
-      self.vignette.decrease_vision()
-
-  elif self.keys_pressed['K']:
-      self.vignette.blind()
-
-  elif self.keys_pressed['SEMICOLON']:
-      self.vignette.far_sight()
-
-  elif self.keys_pressed['M']:
-      self.window.show_view(self.window.shop_view)
-```
 
 ## Extending the Code
 
