@@ -37,7 +37,7 @@ attending the MSc in Computer Science.
 
 ## Game
 
-An exe version of the game can be downloaded [here](exe/DrillDungeonGame.exe)
+An exe version of the game can be downloaded [here](Drill.Dungeon.Game-1.0-amd64.msi)
 
 For the latest version please visit our GitHub repository [here](https://github.bath.ac.uk/hs706/DrillDungeonGame)
 
