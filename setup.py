@@ -1,18 +1,40 @@
-import cx_Freeze
+from cx_Freeze import bdist_msi, Executable, setup
 
 
-executables = [cx_Freeze.Executable("main.py",
-                                    base="Win32GUI",
-                                    targetName="DrillDungeonGame.exe",
-                                    shortcutName="Drill Dungeon Game",
-                                    shortcutDir="DesktopFolder",
-                                    icon="resources/images/favicon.ico",
-                                    )]
+# https://docs.microsoft.com/en-us/windows/win32/msi/shortcut-table
+shortcut_table = [
+    ("DesktopShortcut",                                             # Shortcut
+     "DesktopFolder",                                               # Directory_
+     "DrillDungeonGame",                                            # Name
+     "TARGETDIR",                                                   # Component_
+     "[TARGETDIR]DrillDungeonGame.exe",                             # Target
+     None,                                                          # Arguments
+     None,                                                          # Description
+     None,                                                          # Hotkey
+     None,                                                          # Icon
+     None,                                                          # IconIndex
+     None,                                                          # ShowCmd
+     "TARGETDIR",                                                   # WkDir
+     )
+]
+
+
+executables = [Executable("main.py",
+                          base="Win32GUI",
+                          targetName="DrillDungeonGame.exe",
+                          shortcutName="DrillDungeonGame",
+                          shortcutDir="DesktopFolder",
+                          icon="resources/images/favicon.ico",
+                          )]
+
+
+msi_data = {"Shortcut": shortcut_table}
 
 
 bdist_msi_options = {
     "install_icon": "resources/images/favicon.ico",
     "summary_data": {"author": "Team Purple"},
+    "data": msi_data,
 }
 
 
@@ -24,7 +46,7 @@ build_exe_options = {
 }
 
 
-cx_Freeze.setup(
+setup(
     name="Drill Dungeon Game",
     version="1.0",
     description="A dungeon themed game centered around a drill!",
