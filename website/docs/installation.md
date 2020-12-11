@@ -123,4 +123,30 @@ pytest tests/
 
 # Installation guide for User
 
+### Overview
+
 To install and play the Drill Dungeon Game, please download the .exe file either from the official Drill Dungeon Game website or the GitHub repository. Please make sure that your computer has a working version of Python 3.7 or higher installed. For the installation of Python, please refer to the explanation given above at 1.2.1 "Install Python".
+
+### System Requirements
+
+The packaged version of our game runs on Windows 10.
+
+### Download the installer
+
+The windows msi installer can be downloaded [here](https://github.bath.ac.uk/hs706/DrillDungeonGame/releases/tag/7.1)
+
+### Navigate to where the installer is and run it
+
+This installer will create a desktop shortcut to an executable file from which you can run the application.
+
+[![](pictures/msi.png)](# "centre")
+
+### Navigate through the msi installer
+
+Make sure to specify an install location if you wish to install it somewhere other than the default location.
+
+### Run the executable to start the game
+
+[![](pictures/executable.png)](# "centre")
+
+Start the game by double clicking the executable located in the install directory or through the Desktop shortcut.
