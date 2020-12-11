@@ -297,9 +297,9 @@ class InstructionView(arcade.View):
         arcade.start_render()
         arcade.draw_text("Instructions", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.2,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("1. Press W, A, S, D to move\n\n2. Click on screen to aim and shoot\n\n3. Press T to drill down\n\n4. Press B to change fire mode\n\n4. Press ESC to pause the game",
-                          SCREEN_WIDTH/SCREEN_WIDTH, SCREEN_HEIGHT/2.4,
-                          arcade.color.WHITE, font_size= 25, anchor_x="left")
+        arcade.draw_text("\n\n1. Press W, A, S, D to move.\n\n2. Left click on screen to aim and shoot.\n\n3. Hold right click to enable your shield.\n\n4. Press T/U to drill up/down.\n\n5. Press B to change fire mode.\n\n6. Press ESC to pause the game.",
+                          SCREEN_WIDTH/SCREEN_WIDTH, SCREEN_HEIGHT/2.7,
+                          arcade.color.WHITE, font_size= 20, anchor_x="left")
 
 
     def on_hide_view(self):
@@ -388,9 +388,9 @@ class ObjectivesView(arcade.View):
         arcade.start_render()
         arcade.draw_text("The Objective", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.2,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Text here",
-                          SCREEN_WIDTH/SCREEN_WIDTH, SCREEN_HEIGHT/2.4,
-                          arcade.color.WHITE, font_size= 25, anchor_x="left")
+        arcade.draw_text("Explore the map, but be careful! Moving depletes your coal resource!\n\nDrill away at coal and gold to earn these resources back!\n\nDefend your drill by shooting enemies. Loot them and earn gold!\n\nYou may just come accross a shop to spend your gold in...\n\nFind drill down / drill up tiles to drill further down, but be careful!\n\nThe lower you go... The tougher it will become!",
+                          SCREEN_WIDTH/SCREEN_WIDTH, SCREEN_HEIGHT/2.7,
+                          arcade.color.WHITE, font_size= 20, anchor_x="left")
 
 
     def on_hide_view(self):
